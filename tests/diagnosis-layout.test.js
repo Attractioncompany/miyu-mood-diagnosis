@@ -55,6 +55,31 @@ test('세로 태블릿에서 답변은 2열이고 주요 버튼은 44px 이상�
 });
 
 
+test('검은 주요 버튼의 흰 글자가 선명하게 보인다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">
+    <div id="enabled-primary">${ui.renderStartView(core.createInitialState('2026-07-27'))}</div>
+    <div id="disabled-primary">${ui.renderQuestionView(core.createInitialState('2026-07-27'), 0)}</div>
+  </section>`);
+
+  const colors = await page.locator('#enabled-primary .miyu-button.miyu-primary').evaluate(element => {
+    const style = getComputedStyle(element);
+    return { background: style.backgroundColor, foreground: style.color };
+  });
+  const disabledColors = await page.locator('#disabled-primary .miyu-button.miyu-primary').evaluate(element => {
+    const style = getComputedStyle(element);
+    return { background: style.backgroundColor, foreground: style.color };
+  });
+
+  assert.equal(colors.background, 'rgb(21, 21, 21)');
+  assert.equal(colors.foreground, 'rgb(255, 255, 255)');
+  assert.equal(disabledColors.background, 'rgb(233, 233, 230)');
+  assert.equal(disabledColors.foreground, 'rgb(154, 154, 150)');
+  await page.close();
+});
+
+
 test('진행표는 세로 태블릿의 왼쪽에서 약 78% 너비로 열린다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });

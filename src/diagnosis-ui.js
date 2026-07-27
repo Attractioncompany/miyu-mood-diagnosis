@@ -199,7 +199,7 @@
 
     const selected = core.TYPES.find(type => type.code === state.selectedType);
     const confirmLabel = selected
-      ? `${selected.code} ${selected.name}으로 확정하고 해설 보기`
+      ? `${selected.code} ${selected.name} 확정 · 해설 보기`
       : '최종 타입을 선택해 주세요';
     const personalColor = state.profile.personalColor
       ? `<span>퍼스널컬러 ${escapeHtml(state.profile.personalColor)}</span>`
@@ -446,8 +446,10 @@
       if (!item || !type) return;
       const code = item.querySelector('.lv1-thumb-code');
       const name = item.querySelector('.lv1-thumb-name');
+      const image = item.querySelector('img');
       if (code) code.textContent = type.code;
       if (name) name.textContent = type.name;
+      if (image) image.alt = type.code;
       dGrid.appendChild(item);
     });
   }

@@ -29,10 +29,6 @@
   font: inherit;
 }
 
-#miyu-diagnosis-app button {
-  color: inherit;
-}
-
 #miyu-diagnosis-app button:focus-visible,
 #miyu-diagnosis-app input:focus-visible {
   outline: 3px solid rgba(83, 121, 189, 0.45);
@@ -66,13 +62,6 @@
   transform: translateY(1px);
 }
 
-.miyu-button:disabled {
-  border-color: var(--miyu-line);
-  background: #e9e9e6;
-  color: #9a9a96;
-  cursor: not-allowed;
-}
-
 .miyu-button.miyu-primary {
   background: var(--miyu-ink);
   color: #fff;
@@ -80,6 +69,13 @@
 
 .miyu-button.miyu-secondary {
   background: transparent;
+}
+
+.miyu-button:disabled {
+  border-color: var(--miyu-line);
+  background: #e9e9e6;
+  color: #9a9a96;
+  cursor: not-allowed;
 }
 
 /* Start */

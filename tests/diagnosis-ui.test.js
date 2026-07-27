@@ -121,6 +121,15 @@ test('타입을 고르기 전 확정 버튼은 비활성화한다', () => {
   assert.match(html, /data-action="confirm-type"[^>]*disabled/);
 });
 
+test('선택한 타입의 확정 버튼은 조사 오류 없이 해설 이동을 안내한다', () => {
+  const state = answeredState();
+  state.selectedType = 'D-1';
+  const html = ui.renderResultView(state);
+
+  assert.match(html, />D-1 카리스마 확정 · 해설 보기<\/button>/);
+  assert.doesNotMatch(html, /카리스마으로/);
+});
+
 test('컨트롤러는 이름 없이는 시작하지 않고 유효한 정보는 탭 저장소에 보관한다', () => {
   const storage = createMemoryStorage();
   const location = { hash: '#/' };
