@@ -6,6 +6,8 @@
   'use strict';
 
   const OPTION_CODES = ['A', 'B', 'C', 'D'];
+  const SUPPORTED_LANGUAGES = ['ja', 'zh-CN', 'zh-TW'];
+  const SUPPORTED_GENDERS = ['female', 'male'];
 
   const QUESTIONS = [
     {
@@ -135,15 +137,54 @@
     { code: 'D-3', group: 'D', name: '샤프', image: 'types/d-3.png', hash: '#/cat/17' }
   ];
 
+  function emptyProfile(today) {
+    return {
+      customerName: '',
+      consultantName: '',
+      explanationLanguage: '',
+      gender: '',
+      diagnosisDate: today
+    };
+  }
+
   function createInitialState(today) {
     return {
       version: 17,
-      profile: { name: '', date: today, personalColor: '' },
+      profile: emptyProfile(today),
       answers: Array.from({ length: QUESTIONS.length }, () => []),
       currentQuestion: 0,
       scores: { A: 0, B: 0, C: 0, D: 0 },
       selectedType: null
     };
+  }
+
+  function validateProfile(profile) {
+    const required = [
+      ['customerName', '고객명을 입력해 주세요'],
+      ['consultantName', '컨설턴트명을 입력해 주세요'],
+      ['explanationLanguage', '해설 언어를 선택해 주세요'],
+      ['gender', '성별을 선택해 주세요'],
+      ['diagnosisDate', '진단일을 입력해 주세요']
+    ];
+    for (const [field, error] of required) {
+      if (!String(profile?.[field] || '').trim()) {
+        return { valid: false, field, error };
+      }
+    }
+    if (!SUPPORTED_LANGUAGES.includes(profile.explanationLanguage)) {
+      return {
+        valid: false,
+        field: 'explanationLanguage',
+        error: '해설 언어를 다시 선택해 주세요'
+      };
+    }
+    if (!SUPPORTED_GENDERS.includes(profile.gender)) {
+      return { valid: false, field: 'gender', error: '성별을 다시 선택해 주세요' };
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(profile.diagnosisDate)) {
+      return { valid: false, field: 'diagnosisDate', error: '진단일을 다시 확인해 주세요' };
+    }
+    return { valid: true, field: null, error: null };
   }
 
   function calculateScores(answers) {
@@ -217,7 +258,11 @@
     if (!serialized) return createInitialState(today);
     try {
       const parsed = JSON.parse(serialized);
-      if (parsed.version !== 17 || !isValidAnswers(parsed.answers)) {
+      if (
+        parsed.version !== 17
+        || !isValidAnswers(parsed.answers)
+        || !validateProfile(parsed.profile).valid
+      ) {
         return createInitialState(today);
       }
 
@@ -228,11 +273,11 @@
       return {
         version: 17,
         profile: {
-          name: typeof parsed.profile?.name === 'string' ? parsed.profile.name : '',
-          date: typeof parsed.profile?.date === 'string' ? parsed.profile.date : today,
-          personalColor: typeof parsed.profile?.personalColor === 'string'
-            ? parsed.profile.personalColor
-            : ''
+          customerName: parsed.profile.customerName.trim(),
+          consultantName: parsed.profile.consultantName.trim(),
+          explanationLanguage: parsed.profile.explanationLanguage,
+          gender: parsed.profile.gender,
+          diagnosisDate: parsed.profile.diagnosisDate
         },
         answers: parsed.answers.map(answer => [...answer]),
         currentQuestion: Number.isInteger(parsed.currentQuestion)
@@ -252,9 +297,12 @@
 
   return {
     OPTION_CODES,
+    SUPPORTED_LANGUAGES,
+    SUPPORTED_GENDERS,
     QUESTIONS,
     TYPES,
     createInitialState,
+    validateProfile,
     toggleAnswer,
     calculateScores,
     calculateDenseRanks,
