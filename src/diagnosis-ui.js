@@ -2,7 +2,10 @@
   const core = typeof module === 'object' && module.exports
     ? require('./diagnosis-core.js')
     : root.MiyuDiagnosisCore;
-  const api = factory(core, root);
+  const content = typeof module === 'object' && module.exports
+    ? require('./explanation-content.js')
+    : root.MiyuExplanationContent;
+  const api = factory(core, content, root);
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.MiyuDiagnosisUI = api;
 
@@ -19,16 +22,10 @@
       });
     });
   }
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (core, root) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (core, content, root) {
   'use strict';
 
   const STORAGE_KEY = 'miyuDiagnosisV17';
-  const GROUP_NAMES = {
-    A: 'Blossom · 블로썸',
-    B: 'Feminine · 페미닌',
-    C: 'Mood · 무드',
-    D: 'Modern · 모던'
-  };
 
   let mountedApp = null;
   let mountedController = null;
@@ -57,21 +54,41 @@
   }
 
   function renderStartView(state) {
+    const languageOptions = Object.entries(content.LANGUAGES).map(([value, meta]) =>
+      `<option value="${value}"${state.profile.explanationLanguage === value ? ' selected' : ''}>${escapeHtml(meta.inputLabel)}</option>`
+    ).join('');
     return `<div class="miyu-start-shell">
       <img class="miyu-start-logo" src="${asset('logo')}" data-asset="logo" alt="MIYU">
       <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
       <h1>무드 진단</h1>
       <p class="miyu-start-copy">10개의 항목을 차례로 확인해 주세요. 각 문항은 최대 2개까지 선택할 수 있어요.</p>
       <form class="miyu-profile-form" data-action="start">
-        <label>이름
-          <input name="clientName" value="${escapeHtml(state.profile.name)}" required autocomplete="name">
-          <span class="miyu-field-error" data-profile-error aria-live="polite"></span>
+        <label>고객명
+          <input name="customerName" value="${escapeHtml(state.profile.customerName)}" required autocomplete="name">
+          <span class="miyu-field-error" data-profile-error="customerName" aria-live="polite"></span>
+        </label>
+        <label>컨설턴트명
+          <input name="consultantName" value="${escapeHtml(state.profile.consultantName)}" required autocomplete="name">
+          <span class="miyu-field-error" data-profile-error="consultantName" aria-live="polite"></span>
+        </label>
+        <label>해설 언어
+          <select name="explanationLanguage" required>
+            <option value="">선택해 주세요</option>
+            ${languageOptions}
+          </select>
+          <span class="miyu-field-error" data-profile-error="explanationLanguage" aria-live="polite"></span>
+        </label>
+        <label>성별
+          <select name="gender" required>
+            <option value="">선택해 주세요</option>
+            <option value="female"${state.profile.gender === 'female' ? ' selected' : ''}>여성</option>
+            <option value="male"${state.profile.gender === 'male' ? ' selected' : ''}>남성</option>
+          </select>
+          <span class="miyu-field-error" data-profile-error="gender" aria-live="polite"></span>
         </label>
         <label>진단일
-          <input name="diagnosisDate" type="date" value="${escapeHtml(state.profile.date)}">
-        </label>
-        <label>퍼스널컬러 <span class="miyu-optional">선택</span>
-          <input name="personalColor" value="${escapeHtml(state.profile.personalColor)}" placeholder="예: 여름 쿨">
+          <input name="diagnosisDate" type="date" value="${escapeHtml(state.profile.diagnosisDate)}" required>
+          <span class="miyu-field-error" data-profile-error="diagnosisDate" aria-live="polite"></span>
         </label>
         <button class="miyu-button miyu-primary" type="submit">진단 시작</button>
       </form>
@@ -162,10 +179,11 @@
     const ranks = core.calculateDenseRanks(scores);
     const scoreCards = core.OPTION_CODES.map(group => {
       const rank = ranks[group];
+      const groupName = content.getGroupName(group, state.profile.gender);
       return `<article class="miyu-score-card" data-group="${group}" data-rank="${rank}">
         ${renderRankBadge(rank)}
         <span class="miyu-score-code">${group}</span>
-        <span class="miyu-score-name">${GROUP_NAMES[group]}</span>
+        <span class="miyu-score-name">${groupName}</span>
         <strong>${scores[group]}</strong><small>/ 10</small>
       </article>`;
     }).join('');
@@ -173,6 +191,7 @@
     const groupSections = core.OPTION_CODES.map(group => {
       const groupTypes = core.TYPES.filter(type => type.group === group);
       const rank = ranks[group];
+      const groupName = content.getGroupName(group, state.profile.gender);
       const typeCards = groupTypes.map(type => {
         const selected = state.selectedType === type.code;
         return `<button class="miyu-type-card" type="button"
@@ -190,7 +209,7 @@
         <header>
           ${renderRankBadge(rank)}
           <span>${group}</span>
-          <strong>${GROUP_NAMES[group]}</strong>
+          <strong>${groupName}</strong>
           <small>${scores[group]}점</small>
         </header>
         <div class="miyu-type-row">${typeCards}</div>
@@ -201,15 +220,17 @@
     const confirmLabel = selected
       ? `${selected.code} ${selected.name} 확정 · 해설 보기`
       : '최종 타입을 선택해 주세요';
-    const personalColor = state.profile.personalColor
-      ? `<span>퍼스널컬러 ${escapeHtml(state.profile.personalColor)}</span>`
-      : '';
+    const languageLabel = content.LANGUAGES[state.profile.explanationLanguage]?.inputLabel || '';
     return `<div class="miyu-result-shell">
       <header class="miyu-result-head">
         <img src="${asset('logo')}" data-asset="logo" alt="MIYU">
         <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
-        <h1>${escapeHtml(state.profile.name)}님의 진단 결과</h1>
-        <div class="miyu-result-profile"><span>${escapeHtml(state.profile.date)}</span>${personalColor}</div>
+        <h1>${escapeHtml(state.profile.customerName)}님의 진단 결과</h1>
+        <div class="miyu-result-profile">
+          <span>컨설턴트 ${escapeHtml(state.profile.consultantName)}</span>
+          <span>${escapeHtml(state.profile.diagnosisDate)}</span>
+          <span>${escapeHtml(languageLabel)}</span>
+        </div>
       </header>
       <section class="miyu-result-section">
         <div class="miyu-section-heading"><div><p>STEP 1</p><h2>ABCD 점수 합산</h2></div><span>공동순위 포함</span></div>
@@ -243,22 +264,27 @@
     }
 
     function start(profile) {
-      const name = String(profile.name || '').trim();
-      if (!name) return { error: '이름을 입력해 주세요' };
+      const nextProfile = {
+        customerName: String(profile.customerName || '').trim(),
+        consultantName: String(profile.consultantName || '').trim(),
+        explanationLanguage: String(profile.explanationLanguage || ''),
+        gender: String(profile.gender || ''),
+        diagnosisDate: String(profile.diagnosisDate || '')
+      };
+      const validation = core.validateProfile(nextProfile);
+      if (!validation.valid) {
+        return { error: validation.error, field: validation.field };
+      }
       state = {
         ...state,
-        profile: {
-          name,
-          date: String(profile.date || state.profile.date || today()),
-          personalColor: String(profile.personalColor || '').trim()
-        }
+        profile: nextProfile
       };
       save();
       const firstIncomplete = core.firstIncompleteQuestion(state.answers);
       location.hash = firstIncomplete === core.QUESTIONS.length
         ? '#/diagnosis/result'
         : `#/diagnosis/question/${firstIncomplete + 1}`;
-      return { error: null };
+      return { error: null, field: null };
     }
 
     function selectAnswer(questionIndex, optionCode) {
@@ -325,7 +351,7 @@
 
     function newDiagnosis() {
       const hasProgress = Boolean(
-        state.profile.name
+        state.profile.customerName
         || state.selectedType
         || state.answers.some(answer => answer.length)
       );
@@ -341,6 +367,11 @@
     function resolveRoute(hash) {
       if (hash === '#/' || hash === '#/diagnosis' || hash === '#/diagnosis/start') {
         return { kind: 'start', state };
+      }
+
+      if (!core.validateProfile(state.profile).valid) {
+        location.hash = '#/';
+        return { kind: 'redirect', state };
       }
 
       const questionMatch = hash.match(/^#\/diagnosis\/question\/(\d+)$/);
@@ -492,12 +523,17 @@
       event.preventDefault();
       const form = new FormData(event.target);
       const result = mountedController.start({
-        name: form.get('clientName'),
-        date: form.get('diagnosisDate'),
-        personalColor: form.get('personalColor')
+        customerName: form.get('customerName'),
+        consultantName: form.get('consultantName'),
+        explanationLanguage: form.get('explanationLanguage'),
+        gender: form.get('gender'),
+        diagnosisDate: form.get('diagnosisDate')
       });
       if (result.error) {
-        const error = appElement.querySelector('[data-profile-error]');
+        appElement.querySelectorAll('[data-profile-error]').forEach(element => {
+          element.textContent = '';
+        });
+        const error = appElement.querySelector(`[data-profile-error="${result.field}"]`);
         if (error) error.textContent = result.error;
       }
     });

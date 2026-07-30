@@ -4,9 +4,21 @@ const core = require('../src/diagnosis-core.js');
 const ui = require('../src/diagnosis-ui.js');
 
 
+function validProfile(overrides = {}) {
+  return {
+    customerName: '미유',
+    consultantName: '김컨설턴트',
+    explanationLanguage: 'ja',
+    gender: 'female',
+    diagnosisDate: '2026-07-30',
+    ...overrides
+  };
+}
+
+
 function answeredState() {
   const state = core.createInitialState('2026-07-27');
-  state.profile = { name: '미유', date: '2026-07-27', personalColor: '여름 쿨' };
+  state.profile = validProfile({ diagnosisDate: '2026-07-27' });
   state.answers = [
     ['A'], ['A', 'B'], ['B'], ['C'], ['D'],
     ['A'], ['B'], ['C'], ['D'], ['A']
@@ -32,19 +44,29 @@ function createMemoryStorage(initial = {}) {
 }
 
 
-test('시작 화면은 이름 필수, 날짜, 퍼스널컬러와 로고를 표시한다', () => {
+test('시작 화면은 다섯 고객 정보와 로고를 표시하고 퍼스널컬러를 제거한다', () => {
   const html = ui.renderStartView(core.createInitialState('2026-07-27'));
 
-  assert.match(html, /name="clientName"/);
-  assert.match(html, /required/);
+  for (const name of [
+    'customerName',
+    'consultantName',
+    'explanationLanguage',
+    'gender',
+    'diagnosisDate'
+  ]) {
+    assert.match(html, new RegExp(`name="${name}"`));
+  }
   assert.match(html, /value="2026-07-27"/);
-  assert.match(html, /name="personalColor"/);
+  assert.match(html, /일본어/);
+  assert.match(html, /중국어 간체\(중국\)/);
+  assert.match(html, /중국어 번체\(홍콩·대만\)/);
+  assert.doesNotMatch(html, /personalColor|퍼스널컬러/);
   assert.match(html, /data-asset="logo"/);
 });
 
 test('사용자 입력은 HTML로 실행되지 않도록 이스케이프한다', () => {
   const state = core.createInitialState('2026-07-27');
-  state.profile.name = '<img src=x onerror=alert(1)>';
+  state.profile.customerName = '<img src=x onerror=alert(1)>';
 
   const html = ui.renderStartView(state);
 
@@ -106,6 +128,18 @@ test('결과는 네 점수와 PDF 순서의 12타입을 모두 표시한다', ()
   assert.match(html, /샤프/);
 });
 
+test('남성 결과 화면은 B그룹을 보이시로 표시한다', () => {
+  const state = answeredState();
+  state.profile.gender = 'male';
+
+  const html = ui.renderResultView(state);
+
+  assert.match(html, /Boyish · 보이시/);
+  assert.doesNotMatch(html, /Feminine · 페미닌/);
+  assert.match(html, /김컨설턴트/);
+  assert.match(html, /일본어/);
+});
+
 test('1위와 2위 라벨은 카드 상단용 요소로 점수 숫자와 분리한다', () => {
   const state = answeredState();
   const html = ui.renderResultView(state);
@@ -130,7 +164,7 @@ test('선택한 타입의 확정 버튼은 조사 오류 없이 해설 이동을
   assert.doesNotMatch(html, /카리스마으로/);
 });
 
-test('컨트롤러는 이름 없이는 시작하지 않고 유효한 정보는 탭 저장소에 보관한다', () => {
+test('컨트롤러는 필수 고객 정보가 없으면 시작하지 않고 유효한 정보는 탭 저장소에 보관한다', () => {
   const storage = createMemoryStorage();
   const location = { hash: '#/' };
   const controller = ui.createController({
@@ -140,13 +174,23 @@ test('컨트롤러는 이름 없이는 시작하지 않고 유효한 정보는 �
     today: () => '2026-07-27'
   });
 
-  assert.equal(controller.start({ name: '   ', date: '2026-07-27', personalColor: '' }).error, '이름을 입력해 주세요');
+  assert.deepEqual(
+    controller.start(validProfile({ customerName: '   ' })),
+    { error: '고객명을 입력해 주세요', field: 'customerName' }
+  );
   assert.equal(location.hash, '#/');
 
-  const result = controller.start({ name: ' 미유 ', date: '2026-07-28', personalColor: '여름 쿨' });
+  const result = controller.start(validProfile({
+    customerName: ' 미유 ',
+    diagnosisDate: '2026-07-28'
+  }));
   assert.equal(result.error, null);
   assert.equal(location.hash, '#/diagnosis/question/1');
-  assert.equal(JSON.parse(storage.getItem(ui.STORAGE_KEY)).profile.name, '미유');
+  const saved = JSON.parse(storage.getItem(ui.STORAGE_KEY)).profile;
+  assert.equal(saved.customerName, '미유');
+  assert.equal(saved.consultantName, '김컨설턴트');
+  assert.equal(saved.explanationLanguage, 'ja');
+  assert.equal(saved.gender, 'female');
 });
 
 test('컨트롤러는 새로 만들어도 같은 탭의 답변을 복원한다', () => {
@@ -158,7 +202,7 @@ test('컨트롤러는 새로 만들어도 같은 탭의 답변을 복원한다',
     confirm: () => true,
     today: () => '2026-07-27'
   });
-  first.start({ name: '미유', date: '2026-07-27', personalColor: '' });
+  first.start(validProfile({ diagnosisDate: '2026-07-27' }));
   first.selectAnswer(0, 'A');
 
   const restored = ui.createController({
@@ -171,7 +215,7 @@ test('컨트롤러는 새로 만들어도 같은 탭의 답변을 복원한다',
   assert.deepEqual(restored.getState().answers[0], ['A']);
 });
 
-test('결과 주소를 직접 열어도 미완료 문항으로 돌려보낸다', () => {
+test('고객 정보 없이 결과 주소를 직접 열면 시작 화면으로 돌려보낸다', () => {
   const location = { hash: '#/diagnosis/result' };
   const controller = ui.createController({
     storage: createMemoryStorage(),
@@ -183,7 +227,7 @@ test('결과 주소를 직접 열어도 미완료 문항으로 돌려보낸다',
   const view = controller.resolveRoute(location.hash);
 
   assert.equal(view.kind, 'redirect');
-  assert.equal(location.hash, '#/diagnosis/question/1');
+  assert.equal(location.hash, '#/');
 });
 
 test('최종 타입 확정은 선택만으로 이동하지 않고 별도 확정 때 해설로 이동한다', () => {

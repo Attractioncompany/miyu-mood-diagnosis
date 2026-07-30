@@ -25,12 +25,14 @@
 }
 
 #miyu-diagnosis-app button,
-#miyu-diagnosis-app input {
+#miyu-diagnosis-app input,
+#miyu-diagnosis-app select {
   font: inherit;
 }
 
 #miyu-diagnosis-app button:focus-visible,
-#miyu-diagnosis-app input:focus-visible {
+#miyu-diagnosis-app input:focus-visible,
+#miyu-diagnosis-app select:focus-visible {
   outline: 3px solid rgba(83, 121, 189, 0.45);
   outline-offset: 3px;
 }
@@ -133,16 +135,19 @@
   font-weight: 750;
 }
 
-.miyu-profile-form input {
+.miyu-profile-form input,
+.miyu-profile-form select {
   width: 100%;
   min-height: 50px;
   padding: 11px 14px;
   border: 1px solid var(--miyu-line-strong);
   border-radius: 2px;
   background: #fff;
+  color: var(--miyu-ink);
 }
 
-.miyu-profile-form input:focus {
+.miyu-profile-form input:focus,
+.miyu-profile-form select:focus {
   border-color: var(--miyu-ink);
 }
 
