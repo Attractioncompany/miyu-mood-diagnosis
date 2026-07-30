@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const core = require('../src/diagnosis-core.js');
+const content = require('../src/explanation-content.js');
 const ui = require('../src/diagnosis-ui.js');
 
 
@@ -138,6 +139,21 @@ test('남성 결과 화면은 B그룹을 보이시로 표시한다', () => {
   assert.doesNotMatch(html, /Feminine · 페미닌/);
   assert.match(html, /김컨설턴트/);
   assert.match(html, /일본어/);
+});
+
+test('해설 초안 패널은 한국어와 선택 언어 및 이미지 슬롯을 함께 표시한다', () => {
+  const draft = content.getExplanation('B-1', 'male', 'ja');
+  const html = ui.renderExplanationPanel(draft, validProfile({
+    gender: 'male',
+    diagnosisDate: '2026-07-30'
+  }));
+
+  assert.match(html, /한국어/);
+  assert.match(html, /日本語/);
+  assert.match(html, /김컨설턴트/);
+  assert.match(html, /miyu-explanation-visual/);
+  assert.match(html, /AI 이미지 적용 예정/);
+  assert.match(html, /data-gender="male"/);
 });
 
 test('1위와 2위 라벨은 카드 상단용 요소로 점수 숫자와 분리한다', () => {

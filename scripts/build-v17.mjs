@@ -65,6 +65,10 @@ export function buildV17({ rootDir, outputPath }) {
   }
 
   const css = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis.css'), 'utf8');
+  const explanationContent = fs.readFileSync(
+    path.join(rootDir, 'src', 'explanation-content.js'),
+    'utf8'
+  );
   const core = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis-core.js'), 'utf8');
   const ui = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis-ui.js'), 'utf8');
   const assets = collectAssets(rootDir);
@@ -95,6 +99,17 @@ export function buildV17({ rootDir, outputPath }) {
     .filter(([oid, ci]) => ci.newCode.charAt(0) === macroCode)
     .sort((left, right) => left[1].newCode.localeCompare(right[1].newCode, 'en', { numeric: true }));`,
     'macro category order'
+  );
+  html = replaceOnce(
+    html,
+    `      const sid = s.getAttribute('data-cat-id');
+      if (sid === catId) s.classList.remove('lv3-hidden');
+    });`,
+    `      const sid = s.getAttribute('data-cat-id');
+      if (sid === catId) s.classList.remove('lv3-hidden');
+    });
+    MiyuDiagnosisUI.decorateExplanation(catId);`,
+    'category explanation decorator'
   );
   html = replaceOnce(
     html,
@@ -136,6 +151,7 @@ export function buildV17({ rootDir, outputPath }) {
 
   const diagnosisScript = [
     `window.MIYU_DIAGNOSIS_ASSETS = ${JSON.stringify(assets)};`,
+    explanationContent,
     core,
     ui
   ].join('\n');

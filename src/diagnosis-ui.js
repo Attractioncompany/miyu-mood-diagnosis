@@ -248,6 +248,49 @@
     </div>`;
   }
 
+  function renderExplanationPanel(draft, profile) {
+    if (!draft) return '';
+    const visual = draft.image
+      ? `<img src="${asset(draft.image)}" data-asset="${escapeHtml(draft.image)}" alt="${escapeHtml(draft.typeName)} ${draft.gender === 'male' ? '남성' : '여성'} 무드 참고 이미지">`
+      : `<span class="miyu-explanation-visual-code">${escapeHtml(draft.typeCode)}</span>
+        <strong>${escapeHtml(draft.typeName)}</strong>
+        <small>AI 이미지 적용 예정</small>`;
+    return `<section class="miyu-explanation-panel"
+      data-gender="${escapeHtml(draft.gender)}"
+      data-language="${escapeHtml(draft.translated.language)}"
+      data-draft="${draft.draft}">
+      <header class="miyu-explanation-meta">
+        <div>
+          <p>MIYU CONSULTATION NOTE</p>
+          <h2>${escapeHtml(draft.groupName)}</h2>
+        </div>
+        <span class="miyu-draft-badge">해설 초안</span>
+        <dl>
+          <div><dt>고객</dt><dd>${escapeHtml(profile.customerName)}</dd></div>
+          <div><dt>컨설턴트</dt><dd>${escapeHtml(profile.consultantName)}</dd></div>
+          <div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div>
+        </dl>
+      </header>
+      <div class="miyu-explanation-layout">
+        <div class="miyu-explanation-visual" data-has-image="${Boolean(draft.image)}">
+          ${visual}
+        </div>
+        <div class="miyu-explanation-copy">
+          <article lang="${draft.Korean.htmlLang}">
+            <p>${escapeHtml(draft.Korean.label)}</p>
+            <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.typeName)}</h3>
+            <div>${escapeHtml(draft.Korean.summary)}</div>
+          </article>
+          <article lang="${escapeHtml(draft.translated.htmlLang)}">
+            <p>${escapeHtml(draft.translated.label)}</p>
+            <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.typeName)}</h3>
+            <div>${escapeHtml(draft.translated.summary)}</div>
+          </article>
+        </div>
+      </div>
+    </section>`;
+  }
+
   function createController(adapters) {
     const storage = adapters.storage;
     const location = adapters.location;
@@ -485,6 +528,35 @@
     });
   }
 
+  function decorateExplanation(catId) {
+    if (typeof document === 'undefined' || !mountedController) return;
+    const state = mountedController.getState();
+    if (!core.validateProfile(state.profile).valid) return;
+
+    const type = core.TYPES.find(item => item.hash === `#/cat/${catId}`);
+    const section = document.querySelector(`.category-section[data-cat-id="${catId}"]`);
+    if (!type || !section) return;
+
+    document.querySelectorAll('.miyu-explanation-panel').forEach(panel => panel.remove());
+    const draft = content.getExplanation(
+      type.code,
+      state.profile.gender,
+      state.profile.explanationLanguage
+    );
+    const header = section.querySelector('.cat-header');
+    if (!draft || !header) return;
+    header.insertAdjacentHTML('afterend', renderExplanationPanel(draft, state.profile));
+
+    const isMale = state.profile.gender === 'male';
+    section.classList.toggle('miyu-explanation-male', isMale);
+    const macroEn = section.querySelector('.macro-en');
+    const macroKr = section.querySelector('.macro-kr');
+    if (type.group === 'B') {
+      if (macroEn) macroEn.textContent = isMale ? 'Boyish' : 'Feminine';
+      if (macroKr) macroKr.textContent = isMale ? '보이시' : '페미닌';
+    }
+  }
+
   function mount(appElement, adapters) {
     if (!appElement || appElement.dataset.mounted === 'true') return;
     appElement.dataset.mounted = 'true';
@@ -638,8 +710,10 @@
     renderProgressDrawer,
     renderQuestionView,
     renderResultView,
+    renderExplanationPanel,
     createController,
     normalizeLegacyTypeOrder,
+    decorateExplanation,
     mount,
     renderRoute
   };

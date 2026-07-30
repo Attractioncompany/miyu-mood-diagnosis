@@ -52,6 +52,14 @@ test('v16은 바꾸지 않고 진단이 포함된 단일 v17을 만든다', () =
   assert.ok(fs.statSync(outputPath).size > fs.statSync(sourcePath).size);
 });
 
+test('다국어 해설 데이터와 기존 카테고리 연결을 단일 HTML에 포함한다', () => {
+  const { html } = buildToTemporaryFile();
+
+  assert.match(html, /MiyuExplanationContent/);
+  assert.match(html, /MiyuDiagnosisUI\.decorateExplanation\(catId\);/);
+  assert.match(html, /miyu-explanation-panel/);
+});
+
 
 test('로고와 PDF 이미지 46개를 외부 경로 없이 HTML 안에 포함한다', () => {
   const { html } = buildToTemporaryFile();
