@@ -73,3 +73,42 @@ test('루트 주소가 v17 진단 화면을 연다', async () => {
   assert.equal(await page.locator('h1').first().textContent(), '무드 진단');
   await page.close();
 });
+
+
+test('남성 타입 해설은 보이시와 한국어·일본어를 표시하고 여성 인물을 숨긴다', async () => {
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  const state = {
+    version: 17,
+    profile: {
+      customerName: '미유',
+      consultantName: '김컨설턴트',
+      explanationLanguage: 'ja',
+      gender: 'male',
+      diagnosisDate: '2026-07-30'
+    },
+    answers: Array.from({ length: 10 }, () => ['B']),
+    currentQuestion: 9,
+    scores: { A: 0, B: 10, C: 0, D: 0 },
+    selectedType: 'B-1'
+  };
+  await page.addInitScript(savedState => {
+    sessionStorage.setItem('miyuDiagnosisV17', JSON.stringify(savedState));
+  }, state);
+
+  const targetUrl = new URL(TARGET_FILE, baseUrl);
+  targetUrl.hash = '#/cat/05';
+  await page.goto(targetUrl.href);
+
+  const panel = page.locator('.miyu-explanation-panel');
+  await panel.waitFor({ state: 'visible' });
+  assert.match(await panel.textContent(), /Boyish · 보이시/);
+  assert.match(await panel.textContent(), /한국어/);
+  assert.match(await panel.textContent(), /日本語/);
+  assert.equal(
+    await page.locator('.category-section[data-cat-id="05"] .people-grid').evaluate(element =>
+      getComputedStyle(element).display
+    ),
+    'none'
+  );
+  await page.close();
+});

@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
 const core = require('../src/diagnosis-core.js');
+const content = require('../src/explanation-content.js');
 const ui = require('../src/diagnosis-ui.js');
 
 
@@ -13,10 +14,24 @@ let browser;
 
 function completedState() {
   const state = core.createInitialState('2026-07-27');
-  state.profile.name = '미유';
+  state.profile = {
+    customerName: '미유',
+    consultantName: '김컨설턴트',
+    explanationLanguage: 'ja',
+    gender: 'male',
+    diagnosisDate: '2026-07-27'
+  };
   state.answers = Array.from({ length: 10 }, () => ['A']);
   state.scores = core.calculateScores(state.answers);
   return state;
+}
+
+
+function explanationHtml() {
+  return ui.renderExplanationPanel(
+    content.getExplanation('B-1', 'male', 'ja'),
+    completedState().profile
+  );
 }
 
 
@@ -140,5 +155,45 @@ test('가로 태블릿에서도 답변 2열을 유지하고 진행표는 460px�
 
   assert.equal(gridColumns, 2);
   assert.ok(drawerWidth <= 460, `landscape drawer width was ${drawerWidth}`);
+  await page.close();
+});
+
+
+test('세로 태블릿은 해설 이미지와 두 언어를 위아래로 표시한다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+
+  const copyColumns = await page.locator('.miyu-explanation-copy').evaluate(element =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+  );
+  const visualRatio = await page.locator('.miyu-explanation-visual').evaluate(element =>
+    getComputedStyle(element).aspectRatio
+  );
+  const visualWidth = await page.locator('.miyu-explanation-visual').evaluate(element =>
+    element.getBoundingClientRect().width
+  );
+
+  assert.equal(copyColumns, 1);
+  assert.equal(visualRatio, '4 / 5');
+  assert.ok(visualWidth <= 380, `portrait visual width was ${visualWidth}`);
+  await page.close();
+});
+
+
+test('가로 태블릿은 이미지 옆에 한국어와 선택 언어를 2열로 표시한다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 1194, height: 834 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+
+  const layoutColumns = await page.locator('.miyu-explanation-layout').evaluate(element =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+  );
+  const copyColumns = await page.locator('.miyu-explanation-copy').evaluate(element =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+  );
+
+  assert.equal(layoutColumns, 2);
+  assert.equal(copyColumns, 2);
   await page.close();
 });
