@@ -23,6 +23,45 @@ export function dataUri(filePath, mime) {
 }
 
 
+function collectReferenceAssets(rootDir) {
+  const referenceDir = path.join(rootDir, 'assets', 'diagnosis', 'reference');
+  const manifestPath = path.join(referenceDir, 'manifest.json');
+  if (!fs.existsSync(manifestPath)) {
+    throw new Error('Missing MIYU reference manifest');
+  }
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  if (manifest.version !== 1 || !manifest.assets || typeof manifest.assets !== 'object') {
+    throw new Error('Invalid MIYU reference manifest');
+  }
+  const groups = ['a', 'b', 'c', 'd'];
+  const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
+  const expectedKeys = [
+    ...groups.map(group => `reference/intro/${group}.jpg`),
+    ...types.map(type => `reference/female/face/${type}.jpg`),
+    ...types.map(type => `reference/female/makeup/${type}.jpg`),
+    ...groups.map(group => `reference/female/hair/${group}.jpg`),
+    ...types.map(type => `reference/male/face/${type}.jpg`),
+    ...groups.map(group => `reference/male/hair/${group}.jpg`)
+  ].sort();
+  const manifestKeys = Object.keys(manifest.assets).sort();
+  if (JSON.stringify(manifestKeys) !== JSON.stringify(expectedKeys)) {
+    throw new Error(`Expected ${expectedKeys.length} MIYU reference assets`);
+  }
+  return Object.fromEntries(expectedKeys.map(key => {
+    const item = manifest.assets[key];
+    if (!item || item.mime !== 'image/jpeg' || !item.file
+      || !Number.isInteger(item.width) || !Number.isInteger(item.height)) {
+      throw new Error(`Invalid MIYU reference asset: ${key}`);
+    }
+    const filePath = path.resolve(rootDir, 'assets', item.file);
+    if (!filePath.startsWith(`${referenceDir}${path.sep}`)
+      || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      throw new Error(`Missing MIYU reference asset: ${key}`);
+    }
+    return [key, dataUri(filePath, item.mime)];
+  }));
+}
+
 function replaceOnce(source, needle, replacement, label) {
   const first = source.indexOf(needle);
   const last = source.lastIndexOf(needle);
@@ -139,7 +178,7 @@ export function buildV17({ rootDir, outputPath }) {
   );
   const core = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis-core.js'), 'utf8');
   const ui = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis-ui.js'), 'utf8');
-  const assets = collectAssets(rootDir);
+  const assets = Object.assign(collectAssets(rootDir), collectReferenceAssets(rootDir));
   let html = stripLegacyReviewNotes(sourceBuffer.toString('utf8'));
   html = replaceCelebrityNames(html);
 

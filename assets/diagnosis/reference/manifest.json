@@ -1,0 +1,293 @@
+{
+  "version": 1,
+  "assets": {
+    "reference/intro/a.jpg": {
+      "file": "diagnosis/reference/intro/a.jpg",
+      "mime": "image/jpeg",
+      "width": 180,
+      "height": 269
+    },
+    "reference/intro/b.jpg": {
+      "file": "diagnosis/reference/intro/b.jpg",
+      "mime": "image/jpeg",
+      "width": 175,
+      "height": 255
+    },
+    "reference/intro/c.jpg": {
+      "file": "diagnosis/reference/intro/c.jpg",
+      "mime": "image/jpeg",
+      "width": 174,
+      "height": 258
+    },
+    "reference/intro/d.jpg": {
+      "file": "diagnosis/reference/intro/d.jpg",
+      "mime": "image/jpeg",
+      "width": 174,
+      "height": 264
+    },
+    "reference/female/face/a-1.jpg": {
+      "file": "diagnosis/reference/female/face/a-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 873
+    },
+    "reference/female/face/a-2.jpg": {
+      "file": "diagnosis/reference/female/face/a-2.jpg",
+      "mime": "image/jpeg",
+      "width": 448,
+      "height": 340
+    },
+    "reference/female/face/a-3.jpg": {
+      "file": "diagnosis/reference/female/face/a-3.jpg",
+      "mime": "image/jpeg",
+      "width": 506,
+      "height": 900
+    },
+    "reference/female/face/b-1.jpg": {
+      "file": "diagnosis/reference/female/face/b-1.jpg",
+      "mime": "image/jpeg",
+      "width": 553,
+      "height": 460
+    },
+    "reference/female/face/b-2.jpg": {
+      "file": "diagnosis/reference/female/face/b-2.jpg",
+      "mime": "image/jpeg",
+      "width": 253,
+      "height": 357
+    },
+    "reference/female/face/b-3.jpg": {
+      "file": "diagnosis/reference/female/face/b-3.jpg",
+      "mime": "image/jpeg",
+      "width": 406,
+      "height": 532
+    },
+    "reference/female/face/c-1.jpg": {
+      "file": "diagnosis/reference/female/face/c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 313,
+      "height": 412
+    },
+    "reference/female/face/c-2.jpg": {
+      "file": "diagnosis/reference/female/face/c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 379,
+      "height": 430
+    },
+    "reference/female/face/c-3.jpg": {
+      "file": "diagnosis/reference/female/face/c-3.jpg",
+      "mime": "image/jpeg",
+      "width": 232,
+      "height": 334
+    },
+    "reference/female/face/d-1.jpg": {
+      "file": "diagnosis/reference/female/face/d-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 650
+    },
+    "reference/female/face/d-2.jpg": {
+      "file": "diagnosis/reference/female/face/d-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 861
+    },
+    "reference/female/face/d-3.jpg": {
+      "file": "diagnosis/reference/female/face/d-3.jpg",
+      "mime": "image/jpeg",
+      "width": 373,
+      "height": 628
+    },
+    "reference/female/makeup/a-1.jpg": {
+      "file": "diagnosis/reference/female/makeup/a-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 739
+    },
+    "reference/female/makeup/a-2.jpg": {
+      "file": "diagnosis/reference/female/makeup/a-2.jpg",
+      "mime": "image/jpeg",
+      "width": 592,
+      "height": 717
+    },
+    "reference/female/makeup/a-3.jpg": {
+      "file": "diagnosis/reference/female/makeup/a-3.jpg",
+      "mime": "image/jpeg",
+      "width": 670,
+      "height": 900
+    },
+    "reference/female/makeup/b-1.jpg": {
+      "file": "diagnosis/reference/female/makeup/b-1.jpg",
+      "mime": "image/jpeg",
+      "width": 409,
+      "height": 411
+    },
+    "reference/female/makeup/b-2.jpg": {
+      "file": "diagnosis/reference/female/makeup/b-2.jpg",
+      "mime": "image/jpeg",
+      "width": 406,
+      "height": 597
+    },
+    "reference/female/makeup/b-3.jpg": {
+      "file": "diagnosis/reference/female/makeup/b-3.jpg",
+      "mime": "image/jpeg",
+      "width": 301,
+      "height": 408
+    },
+    "reference/female/makeup/c-1.jpg": {
+      "file": "diagnosis/reference/female/makeup/c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 400,
+      "height": 499
+    },
+    "reference/female/makeup/c-2.jpg": {
+      "file": "diagnosis/reference/female/makeup/c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 309,
+      "height": 397
+    },
+    "reference/female/makeup/c-3.jpg": {
+      "file": "diagnosis/reference/female/makeup/c-3.jpg",
+      "mime": "image/jpeg",
+      "width": 198,
+      "height": 270
+    },
+    "reference/female/makeup/d-1.jpg": {
+      "file": "diagnosis/reference/female/makeup/d-1.jpg",
+      "mime": "image/jpeg",
+      "width": 199,
+      "height": 294
+    },
+    "reference/female/makeup/d-2.jpg": {
+      "file": "diagnosis/reference/female/makeup/d-2.jpg",
+      "mime": "image/jpeg",
+      "width": 298,
+      "height": 397
+    },
+    "reference/female/makeup/d-3.jpg": {
+      "file": "diagnosis/reference/female/makeup/d-3.jpg",
+      "mime": "image/jpeg",
+      "width": 355,
+      "height": 462
+    },
+    "reference/female/hair/a.jpg": {
+      "file": "diagnosis/reference/female/hair/a.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 473
+    },
+    "reference/female/hair/b.jpg": {
+      "file": "diagnosis/reference/female/hair/b.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 473
+    },
+    "reference/female/hair/c.jpg": {
+      "file": "diagnosis/reference/female/hair/c.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 473
+    },
+    "reference/female/hair/d.jpg": {
+      "file": "diagnosis/reference/female/hair/d.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 473
+    },
+    "reference/male/face/a-1.jpg": {
+      "file": "diagnosis/reference/male/face/a-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/a-2.jpg": {
+      "file": "diagnosis/reference/male/face/a-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/a-3.jpg": {
+      "file": "diagnosis/reference/male/face/a-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/b-1.jpg": {
+      "file": "diagnosis/reference/male/face/b-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/b-2.jpg": {
+      "file": "diagnosis/reference/male/face/b-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/b-3.jpg": {
+      "file": "diagnosis/reference/male/face/b-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/c-1.jpg": {
+      "file": "diagnosis/reference/male/face/c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/c-2.jpg": {
+      "file": "diagnosis/reference/male/face/c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/c-3.jpg": {
+      "file": "diagnosis/reference/male/face/c-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/d-1.jpg": {
+      "file": "diagnosis/reference/male/face/d-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/d-2.jpg": {
+      "file": "diagnosis/reference/male/face/d-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/face/d-3.jpg": {
+      "file": "diagnosis/reference/male/face/d-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/a.jpg": {
+      "file": "diagnosis/reference/male/hair/a.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 566
+    },
+    "reference/male/hair/b.jpg": {
+      "file": "diagnosis/reference/male/hair/b.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 380
+    },
+    "reference/male/hair/c.jpg": {
+      "file": "diagnosis/reference/male/hair/c.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 380
+    },
+    "reference/male/hair/d.jpg": {
+      "file": "diagnosis/reference/male/hair/d.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 566
+    }
+  }
+}

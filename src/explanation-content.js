@@ -71,9 +71,18 @@
   function getIntroPage(pageNumber, gender, language) {
     const page = (data.INTRO_PAGES || []).find(item => item.id === Number(pageNumber));
     if (!page || !LOCALIZED_LANGUAGES.includes(language)) return null;
+    const safeGender = normalizedGender(gender);
     return {
       ...page,
-      groups: page.groups ? data.GROUP_LABELS[normalizedGender(gender)] : null
+      groups: page.groups ? data.GROUP_LABELS[safeGender] : null,
+      groupVisuals: page.groups
+        ? ['A', 'B', 'C', 'D'].map(group => ({
+            group,
+            label: data.GROUP_LABELS[safeGender][group],
+            image: data.INTRO_GROUP_VISUALS[group].image,
+            caption: data.INTRO_GROUP_VISUALS[group].caption
+          }))
+        : []
     };
   }
 
@@ -116,6 +125,17 @@
       if (page.eyebrow) assertLocalizedValue(page.eyebrow, `intro eyebrow: ${page.id}`);
       for (const [index, body] of (page.body || []).entries()) {
         assertLocalizedValue(body, `intro body: ${page.id}.${index}`);
+      }
+    }
+    for (const [group, reference] of Object.entries(data.INTRO_GROUP_VISUALS || {})) {
+      if (!reference.image || !reference.image.startsWith('reference/intro/')) {
+        throw new Error(`Missing intro reference: ${group}`);
+      }
+      assertLocalizedValue(reference.caption, `intro reference caption: ${group}`);
+    }
+    for (const [kind, byGender] of Object.entries(data.REFERENCE_CAPTIONS || {})) {
+      for (const [gender, value] of Object.entries(byGender)) {
+        assertLocalizedValue(value, `reference caption: ${kind}.${gender}`);
       }
     }
     assertLocalizedValue(data.BRIDGE_COPY && data.BRIDGE_COPY.title, 'bridge title');
@@ -187,6 +207,12 @@
     const selectedLanguage = language;
     const genderContent = type.gender[safeGender];
     const localizedGroupName = data.GROUP_LABELS[safeGender][type.group];
+    const averageFace = {
+      image: `reference/${safeGender}/face/${typeCode.toLowerCase()}.jpg`,
+      caption: data.REFERENCE_CAPTIONS.averageFace[safeGender]
+    };
+    const makeupCopy = type.recommendations.makeup[safeGender];
+    const hairCopy = data.GROUP_HAIR[type.group][safeGender];
     const sections = {
       facialFeatures: {
         label: data.SECTION_LABELS.facialFeatures,
@@ -199,8 +225,25 @@
         definition: type.common.definition,
         keywords: type.common.moodKeywords
       },
-      makeup: type.recommendations.makeup[safeGender],
-      hair: data.GROUP_HAIR[type.group][safeGender],
+      makeup: {
+        ...makeupCopy,
+        copy: makeupCopy,
+        examples: [{
+          image: safeGender === 'female'
+            ? `reference/female/makeup/${typeCode.toLowerCase()}.jpg`
+            : averageFace.image,
+          caption: data.REFERENCE_CAPTIONS.makeup[safeGender]
+        }]
+      },
+      hair: {
+        ...hairCopy,
+        copy: hairCopy,
+        avoid: genderContent.avoid,
+        examples: [{
+          image: `reference/${safeGender}/hair/${type.group.toLowerCase()}.jpg`,
+          caption: data.REFERENCE_CAPTIONS.hair[safeGender]
+        }]
+      },
       accessoryFashion: type.recommendations.accessoryFashion[safeGender]
     };
     Object.defineProperties(sections, {
@@ -242,6 +285,7 @@
         htmlLang: languageMeta.htmlLang,
         summary: genderContent.overview[selectedLanguage]
       },
+      averageFace,
       image: type.image || null,
       draft: type.draft !== false
     };
