@@ -15,10 +15,10 @@
       title: '얼굴형',
       subtitle: 'Face Shape',
       options: [
-        { code: 'A', label: '역삼각형', images: ['questions/q01-a.png'] },
-        { code: 'B', label: '계란형', images: ['questions/q01-b.png'] },
-        { code: 'C', label: '둥근형 / 긴형', images: ['questions/q01-c-1.png', 'questions/q01-c-2.png'] },
-        { code: 'D', label: '각진형', images: ['questions/q01-d.png'] }
+        { code: 'A', label: '역삼각형', images: { female: ['questions/q01-a.png'], male: ['questions/male/q01-a.png'] } },
+        { code: 'B', label: '계란형', images: { female: ['questions/q01-b.png'], male: ['questions/male/q01-b.png'] } },
+        { code: 'C', label: '둥근형 / 긴형', images: { female: ['questions/q01-c-1.png', 'questions/q01-c-2.png'], male: ['questions/male/q01-c-1.png', 'questions/male/q01-c-2.png'] } },
+        { code: 'D', label: '각진형', images: { female: ['questions/q01-d.png'], male: ['questions/male/q01-d.png'] } }
       ]
     },
     {
@@ -26,10 +26,10 @@
       title: '턱선',
       subtitle: 'Jawline · 그림표',
       options: [
-        { code: 'A', label: '짧은 턱 + 넓은 V', images: ['questions/q02-a.png'] },
-        { code: 'B', label: '부드러운 U자 또는 부드러운 각진형 / 무턱', images: ['questions/q02-b.png'] },
-        { code: 'C', label: '각진 느낌 + 끝이 평평', images: ['questions/q02-c.png'] },
-        { code: 'D', label: '하악각이 발달해 각진 느낌이지만 끝이 뾰족한 V', images: ['questions/q02-d.png'] }
+        { code: 'A', label: '짧은 턱 + 넓은 V', images: { female: ['questions/q02-a.png'], male: ['questions/male/q02-a.png'] } },
+        { code: 'B', label: '부드러운 U자 또는 부드러운 각진형 / 무턱', images: { female: ['questions/q02-b.png'], male: ['questions/male/q02-b.png'] } },
+        { code: 'C', label: '각진 느낌 + 끝이 평평', images: { female: ['questions/q02-c.png'], male: ['questions/male/q02-c.png'] } },
+        { code: 'D', label: '하악각이 발달해 각진 느낌이지만 끝이 뾰족한 V', images: { female: ['questions/q02-d.png'], male: ['questions/male/q02-d.png'] } }
       ]
     },
     {
@@ -37,10 +37,10 @@
       title: '이마',
       subtitle: 'Forehead',
       options: [
-        { code: 'A', label: '볼록 나온 이마', images: ['questions/q03-a.png'] },
-        { code: 'B', label: '예쁜 이마', images: ['questions/q03-b.png'] },
-        { code: 'C', label: '좁은 이마', images: ['questions/q03-c.png'] },
-        { code: 'D', label: '이마 눈썹뼈가 튀어나온 이마', images: ['questions/q03-d.png'] }
+        { code: 'A', label: '볼록 나온 이마', images: { female: ['questions/q03-a.png'], male: ['questions/male/q03-a.png'] } },
+        { code: 'B', label: '곡선이 자연스럽고 균형 잡힌 이마', images: { female: ['questions/q03-b.png'], male: ['questions/male/q03-b.png'] } },
+        { code: 'C', label: '좁은 이마', images: { female: ['questions/q03-c.png'], male: ['questions/male/q03-c.png'] } },
+        { code: 'D', label: '이마 눈썹뼈가 튀어나온 이마', images: { female: ['questions/q03-d.png'], male: ['questions/male/q03-d.png'] } }
       ]
     },
     {
@@ -48,10 +48,10 @@
       title: '눈썹',
       subtitle: 'Eyebrows',
       options: [
-        { code: 'A', label: '가늘고 연한 눈썹', images: ['questions/q04-a.png'] },
-        { code: 'B', label: '둥근 세미 아치 눈썹', images: ['questions/q04-b.png'] },
-        { code: 'C', label: '산이 강한 아치 눈썹', images: ['questions/q04-c.png'] },
-        { code: 'D', label: '두껍고 눈썹뼈가 발달한 눈썹 (없거나 있거나)', images: ['questions/q04-d.png'] }
+        { code: 'A', label: '가늘고 연한 눈썹', images: { female: ['questions/q04-a.png'], male: ['questions/male/q04-a.png'] } },
+        { code: 'B', label: '둥근 세미 아치 눈썹', images: { female: ['questions/q04-b.png'], male: ['questions/male/q04-b.png'] } },
+        { code: 'C', label: '산이 강한 아치 눈썹', images: { female: ['questions/q04-c.png'], male: ['questions/male/q04-c.png'] } },
+        { code: 'D', label: '두껍고 눈썹뼈가 발달한 눈썹 (없거나 있거나)', images: { female: ['questions/q04-d.png'], male: ['questions/male/q04-d.png'] } }
       ]
     },
     {
@@ -59,10 +59,10 @@
       title: '눈',
       subtitle: 'Eyes',
       options: [
-        { code: 'A', label: '둥근 호 느낌이 강한 눈, 웃지 않을 때 둥근 느낌', images: ['questions/q05-a.png'] },
-        { code: 'B', label: '아몬드 모양, 눈꼬리 하향', images: ['questions/q05-b.png'] },
-        { code: 'C', label: '아몬드 모양, 눈꼬리 상향', images: ['questions/q05-c.png'] },
-        { code: 'D', label: '상향형 날카롭고 뾰족한 각진 눈매', images: ['questions/q05-d.png'] }
+        { code: 'A', label: '둥근 호 느낌이 강한 눈, 웃지 않을 때 둥근 느낌', images: { female: ['questions/q05-a.png'], male: ['questions/male/q05-a.png'] } },
+        { code: 'B', label: '아몬드 모양, 눈꼬리 하향', images: { female: ['questions/q05-b.png'], male: ['questions/male/q05-b.png'] } },
+        { code: 'C', label: '아몬드 모양, 눈꼬리 상향', images: { female: ['questions/q05-c.png'], male: ['questions/male/q05-c.png'] } },
+        { code: 'D', label: '상향형 날카롭고 뾰족한 각진 눈매', images: { female: ['questions/q05-d.png'], male: ['questions/male/q05-d.png'] } }
       ]
     },
     {
@@ -70,10 +70,10 @@
       title: '광대',
       subtitle: 'Cheekbones',
       options: [
-        { code: 'A', label: '평면 / 웃을 때 볼살 생김', images: ['questions/q06-a.png'] },
-        { code: 'B', label: '돌출 약함, 정돈됨', images: ['questions/q06-b.png'] },
-        { code: 'C', label: '앞광대 평평, 옆광대 발달', images: ['questions/q06-c-1.png', 'questions/q06-c-2.png'] },
-        { code: 'D', label: '앞광대 있는 편', images: ['questions/q06-d.png'] }
+        { code: 'A', label: '평면 / 웃을 때 볼살 생김', images: { female: ['questions/q06-a.png'], male: ['questions/male/q06-a.png'] } },
+        { code: 'B', label: '돌출 약함, 정돈됨', images: { female: ['questions/q06-b.png'], male: ['questions/male/q06-b.png'] } },
+        { code: 'C', label: '앞광대 평평, 옆광대 발달', images: { female: ['questions/q06-c-1.png', 'questions/q06-c-2.png'], male: ['questions/male/q06-c-1.png', 'questions/male/q06-c-2.png'] } },
+        { code: 'D', label: '앞광대 있는 편', images: { female: ['questions/q06-d.png'], male: ['questions/male/q06-d.png'] } }
       ]
     },
     {
@@ -81,10 +81,10 @@
       title: '코',
       subtitle: 'Nose',
       options: [
-        { code: 'A', label: '콧볼 있는 둥근 코', images: ['questions/q07-a.png'] },
-        { code: 'B', label: '여성스러운 코 (코가 강하게 부각되지 않음)', images: ['questions/q07-b.png'] },
-        { code: 'C', label: '콧대가 두껍고 직선 콧대', images: ['questions/q07-c.png'] },
-        { code: 'D', label: '콧대가 가늘고 긴 코 (코 길이감 있음)', images: ['questions/q07-d.png'] }
+        { code: 'A', label: '콧볼 있는 둥근 코', images: { female: ['questions/q07-a.png'], male: ['questions/male/q07-a.png'] } },
+        { code: 'B', label: '부드럽고 강하게 부각되지 않는 코', images: { female: ['questions/q07-b.png'], male: ['questions/male/q07-b.png'] } },
+        { code: 'C', label: '콧대가 두껍고 직선 콧대', images: { female: ['questions/q07-c.png'], male: ['questions/male/q07-c.png'] } },
+        { code: 'D', label: '콧대가 가늘고 긴 코 (코 길이감 있음)', images: { female: ['questions/q07-d.png'], male: ['questions/male/q07-d.png'] } }
       ]
     },
     {
@@ -92,10 +92,10 @@
       title: '입',
       subtitle: 'Lips',
       options: [
-        { code: 'A', label: '입이 가로로 길고 입이 큼 + 큐피드 활 또렷 (무표정일 때 입이 작고, 웃을 때 가로로 길어짐)', images: ['questions/q08-a.png'] },
-        { code: 'B', label: '입술이 작고 윗입술이 아랫입술 대비 얇음', images: ['questions/q08-b.png'] },
-        { code: 'C', label: '입술산과 립라인이 또렷함', images: ['questions/q08-c.png'] },
-        { code: 'D', label: '립라인이 흐리고 입술이 두꺼움', images: ['questions/q08-d.png'] }
+        { code: 'A', label: '입이 가로로 길고 입이 큼 + 큐피드 활 또렷 (무표정일 때 입이 작고, 웃을 때 가로로 길어짐)', images: { female: ['questions/q08-a.png'], male: ['questions/male/q08-a.png'] } },
+        { code: 'B', label: '입술이 작고 윗입술이 아랫입술 대비 얇음', images: { female: ['questions/q08-b.png'], male: ['questions/male/q08-b.png'] } },
+        { code: 'C', label: '입술산과 립라인이 또렷함', images: { female: ['questions/q08-c.png'], male: ['questions/male/q08-c.png'] } },
+        { code: 'D', label: '립라인이 흐리고 입술이 두꺼움', images: { female: ['questions/q08-d.png'], male: ['questions/male/q08-d.png'] } }
       ]
     },
     {
@@ -103,10 +103,10 @@
       title: '무드',
       subtitle: 'Mood · 추구미가 아닌 첫인상, 평소 표정 기준',
       options: [
-        { code: 'A', label: '통통 튀는 · 발랄한 · 러블리한 · 동안 · 웃상', images: [] },
-        { code: 'B', label: '정석미인 · 우아한 · 고급스러운 · 성숙한', images: [] },
-        { code: 'C', label: '동양적인 · 이국적인 · 캐릭터 있는', images: [] },
-        { code: 'D', label: '날카로운 · 선명한 · 카리스마 있는', images: [] }
+        { code: 'A', label: '통통 튀는 · 발랄한 · 러블리한 · 동안 · 웃상', images: { female: [], male: [] } },
+        { code: 'B', label: '정석미인 · 우아한 · 고급스러운 · 성숙한', images: { female: [], male: [] } },
+        { code: 'C', label: '동양적인 · 이국적인 · 캐릭터 있는', images: { female: [], male: [] } },
+        { code: 'D', label: '날카로운 · 선명한 · 카리스마 있는', images: { female: [], male: [] } }
       ]
     },
     {
@@ -114,10 +114,10 @@
       title: '이목구비 강도',
       subtitle: '눈썹, 눈, 코, 입, 턱선, 광대',
       options: [
-        { code: 'A', label: '매우 약함 (0~1개)', images: [] },
-        { code: 'B', label: '약함 (2개)', images: [] },
-        { code: 'C', label: '중간 (3개)', images: [] },
-        { code: 'D', label: '강함 (4개 이상)', images: [] }
+        { code: 'A', label: '매우 약함 (0~1개)', images: { female: [], male: [] } },
+        { code: 'B', label: '약함 (2개)', images: { female: [], male: [] } },
+        { code: 'C', label: '중간 (3개)', images: { female: [], male: [] } },
+        { code: 'D', label: '강함 (4개 이상)', images: { female: [], male: [] } }
       ]
     }
   ];
@@ -156,6 +156,11 @@
       scores: { A: 0, B: 0, C: 0, D: 0 },
       selectedType: null
     };
+  }
+
+  function getOptionImages(option, gender) {
+    if (!SUPPORTED_GENDERS.includes(gender)) return [];
+    return Array.isArray(option.images?.[gender]) ? option.images[gender] : [];
   }
 
   function validateProfile(profile) {
@@ -302,6 +307,7 @@
     QUESTIONS,
     TYPES,
     createInitialState,
+    getOptionImages,
     validateProfile,
     toggleAnswer,
     calculateScores,

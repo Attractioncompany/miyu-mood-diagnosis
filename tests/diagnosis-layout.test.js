@@ -27,6 +27,13 @@ function completedState() {
 }
 
 
+function questionState(gender = 'female') {
+  const state = core.createInitialState('2026-07-27');
+  state.profile.gender = gender;
+  return state;
+}
+
+
 function explanationHtml() {
   return ui.renderExplanationPanel(
     content.getExplanation('B-1', 'male', 'ja'),
@@ -51,7 +58,7 @@ after(async () => {
 test('세로 태블릿에서 답변은 2열이고 주요 버튼은 44px 이상이다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
-  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">${ui.renderQuestionView(core.createInitialState('2026-07-27'), 4)}</section>`);
+  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">${ui.renderQuestionView(questionState(), 4)}</section>`);
 
   const gridColumns = await page.locator('.miyu-answer-grid').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
@@ -75,7 +82,7 @@ test('검은 주요 버튼의 흰 글자가 선명하게 보인다', async () =>
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">
     <div id="enabled-primary">${ui.renderStartView(core.createInitialState('2026-07-27'))}</div>
-    <div id="disabled-primary">${ui.renderQuestionView(core.createInitialState('2026-07-27'), 0)}</div>
+    <div id="disabled-primary">${ui.renderQuestionView(questionState(), 0)}</div>
   </section>`);
 
   const colors = await page.locator('#enabled-primary .miyu-button.miyu-primary').evaluate(element => {
@@ -98,7 +105,7 @@ test('검은 주요 버튼의 흰 글자가 선명하게 보인다', async () =>
 test('진행표는 세로 태블릿의 왼쪽에서 약 78% 너비로 열린다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
-  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">${ui.renderQuestionView(core.createInitialState('2026-07-27'), 4)}</section>`);
+  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">${ui.renderQuestionView(questionState(), 4)}</section>`);
 
   const closedX = await page.locator('.miyu-progress-drawer').evaluate(element =>
     element.getBoundingClientRect().x
@@ -124,7 +131,7 @@ test('질문 이미지와 결과 얼굴은 자르지 않고 contain으로 표시
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   await page.setContent(`<style>${css}</style>
     <section id="miyu-diagnosis-app">
-      ${ui.renderQuestionView(core.createInitialState('2026-07-27'), 4)}
+      ${ui.renderQuestionView(questionState(), 4)}
       ${ui.renderResultView(completedState())}
     </section>`);
 
@@ -144,7 +151,7 @@ test('질문 이미지와 결과 얼굴은 자르지 않고 contain으로 표시
 test('가로 태블릿에서도 답변 2열을 유지하고 진행표는 460px을 넘지 않는다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 1194, height: 834 } });
-  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app" class="miyu-drawer-open">${ui.renderQuestionView(core.createInitialState('2026-07-27'), 4)}</section>`);
+  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app" class="miyu-drawer-open">${ui.renderQuestionView(questionState(), 4)}</section>`);
 
   const gridColumns = await page.locator('.miyu-answer-grid').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
@@ -177,6 +184,54 @@ test('세로 태블릿은 해설 이미지와 두 언어를 위아래로 표시�
   assert.equal(copyColumns, 1);
   assert.equal(visualRatio, '4 / 5');
   assert.ok(visualWidth <= 380, `portrait visual width was ${visualWidth}`);
+  await page.close();
+});
+
+
+test('세로 태블릿의 상세 10행은 셀 안에서 두 언어를 쌓고 가로로 넘치지 않는다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+
+  const rows = page.locator('.miyu-detail-row');
+  assert.equal(await rows.count(), 10);
+  const values = await page.locator('.miyu-detail-value').evaluateAll(elements =>
+    elements.map(element => {
+      const korean = element.querySelector('.miyu-language-ko');
+      const translated = element.querySelector('.miyu-language-translated');
+      const cellRect = element.getBoundingClientRect();
+      const koreanRect = korean.getBoundingClientRect();
+      const translatedRect = translated.getBoundingClientRect();
+      return {
+        koreanLang: korean.lang,
+        translatedLang: translated.lang,
+        translatedBelow: translatedRect.top >= koreanRect.bottom,
+        withinViewport: cellRect.left >= 0 && cellRect.right <= window.innerWidth
+      };
+    })
+  );
+
+  assert.ok(values.every(value => value.koreanLang === 'ko'));
+  assert.ok(values.every(value => value.translatedLang === 'ja'));
+  assert.ok(values.every(value => value.translatedBelow));
+  assert.ok(values.every(value => value.withinViewport));
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+  await page.close();
+});
+
+
+test('출력 화면은 한국어와 선택 언어를 모두 유지한다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+  await page.emulateMedia({ media: 'print' });
+
+  assert.equal(await page.locator('.miyu-language-ko').first().isVisible(), true);
+  assert.equal(await page.locator('.miyu-language-translated').first().isVisible(), true);
+  const breakInside = await page.locator('.miyu-detail-row').first().evaluate(element =>
+    getComputedStyle(element).breakInside
+  );
+  assert.ok(['avoid', 'avoid-page'].includes(breakInside));
   await page.close();
 });
 

@@ -7,6 +7,7 @@ const TYPE_CODES = [
   'A-1', 'A-2', 'A-3', 'B-1', 'B-2', 'B-3',
   'C-1', 'C-2', 'C-3', 'D-1', 'D-2', 'D-3'
 ];
+const LANGUAGES = ['ko', 'ja', 'zh-CN', 'zh-TW'];
 
 
 test('남성 B그룹은 보이시, 여성 B그룹은 페미닌이다', () => {
@@ -20,6 +21,33 @@ test('지원 언어의 화면용 이름을 제공한다', () => {
   assert.equal(content.LANGUAGES.ja.inputLabel, '일본어');
   assert.equal(content.LANGUAGES['zh-CN'].displayLabel, '简体中文');
   assert.equal(content.LANGUAGES['zh-TW'].displayLabel, '繁體中文');
+});
+
+test('소개·브릿지와 다섯 단계 해설 데이터를 고객 언어로 제공한다', () => {
+  const intro = content.getIntroPage(1, 'female', 'ja');
+  assert.equal(intro.title.ko, '미유 무드 진단이란?');
+  assert.equal(intro.title.ja, 'MIYUムード診断とは？');
+  assert.equal(content.getIntroPage(2, 'male', 'zh-TW').groups.B.ko, 'Boyish · 보이시');
+  assert.equal(content.getBridgeCopy('zh-CN').title['zh-CN'], '现在开始进行诊断。');
+
+  const draft = content.getExplanation('C-3', 'male', 'zh-TW');
+  assert.deepEqual(Object.keys(draft.sections), [
+    'facialFeatures', 'mood', 'makeup', 'hair', 'accessoryFashion'
+  ]);
+  assert.ok(draft.sections.makeup['zh-TW'].trim());
+  assert.ok(draft.sections.hair['zh-TW'].trim());
+  assert.ok(draft.sections.accessoryFashion['zh-TW'].trim());
+});
+
+test('추천 문구의 언어가 빠지면 완전성 검사가 실패한다', () => {
+  const localized = content.getRawTypeContent('A-1').recommendations.makeup.male;
+  const original = localized['zh-CN'];
+  delete localized['zh-CN'];
+  try {
+    assert.throws(() => content.assertCompleteContent(), /Missing zh-CN/);
+  } finally {
+    localized['zh-CN'] = original;
+  }
 });
 
 test('12타입은 성별과 언어별 한국어·번역 초안을 함께 반환한다', () => {
@@ -38,11 +66,101 @@ test('12타입은 성별과 언어별 한국어·번역 초안을 함께 반환�
   }
 });
 
-test('잘못된 타입은 null, 잘못된 언어는 한국어와 안전한 안내를 반환한다', () => {
+test('잘못된 타입이나 지원하지 않는 언어는 해설을 반환하지 않는다', () => {
   assert.equal(content.getExplanation('X-9', 'male', 'ja'), null);
+  assert.equal(content.getExplanation('A-1', 'male', 'xx'), null);
+  assert.doesNotMatch(
+    JSON.stringify(content.TYPE_CONTENT),
+    /번역 준비 중|TBD|TODO/
+  );
+});
 
-  const result = content.getExplanation('A-1', 'male', 'xx');
-  assert.ok(result.Korean.summary);
-  assert.equal(result.translated.language, 'ko');
-  assert.match(result.translated.summary, /번역 준비 중/);
+test('12타입의 모든 고객용 해설 단위에 네 언어가 있다', () => {
+  for (const localized of content.collectLocalizedValues(content.SECTION_LABELS)) {
+    for (const language of LANGUAGES) {
+      assert.ok(String(localized[language] || '').trim(), `section label missing ${language}`);
+    }
+  }
+  for (const typeCode of TYPE_CODES) {
+    const type = content.getRawTypeContent(typeCode);
+    assert.ok(type);
+    for (const localized of content.collectLocalizedValues(type)) {
+      for (const language of LANGUAGES) {
+        assert.ok(
+          String(localized[language] || '').trim(),
+          `${typeCode} missing ${language}`
+        );
+      }
+    }
+  }
+  assert.equal(content.assertCompleteContent(), true);
+});
+
+test('필수 언어 키를 삭제하면 완전성 검사가 실패한다', () => {
+  const cases = [
+    [content.SECTION_LABELS.details, 'zh-TW'],
+    [content.getRawTypeContent('A-1').common.definition, 'zh-TW'],
+    [content.GROUP_LABELS.male.B, 'ja']
+  ];
+
+  for (const [localized, language] of cases) {
+    const original = localized[language];
+    delete localized[language];
+    try {
+      assert.throws(
+        () => content.assertCompleteContent(),
+        new RegExp(`Missing ${language}`)
+      );
+    } finally {
+      localized[language] = original;
+    }
+  }
+});
+
+test('번체 해설은 명시적인 번체 문장이고 의미가 다른 글자를 구분한다', () => {
+  const definition = content.getRawTypeContent('B-2').common.definition['zh-TW'];
+
+  assert.equal(
+    definition,
+    '橢圓形臉＋1:1:1比例＋眉眼間距近＋外眼角略下垂的杏仁眼＋細高鼻樑＋薄唇的氛圍／下頜角發達的長臉＋濃眉＋內眼角向下深入的杏仁眼＋粗鼻樑＋厚唇＋圓潤前突下巴的氛圍'
+  );
+  assert.match(definition, /發達/);
+  assert.doesNotMatch(definition, /髮達|椭|围/);
+});
+
+test('남성 B·C 여섯 타입의 머리 흐름은 번체에서 髮流로 표기한다', () => {
+  const affectedTypes = ['B-1', 'B-2', 'B-3', 'C-1', 'C-2', 'C-3'];
+  const expectedByGroup = {
+    B: '保留柔和髮流的端正髮型能增強舒適感。',
+    C: '保留自然髮流或單側走向，突出個人氛圍。'
+  };
+  const actual = affectedTypes.map(typeCode => [
+    typeCode,
+    content.getExplanation(typeCode, 'male', 'zh-TW')
+      .sections.hair['zh-TW']
+  ]);
+  const expected = affectedTypes.map(typeCode => [
+    typeCode,
+    expectedByGroup[typeCode[0]]
+  ]);
+
+  assert.deepEqual(actual, expected);
+  for (const [, hair] of actual) {
+    assert.doesNotMatch(hair, /發流/);
+  }
+});
+
+test('최종 해설은 이목구비·무드·메이크업·헤어·액세서리 패션을 모두 반환한다', () => {
+  const result = content.getExplanation('C-3', 'male', 'ja');
+  assert.ok(result.localizedTypeName.ja);
+  assert.ok(result.localizedGroupName.ja);
+  assert.ok(result.sections.facialFeatures.items.length >= 1);
+  assert.equal(result.sections.facialFeatures.details.length, 10);
+  assert.ok(result.sections.facialFeatures.details.every(row => row.label.ja && row.text.ja));
+  assert.ok(result.sections.mood.overview.ko);
+  assert.ok(result.sections.mood.definition.ko);
+  assert.ok(result.sections.mood.keywords.ko);
+  assert.deepEqual(Object.keys(result.sections), [
+    'facialFeatures', 'mood', 'makeup', 'hair', 'accessoryFashion'
+  ]);
 });

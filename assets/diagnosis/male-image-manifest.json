@@ -1,0 +1,52 @@
+{
+  "sheets": [
+    {
+      "input": "q01-sheet.png",
+      "columns": 3,
+      "rows": 2,
+      "outputs": ["q01-a.png", "q01-b.png", "q01-c-1.png", "q01-c-2.png", "q01-d.png"]
+    },
+    {
+      "input": "q02-sheet.png",
+      "columns": 2,
+      "rows": 2,
+      "outputs": ["q02-a.png", "q02-b.png", "q02-c.png", "q02-d.png"]
+    },
+    {
+      "input": "q03-sheet.png",
+      "columns": 2,
+      "rows": 2,
+      "outputs": ["q03-a.png", "q03-b.png", "q03-c.png", "q03-d.png"]
+    },
+    {
+      "input": "q04-sheet.png",
+      "columns": 2,
+      "rows": 2,
+      "outputs": ["q04-a.png", "q04-b.png", "q04-c.png", "q04-d.png"]
+    },
+    {
+      "input": "q05-sheet.png",
+      "columns": 2,
+      "rows": 2,
+      "outputs": ["q05-a.png", "q05-b.png", "q05-c.png", "q05-d.png"]
+    },
+    {
+      "input": "q06-sheet.png",
+      "columns": 3,
+      "rows": 2,
+      "outputs": ["q06-a.png", "q06-b.png", "q06-c-1.png", "q06-c-2.png", "q06-d.png"]
+    },
+    {
+      "input": "q07-sheet.png",
+      "columns": 2,
+      "rows": 2,
+      "outputs": ["q07-a.png", "q07-b.png", "q07-c.png", "q07-d.png"]
+    },
+    {
+      "input": "q08-sheet.png",
+      "columns": 2,
+      "rows": 2,
+      "outputs": ["q08-a.png", "q08-b.png", "q08-c.png", "q08-d.png"]
+    }
+  ]
+}

@@ -1,10 +1,16 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const require = createRequire(import.meta.url);
+const celebrityNamesApi = require('../src/celebrity-names.js');
+const diagnosisCoreApi = require('../src/diagnosis-core.js');
+const explanationApi = require('../src/explanation-content.js');
 
 const EXPECTED_SOURCE_HASH = '46f24a73ab0e624e029f1f58fe44f6ec311bfdeba84c7e7833d82c8f0ee2fa81';
+export const MAX_DIST_BYTES = 95 * 1024 * 1024;
 
 
 function sha256Buffer(buffer) {
@@ -12,8 +18,8 @@ function sha256Buffer(buffer) {
 }
 
 
-function dataUri(filePath) {
-  return `data:image/png;base64,${fs.readFileSync(filePath).toString('base64')}`;
+export function dataUri(filePath, mime) {
+  return `data:${mime};base64,${fs.readFileSync(filePath).toString('base64')}`;
 }
 
 
@@ -37,26 +43,84 @@ function replaceExpectedCount(source, needle, replacement, expectedCount, label)
 
 
 function collectAssets(rootDir) {
-  const assets = {
-    logo: dataUri(path.join(rootDir, 'assets', '로고.png'))
-  };
-  for (const folder of ['questions', 'types']) {
-    const folderPath = path.join(rootDir, 'assets', 'diagnosis', folder);
-    const filenames = fs.readdirSync(folderPath)
-      .filter(name => name.endsWith('.png'))
-      .sort();
-    for (const filename of filenames) {
-      assets[`${folder}/${filename}`] = dataUri(path.join(folderPath, filename));
-    }
+  const questionPaths = diagnosisCoreApi.QUESTIONS.flatMap(question =>
+    question.options.flatMap(option => ({
+      female: option.images.female,
+      male: option.images.male
+    }))
+  );
+  const femalePaths = questionPaths.flatMap(paths => paths.female);
+  const malePaths = questionPaths.flatMap(paths => paths.male);
+  const typePaths = diagnosisCoreApi.TYPES.map(type => type.image);
+
+  if (femalePaths.length !== 34 || new Set(femalePaths).size !== 34) {
+    throw new Error(`Expected 34 unique female diagnosis assets, found ${new Set(femalePaths).size}`);
   }
-  if (Object.keys(assets).length !== 47) {
-    throw new Error(`Expected logo + 46 diagnosis images, found ${Object.keys(assets).length}`);
+  if (malePaths.length !== 34 || new Set(malePaths).size !== 34) {
+    throw new Error(`Expected 34 unique male diagnosis assets, found ${new Set(malePaths).size}`);
+  }
+  if (typePaths.length !== 12 || new Set(typePaths).size !== 12) {
+    throw new Error(`Expected 12 unique type diagnosis assets, found ${new Set(typePaths).size}`);
+  }
+
+  const photoPaths = [...femalePaths, ...malePaths, ...typePaths];
+  const expectedAssets = [
+    ['logo', path.join(rootDir, 'assets', '로고.png'), 'image/png'],
+    ...photoPaths.map(relativePath => [relativePath])
+  ];
+  if (new Set(expectedAssets.map(([key]) => key)).size !== 81) {
+    throw new Error('Expected exactly 81 unique diagnosis asset keys');
+  }
+
+  const standaloneDir = path.join(rootDir, 'assets', 'diagnosis', 'standalone');
+  const manifestPath = path.join(standaloneDir, 'manifest.json');
+  if (!fs.existsSync(manifestPath)) {
+    throw new Error('Missing optimized diagnosis manifest');
+  }
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  if (manifest.version !== 1 || !manifest.assets || typeof manifest.assets !== 'object') {
+    throw new Error('Invalid optimized diagnosis manifest');
+  }
+  const manifestKeys = Object.keys(manifest.assets).sort();
+  if (JSON.stringify(manifestKeys) !== JSON.stringify([...photoPaths].sort())) {
+    throw new Error('Optimized diagnosis manifest asset keys do not match diagnosis assets');
+  }
+  const assets = {
+    logo: dataUri(expectedAssets[0][1], expectedAssets[0][2])
+  };
+  for (const key of photoPaths) {
+    const item = manifest.assets[key];
+    if (!item || item.mime !== 'image/jpeg' || !item.file || !Number.isInteger(item.width) || !Number.isInteger(item.height)) {
+      throw new Error(`Invalid optimized diagnosis asset: ${key}`);
+    }
+    const filePath = path.resolve(standaloneDir, item.file);
+    if (!filePath.startsWith(`${standaloneDir}${path.sep}`)
+      || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      throw new Error(`Missing diagnosis asset: ${key}`);
+    }
+    assets[key] = dataUri(filePath, item.mime);
   }
   return assets;
 }
 
 
+export function stripLegacyReviewNotes(html) {
+  const pattern = /<div class="meta-mini">\s*<div class="meta-label">검토 메모<\/div>\s*<div class="match-note">[\s\S]*?<\/div>\s*<\/div>/g;
+  const matches = html.match(pattern) || [];
+  if (matches.length !== 11) {
+    throw new Error(`review notes: expected 11, found ${matches.length}`);
+  }
+  return html.replace(pattern, '');
+}
+
+
+export function replaceCelebrityNames(html) {
+  return celebrityNamesApi.replaceCelebrityNames(html);
+}
+
+
 export function buildV17({ rootDir, outputPath }) {
+  explanationApi.assertCompleteContent();
   const sourcePath = path.join(rootDir, 'source', '미유_무드분류_12type_v16.html');
   const sourceBuffer = fs.readFileSync(sourcePath);
   const sourceHash = sha256Buffer(sourceBuffer);
@@ -65,6 +129,10 @@ export function buildV17({ rootDir, outputPath }) {
   }
 
   const css = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis.css'), 'utf8');
+  const explanationData = fs.readFileSync(
+    path.join(rootDir, 'src', 'explanation-data.js'),
+    'utf8'
+  );
   const explanationContent = fs.readFileSync(
     path.join(rootDir, 'src', 'explanation-content.js'),
     'utf8'
@@ -72,7 +140,8 @@ export function buildV17({ rootDir, outputPath }) {
   const core = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis-core.js'), 'utf8');
   const ui = fs.readFileSync(path.join(rootDir, 'src', 'diagnosis-ui.js'), 'utf8');
   const assets = collectAssets(rootDir);
-  let html = sourceBuffer.toString('utf8');
+  let html = stripLegacyReviewNotes(sourceBuffer.toString('utf8'));
+  html = replaceCelebrityNames(html);
 
   html = replaceOnce(
     html,
@@ -119,6 +188,9 @@ export function buildV17({ rootDir, outputPath }) {
     // Lv1 인덱스`,
     `  const breadcrumb = document.getElementById('navBreadcrumb');
   const topNav = document.getElementById('topNav');
+  if (MiyuDiagnosisUI.redirectMaleLegacyRoute(hash, MiyuDiagnosisUI.getMountedProfile(), window.location)) {
+    return;
+  }
   if (topNav) topNav.style.display = 'block';
   
   if (parts[0] === '' || hash === '#/' || parts[0] === 'diagnosis') {
@@ -141,16 +213,13 @@ export function buildV17({ rootDir, outputPath }) {
     `<body>
   <section id="miyu-diagnosis-app" class="page" aria-live="polite">
     <div class="miyu-diagnosis-view"></div>
-    <div class="miyu-image-modal" role="dialog" aria-modal="true" aria-label="이미지 크게 보기">
-      <button type="button" data-action="close-image" aria-label="이미지 닫기">×</button>
-      <img alt="">
-    </div>
   </section>`,
     'body start'
   );
 
   const diagnosisScript = [
     `window.MIYU_DIAGNOSIS_ASSETS = ${JSON.stringify(assets)};`,
+    explanationData,
     explanationContent,
     core,
     ui
@@ -162,6 +231,21 @@ export function buildV17({ rootDir, outputPath }) {
     'diagnosis script marker'
   );
 
+  for (const forbidden of [
+    '검토 메모',
+    'class="match-note"',
+    'data-action="open-image"',
+    'miyu-image-modal'
+  ]) {
+    if (html.includes(forbidden)) {
+      throw new Error(`Forbidden generated content: ${forbidden}`);
+    }
+  }
+
+  const outputBytes = Buffer.byteLength(html, 'utf8');
+  if (outputBytes > MAX_DIST_BYTES) {
+    throw new Error(`Generated standalone exceeds 95 MiB limit: ${outputBytes}`);
+  }
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, html, 'utf8');
   const outputHash = sha256Buffer(fs.readFileSync(outputPath));

@@ -60,8 +60,38 @@ test('PDF 순서의 10문항과 교정 문구를 제공한다', () => {
   assert.match(core.QUESTIONS[4].options[3].label, /상향형/);
   assert.doesNotMatch(core.QUESTIONS[4].options[3].label, /샹향형/);
   assert.match(core.QUESTIONS[2].options[2].label, /좁은 이마/);
-  assert.match(core.QUESTIONS[6].options[1].label, /여성스러운/);
+  assert.equal(core.QUESTIONS[2].options[1].label, '곡선이 자연스럽고 균형 잡힌 이마');
+  assert.equal(core.QUESTIONS[6].options[1].label, '부드럽고 강하게 부각되지 않는 코');
   assert.match(core.QUESTIONS[8].options[0].label, /웃상/);
+});
+
+test('문항 이미지는 성별에 맞는 경로를 반환한다', () => {
+  const option = core.QUESTIONS[0].options[0];
+
+  assert.deepEqual(core.getOptionImages(option, 'female'), [
+    'questions/q01-a.png'
+  ]);
+  assert.deepEqual(core.getOptionImages(option, 'male'), [
+    'questions/male/q01-a.png'
+  ]);
+  assert.deepEqual(core.getOptionImages(option, 'other'), []);
+});
+
+test('1~8번은 성별 이미지 배열을 갖고 9~10번은 양쪽 모두 비어 있다', () => {
+  const imageOptions = core.QUESTIONS.slice(0, 8).flatMap(question => question.options);
+  const textOptions = core.QUESTIONS.slice(8).flatMap(question => question.options);
+
+  for (const option of imageOptions) {
+    assert.ok(Array.isArray(option.images.female));
+    assert.ok(Array.isArray(option.images.male));
+    assert.ok(option.images.female.length > 0);
+    assert.equal(option.images.male.length, option.images.female.length);
+  }
+  for (const option of textOptions) {
+    assert.deepEqual(option.images, { female: [], male: [] });
+  }
+
+  assert.equal(imageOptions.flatMap(option => option.images.female).length, 34);
 });
 
 test('한 문항에서 1개 또는 2개만 선택하고 세 번째는 거절한다', () => {
