@@ -188,6 +188,20 @@ test('세로 태블릿은 해설 이미지와 두 언어를 위아래로 표시�
 });
 
 
+test('세로 태블릿의 평균 얼굴과 스타일 참고 이미지는 카드 안에서 보인다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+
+  const figures = page.locator('.miyu-average-face, .miyu-reference-gallery');
+  assert.equal(await figures.count(), 3);
+  assert.ok(await page.locator('.miyu-average-face img').count() >= 1);
+  assert.ok(await page.locator('.miyu-reference-gallery img').count() >= 2);
+  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
+  await page.close();
+});
+
+
 test('세로 태블릿의 상세 10행은 셀 안에서 두 언어를 쌓고 가로로 넘치지 않는다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
