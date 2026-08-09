@@ -98,11 +98,13 @@
     const profile = state.profile;
     const page = content.getIntroPage(pageNumber, profile.gender, profile.explanationLanguage);
     if (!page) return '';
-    const groups = page.groups
-      ? `<div class="miyu-intro-groups">${Object.entries(page.groups).map(([group, label]) =>
-        `<article class="miyu-intro-group" data-group="${escapeHtml(group)}">`
-          + `<strong>${escapeHtml(group)}</strong>`
-          + renderLocalizedBlock(label, profile.explanationLanguage, 'miyu-localized-copy')
+    const groups = page.groupVisuals && page.groupVisuals.length
+      ? `<div class="miyu-intro-groups miyu-intro-groups-with-faces">${page.groupVisuals.map(item =>
+        `<article class="miyu-intro-group miyu-intro-group-face" data-group="${escapeHtml(item.group)}">`
+          + `<img src="${asset(item.image)}" data-asset="${escapeHtml(item.image)}" alt="" loading="eager">`
+          + `<strong>${escapeHtml(item.group)}</strong>`
+          + renderLocalizedBlock(item.label, profile.explanationLanguage, 'miyu-localized-copy')
+          + renderLocalizedBlock(item.caption, profile.explanationLanguage, 'miyu-intro-group-caption')
           + '</article>'
       ).join('')}</div>`
       : '';
@@ -314,6 +316,20 @@
     </div>`;
   }
 
+  function renderReferenceImage(reference, language, className, eager = false) {
+    if (!reference || !reference.image) return '';
+    return `<figure class="${escapeHtml(className)}">
+      <img src="${asset(reference.image)}" data-asset="${escapeHtml(reference.image)}" alt="" loading="${eager ? 'eager' : 'lazy'}">
+      <figcaption>${renderLocalizedBlock(reference.caption, language, 'miyu-reference-caption')}</figcaption>
+    </figure>`;
+  }
+
+  function renderReferenceGallery(examples, language, className) {
+    return `<div class="miyu-reference-gallery ${escapeHtml(className)}">${examples.map(reference =>
+      renderReferenceImage(reference, language, 'miyu-reference-figure')
+    ).join('')}</div>`;
+  }
+
   function renderDetailTable(details, language) {
     return `<div class="miyu-detail-table" role="table">
       ${details.map(row => `<div class="miyu-detail-row" role="row">
@@ -337,10 +353,9 @@
     const makeupLabel = draft.gender === 'male'
       ? content.SECTION_LABELS.grooming
       : content.SECTION_LABELS.makeup;
-    const visual = draft.image
-      ? `<img src="${asset(draft.image)}" data-asset="${escapeHtml(draft.image)}" alt="${escapeHtml(draft.typeName)} ${draft.gender === 'male' ? '남성' : '여성'} 무드 참고 이미지">`
-      : `<span class="miyu-explanation-visual-code">${escapeHtml(draft.typeCode)}</span>
-        ${renderLocalizedBlock(draft.localizedTypeName, language, 'miyu-visual-type-name')}`;
+    const exampleLabel = draft.gender === 'male'
+      ? content.SECTION_LABELS.groomingExample
+      : content.SECTION_LABELS.makeupExample;
     return `<section class="miyu-explanation-panel"
       data-gender="${escapeHtml(draft.gender)}"
       data-language="${escapeHtml(draft.translated.language)}">
@@ -355,21 +370,22 @@
           <div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div>
         </dl>
       </header>
-      <div class="miyu-explanation-layout">
-        <div class="miyu-explanation-visual" data-has-image="${Boolean(draft.image)}">
-          ${visual}
+      <section class="miyu-average-face miyu-reference-section">
+        ${renderSectionHeading(content.SECTION_LABELS.averageFace, language)}
+        <div class="miyu-explanation-layout">
+          ${renderReferenceImage(draft.averageFace, language, 'miyu-explanation-visual miyu-average-face-visual', true)}
+          <div class="miyu-explanation-copy">
+            <article lang="${escapeHtml(draft.Korean.htmlLang)}">
+              <p>${escapeHtml(draft.Korean.label)}</p>
+              <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName.ko)}</h3>
+            </article>
+            <article lang="${escapeHtml(draft.translated.htmlLang)}">
+              <p>${escapeHtml(draft.translated.label)}</p>
+              <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName[language])}</h3>
+            </article>
+          </div>
         </div>
-        <div class="miyu-explanation-copy">
-          <article lang="${escapeHtml(draft.Korean.htmlLang)}">
-            <p>${escapeHtml(draft.Korean.label)}</p>
-            <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName.ko)}</h3>
-          </article>
-          <article lang="${escapeHtml(draft.translated.htmlLang)}">
-            <p>${escapeHtml(draft.translated.label)}</p>
-            <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName[language])}</h3>
-          </article>
-        </div>
-      </div>
+      </section>
       <div class="miyu-explanation-sections">
         <section class="miyu-explanation-section miyu-facial-features">
           ${renderSectionHeading(sections.facialFeatures.label, language)}
@@ -385,11 +401,17 @@
         </section>
         <section class="miyu-explanation-section miyu-makeup">
           ${renderSectionHeading(makeupLabel, language)}
-          ${renderLocalizedBlock(sections.makeup, language, 'miyu-localized-copy')}
+          ${renderLocalizedBlock(sections.makeup.copy, language, 'miyu-localized-copy')}
+          ${renderSectionHeading(exampleLabel, language)}
+          ${renderReferenceGallery(sections.makeup.examples, language, 'miyu-makeup-examples')}
         </section>
         <section class="miyu-explanation-section miyu-hair">
           ${renderSectionHeading(content.SECTION_LABELS.hair, language)}
-          ${renderLocalizedBlock(sections.hair, language, 'miyu-localized-copy')}
+          ${renderLocalizedBlock(sections.hair.copy, language, 'miyu-localized-copy')}
+          ${renderSectionHeading(content.SECTION_LABELS.avoid, language)}
+          ${renderLocalizedBlock(sections.hair.avoid, language, 'miyu-localized-copy')}
+          ${renderSectionHeading(content.SECTION_LABELS.hairExample, language)}
+          ${renderReferenceGallery(sections.hair.examples, language, 'miyu-hair-examples')}
         </section>
         <section class="miyu-explanation-section miyu-accessory-fashion">
           ${renderSectionHeading(content.SECTION_LABELS.accessoryFashion, language)}
@@ -713,14 +735,7 @@
     const peopleGrid = section.querySelector('.people-grid');
     section.querySelectorAll('.miyu-legacy-section-heading').forEach(heading => heading.remove());
 
-    if (!isMale && averageFace) {
-      averageFace.querySelectorAll('.miyu-localized-heading').forEach(heading => heading.remove());
-      averageFace.insertAdjacentHTML(
-        'afterbegin',
-        renderSectionHeading(content.SECTION_LABELS.averageFace, language)
-      );
-      if (peopleGrid) peopleGrid.parentNode.insertBefore(averageFace, peopleGrid);
-    }
+    if (!isMale && averageFace) averageFace.remove();
     if (!isMale && peopleGrid) {
       peopleGrid.insertAdjacentHTML(
         'beforebegin',

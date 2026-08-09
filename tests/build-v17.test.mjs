@@ -60,6 +60,20 @@ function expectedDiagnosisAssetKeys() {
 }
 
 
+function expectedReferenceAssetKeys() {
+  const groups = ['a', 'b', 'c', 'd'];
+  const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
+  return [
+    ...groups.map(group => `reference/intro/${group}.jpg`),
+    ...types.map(type => `reference/female/face/${type}.jpg`),
+    ...types.map(type => `reference/female/makeup/${type}.jpg`),
+    ...groups.map(group => `reference/female/hair/${group}.jpg`),
+    ...types.map(type => `reference/male/face/${type}.jpg`),
+    ...groups.map(group => `reference/male/hair/${group}.jpg`)
+  ].sort();
+}
+
+
 function extractLegacyCelebrityLabels(html) {
   const personNames = Array.from(
     html.matchAll(/<div class="person-name">([^<]+)<\/div>/g),
@@ -178,13 +192,13 @@ test('검토 메모 제거는 11개가 아니면 빌드를 중단한다', () => 
 });
 
 
-test('로고와 진단 이미지 80개를 정확한 키로 외부 경로 없이 HTML 안에 포함한다', () => {
+test('로고·진단·시각 해설 이미지를 외부 경로 없이 HTML 안에 포함한다', () => {
   const { html } = buildToTemporaryFile();
   const assets = extractDiagnosisAssets(html);
   const keys = Object.keys(assets).sort();
-  const expectedKeys = expectedDiagnosisAssetKeys();
+  const expectedKeys = [...expectedDiagnosisAssetKeys(), ...expectedReferenceAssetKeys()].sort();
 
-  assert.equal(new Set(expectedKeys).size, 81);
+  assert.equal(new Set(expectedKeys).size, 129);
   assert.equal(expectedKeys.filter(key => /^questions\/q\d/.test(key)).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('questions/male/')).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('types/')).length, 12);

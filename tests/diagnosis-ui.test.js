@@ -127,6 +127,29 @@ test('소개 화면은 성별별 B그룹과 선택 언어를 함께 표시한다
   assert.match(ui.renderBridgeView(male), /現在開始進行診斷。/);
 });
 
+test('소개 2페이지는 네 개의 얼굴 카드와 두 언어를 표시한다', () => {
+  const state = core.createInitialState('2026-08-09');
+  state.profile = validProfile({ explanationLanguage: 'ja' });
+
+  const html = ui.renderIntroView(state, 2);
+
+  assert.equal((html.match(/miyu-intro-group-face/g) || []).length, 4);
+  assert.match(html, /reference\/intro\/a\.jpg/);
+  assert.match(html, /화사하고 사랑스러운/);
+  assert.match(html, /華やかで愛らしい/);
+});
+
+test('브릿지는 컨설턴트가 진단하고 결과를 설명한다고 안내한다', () => {
+  const state = core.createInitialState('2026-08-09');
+  state.profile = validProfile({ explanationLanguage: 'ja' });
+
+  const html = ui.renderBridgeView(state);
+
+  assert.match(html, /컨설턴트가 고객님의 얼굴 특징을 바탕으로 진단/);
+  assert.match(html, /コンサルタント.*診断/);
+  assert.doesNotMatch(html, /사진을 보며.*골라/);
+});
+
 test('고객 정보 없이 소개와 브릿지 주소를 열면 시작 화면으로 돌아간다', () => {
   const location = { hash: '#/diagnosis/intro/1' };
   const controller = ui.createController({
@@ -254,6 +277,19 @@ test('해설 패널은 한국어와 선택 언어 및 이미지 슬롯을 함께
   assert.match(html, /miyu-explanation-visual/);
   assert.match(html, /data-gender="male"/);
   assert.doesNotMatch(html, /해설 초안|miyu-draft-badge/);
+});
+
+test('해설은 평균 얼굴을 이목구비 특징보다 먼저, 스타일 사진과 함께 표시한다', () => {
+  const html = ui.renderExplanationPanel(
+    content.getExplanation('B-2', 'female', 'ja'),
+    validProfile()
+  );
+
+  assert.ok(html.indexOf('miyu-average-face') < html.indexOf('miyu-facial-features'));
+  assert.match(html, /miyu-makeup-examples/);
+  assert.match(html, /miyu-hair-examples/);
+  assert.match(html, /메이크업 예시/);
+  assert.match(html, /メイク例/);
 });
 
 test('해설 패널은 모든 고객용 섹션을 한국어와 선택 언어로 표시한다', () => {

@@ -39,6 +39,31 @@ test('소개·브릿지와 다섯 단계 해설 데이터를 고객 언어로 �
   assert.ok(draft.sections.accessoryFashion['zh-TW'].trim());
 });
 
+test('두 번째 소개 화면은 네 무드 그룹의 얼굴 참고 이미지를 제공한다', () => {
+  const female = content.getIntroPage(2, 'female', 'ja');
+  const male = content.getIntroPage(2, 'male', 'zh-TW');
+
+  assert.deepEqual(female.groupVisuals.map(item => item.group), ['A', 'B', 'C', 'D']);
+  assert.ok(
+    female.groupVisuals.every(item => item.image.startsWith('reference/intro/'))
+  );
+  assert.equal(male.groupVisuals[1].label['zh-TW'], 'Boyish · 清秀少年感');
+});
+
+test('해설은 평균 얼굴과 사진 참고가 있는 메이크업·헤어 안내를 반환한다', () => {
+  const female = content.getExplanation('A-1', 'female', 'zh-TW');
+  const male = content.getExplanation('A-1', 'male', 'ja');
+
+  assert.match(female.averageFace.image, /^reference\/female\/face\/a-1\.jpg$/);
+  assert.match(male.averageFace.image, /^reference\/male\/face\/a-1\.jpg$/);
+  assert.equal(female.sections.makeup.examples.length, 1);
+  assert.equal(female.sections.hair.examples.length, 1);
+  assert.equal(male.sections.makeup.examples.length, 1);
+  assert.equal(male.sections.hair.examples.length, 1);
+  assert.ok(female.sections.makeup.copy['zh-TW'].trim());
+  assert.ok(male.sections.hair.examples[0].caption.ja.trim());
+});
+
 test('추천 문구의 언어가 빠지면 완전성 검사가 실패한다', () => {
   const localized = content.getRawTypeContent('A-1').recommendations.makeup.male;
   const original = localized['zh-CN'];
