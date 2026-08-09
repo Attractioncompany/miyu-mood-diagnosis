@@ -2,7 +2,10 @@
   const core = typeof module === 'object' && module.exports
     ? require('./diagnosis-core.js')
     : root.MiyuDiagnosisCore;
-  const api = factory(core, root);
+  const content = typeof module === 'object' && module.exports
+    ? require('./explanation-content.js')
+    : root.MiyuExplanationContent;
+  const api = factory(core, content, root);
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.MiyuDiagnosisUI = api;
 
@@ -19,16 +22,10 @@
       });
     });
   }
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (core, root) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (core, content, root) {
   'use strict';
 
   const STORAGE_KEY = 'miyuDiagnosisV17';
-  const GROUP_NAMES = {
-    A: 'Blossom · 블로썸',
-    B: 'Feminine · 페미닌',
-    C: 'Mood · 무드',
-    D: 'Modern · 모던'
-  };
 
   let mountedApp = null;
   let mountedController = null;
@@ -48,34 +45,104 @@
   }
 
   function renderAssetImages(paths, alt) {
-    return paths.map((path, index) =>
-      `<button class="miyu-image-zoom" type="button" data-action="open-image" data-image="${escapeHtml(path)}" aria-label="${escapeHtml(alt)} 이미지 ${index + 1} 크게 보기">`
+    return paths.map(path =>
+      '<figure class="miyu-answer-figure">'
       + `<img src="${asset(path)}" data-asset="${escapeHtml(path)}" alt="${escapeHtml(alt)}" loading="eager">`
-      + '<span aria-hidden="true">확대</span>'
-      + '</button>'
+      + '</figure>'
     ).join('');
   }
 
   function renderStartView(state) {
+    const languageOptions = Object.entries(content.LANGUAGES).map(([value, meta]) =>
+      `<option value="${value}"${state.profile.explanationLanguage === value ? ' selected' : ''}>${escapeHtml(meta.inputLabel)}</option>`
+    ).join('');
     return `<div class="miyu-start-shell">
       <img class="miyu-start-logo" src="${asset('logo')}" data-asset="logo" alt="MIYU">
       <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
       <h1>무드 진단</h1>
       <p class="miyu-start-copy">10개의 항목을 차례로 확인해 주세요. 각 문항은 최대 2개까지 선택할 수 있어요.</p>
       <form class="miyu-profile-form" data-action="start">
-        <label>이름
-          <input name="clientName" value="${escapeHtml(state.profile.name)}" required autocomplete="name">
-          <span class="miyu-field-error" data-profile-error aria-live="polite"></span>
+        <label>고객명
+          <input name="customerName" value="${escapeHtml(state.profile.customerName)}" required autocomplete="name">
+          <span class="miyu-field-error" data-profile-error="customerName" aria-live="polite"></span>
+        </label>
+        <label>컨설턴트명
+          <input name="consultantName" value="${escapeHtml(state.profile.consultantName)}" required autocomplete="name">
+          <span class="miyu-field-error" data-profile-error="consultantName" aria-live="polite"></span>
+        </label>
+        <label>해설 언어
+          <select name="explanationLanguage" required>
+            <option value="">선택해 주세요</option>
+            ${languageOptions}
+          </select>
+          <span class="miyu-field-error" data-profile-error="explanationLanguage" aria-live="polite"></span>
+        </label>
+        <label>성별
+          <select name="gender" required>
+            <option value="">선택해 주세요</option>
+            <option value="female"${state.profile.gender === 'female' ? ' selected' : ''}>여성</option>
+            <option value="male"${state.profile.gender === 'male' ? ' selected' : ''}>남성</option>
+          </select>
+          <span class="miyu-field-error" data-profile-error="gender" aria-live="polite"></span>
         </label>
         <label>진단일
-          <input name="diagnosisDate" type="date" value="${escapeHtml(state.profile.date)}">
-        </label>
-        <label>퍼스널컬러 <span class="miyu-optional">선택</span>
-          <input name="personalColor" value="${escapeHtml(state.profile.personalColor)}" placeholder="예: 여름 쿨">
+          <input name="diagnosisDate" type="date" value="${escapeHtml(state.profile.diagnosisDate)}" required>
+          <span class="miyu-field-error" data-profile-error="diagnosisDate" aria-live="polite"></span>
         </label>
         <button class="miyu-button miyu-primary" type="submit">진단 시작</button>
       </form>
     </div>`;
+  }
+
+  function renderIntroView(state, pageNumber) {
+    const profile = state.profile;
+    const page = content.getIntroPage(pageNumber, profile.gender, profile.explanationLanguage);
+    if (!page) return '';
+    const groups = page.groups
+      ? `<div class="miyu-intro-groups">${Object.entries(page.groups).map(([group, label]) =>
+        `<article class="miyu-intro-group" data-group="${escapeHtml(group)}">`
+          + `<strong>${escapeHtml(group)}</strong>`
+          + renderLocalizedBlock(label, profile.explanationLanguage, 'miyu-localized-copy')
+          + '</article>'
+      ).join('')}</div>`
+      : '';
+    const eyebrow = page.eyebrow
+      ? `<p class="miyu-eyebrow">${renderLocalizedBlock(page.eyebrow, profile.explanationLanguage, 'miyu-intro-eyebrow')}</p>`
+      : `<p class="miyu-eyebrow">MIYU MOOD CONSULTING</p>`;
+    return `<section class="miyu-intro-step" data-intro-page="${pageNumber}">
+      <header class="miyu-intro-head"><img src="${asset('logo')}" data-asset="logo" alt="MIYU"></header>
+      <main class="miyu-intro-main">
+        <p class="miyu-intro-count">INTRO ${pageNumber} / 3</p>
+        ${eyebrow}
+        <h1>${renderLocalizedBlock(page.title, profile.explanationLanguage, 'miyu-intro-title')}</h1>
+        <div class="miyu-intro-copy">${page.body.map(item =>
+          renderLocalizedBlock(item, profile.explanationLanguage, 'miyu-localized-copy')
+        ).join('')}</div>
+        ${groups}
+      </main>
+      <footer class="miyu-intro-footer">
+        <button class="miyu-button miyu-secondary" type="button" data-action="previous-intro">이전</button>
+        <button class="miyu-button miyu-primary" type="button" data-action="next-intro">다음</button>
+      </footer>
+    </section>`;
+  }
+
+  function renderBridgeView(state) {
+    const profile = state.profile;
+    const bridge = content.getBridgeCopy(profile.explanationLanguage);
+    if (!bridge) return '';
+    return `<section class="miyu-bridge-step">
+      <header class="miyu-intro-head"><img src="${asset('logo')}" data-asset="logo" alt="MIYU"></header>
+      <main class="miyu-bridge-main">
+        <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
+        <h1>${renderLocalizedBlock(bridge.title, profile.explanationLanguage, 'miyu-bridge-title')}</h1>
+        <div class="miyu-intro-copy">${renderLocalizedBlock(bridge.body, profile.explanationLanguage, 'miyu-localized-copy')}</div>
+      </main>
+      <footer class="miyu-intro-footer">
+        <button class="miyu-button miyu-secondary" type="button" data-action="previous-bridge">이전</button>
+        <button class="miyu-button miyu-primary" type="button" data-action="begin-diagnosis">진단 시작</button>
+      </footer>
+    </section>`;
   }
 
   function renderProgressDrawer(state, questionIndex) {
@@ -115,7 +182,8 @@
     const selected = state.answers[questionIndex];
     const cards = question.options.map(option => {
       const pressed = selected.includes(option.code);
-      const images = renderAssetImages(option.images, `${option.code}. ${option.label}`);
+      const optionImages = core.getOptionImages(option, state.profile.gender);
+      const images = renderAssetImages(optionImages, `${option.code}. ${option.label}`);
       return `<article class="miyu-answer-card" data-selected="${pressed}">
         <button class="miyu-answer-select" type="button"
           data-action="select-answer" data-option="${option.code}"
@@ -124,7 +192,7 @@
           <span class="miyu-option-label">${escapeHtml(option.label)}</span>
           <span class="miyu-checkmark" aria-hidden="true">✓</span>
         </button>
-        ${images ? `<div class="miyu-answer-image" data-image-count="${option.images.length}">${images}</div>` : '<div class="miyu-answer-no-image" aria-hidden="true"></div>'}
+        ${images ? `<div class="miyu-answer-image" data-image-count="${optionImages.length}">${images}</div>` : '<div class="miyu-answer-no-image" aria-hidden="true"></div>'}
       </article>`;
     }).join('');
     return `<div class="miyu-question-shell">
@@ -162,10 +230,11 @@
     const ranks = core.calculateDenseRanks(scores);
     const scoreCards = core.OPTION_CODES.map(group => {
       const rank = ranks[group];
+      const groupName = content.getGroupName(group, state.profile.gender);
       return `<article class="miyu-score-card" data-group="${group}" data-rank="${rank}">
         ${renderRankBadge(rank)}
         <span class="miyu-score-code">${group}</span>
-        <span class="miyu-score-name">${GROUP_NAMES[group]}</span>
+        <span class="miyu-score-name">${groupName}</span>
         <strong>${scores[group]}</strong><small>/ 10</small>
       </article>`;
     }).join('');
@@ -173,6 +242,7 @@
     const groupSections = core.OPTION_CODES.map(group => {
       const groupTypes = core.TYPES.filter(type => type.group === group);
       const rank = ranks[group];
+      const groupName = content.getGroupName(group, state.profile.gender);
       const typeCards = groupTypes.map(type => {
         const selected = state.selectedType === type.code;
         return `<button class="miyu-type-card" type="button"
@@ -190,7 +260,7 @@
         <header>
           ${renderRankBadge(rank)}
           <span>${group}</span>
-          <strong>${GROUP_NAMES[group]}</strong>
+          <strong>${groupName}</strong>
           <small>${scores[group]}점</small>
         </header>
         <div class="miyu-type-row">${typeCards}</div>
@@ -201,15 +271,17 @@
     const confirmLabel = selected
       ? `${selected.code} ${selected.name} 확정 · 해설 보기`
       : '최종 타입을 선택해 주세요';
-    const personalColor = state.profile.personalColor
-      ? `<span>퍼스널컬러 ${escapeHtml(state.profile.personalColor)}</span>`
-      : '';
+    const languageLabel = content.LANGUAGES[state.profile.explanationLanguage]?.inputLabel || '';
     return `<div class="miyu-result-shell">
       <header class="miyu-result-head">
         <img src="${asset('logo')}" data-asset="logo" alt="MIYU">
         <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
-        <h1>${escapeHtml(state.profile.name)}님의 진단 결과</h1>
-        <div class="miyu-result-profile"><span>${escapeHtml(state.profile.date)}</span>${personalColor}</div>
+        <h1>${escapeHtml(state.profile.customerName)}님의 진단 결과</h1>
+        <div class="miyu-result-profile">
+          <span>컨설턴트 ${escapeHtml(state.profile.consultantName)}</span>
+          <span>${escapeHtml(state.profile.diagnosisDate)}</span>
+          <span>${escapeHtml(languageLabel)}</span>
+        </div>
       </header>
       <section class="miyu-result-section">
         <div class="miyu-section-heading"><div><p>STEP 1</p><h2>ABCD 점수 합산</h2></div><span>공동순위 포함</span></div>
@@ -225,6 +297,106 @@
         <button class="miyu-button miyu-primary" type="button" data-action="confirm-type"${selected ? '' : ' disabled'}>${escapeHtml(confirmLabel)}</button>
       </div>
     </div>`;
+  }
+
+  function renderLocalizedBlock(localized, language, className = '') {
+    const languageMeta = content.LANGUAGES[language];
+    if (!localized || !languageMeta) return '';
+    return `<div class="${escapeHtml(className)}">
+      <div class="miyu-language-ko" lang="ko">${escapeHtml(localized.ko)}</div>
+      <div class="miyu-language-translated" lang="${escapeHtml(languageMeta.htmlLang)}">${escapeHtml(localized[language])}</div>
+    </div>`;
+  }
+
+  function renderSectionHeading(label, language) {
+    return `<div class="miyu-localized-heading" role="heading" aria-level="3">
+      ${renderLocalizedBlock(label, language, 'miyu-localized-heading-copy')}
+    </div>`;
+  }
+
+  function renderDetailTable(details, language) {
+    return `<div class="miyu-detail-table" role="table">
+      ${details.map(row => `<div class="miyu-detail-row" role="row">
+        <div class="miyu-detail-label" role="rowheader">
+          ${renderLocalizedBlock(row.label, language, 'miyu-localized-label')}
+        </div>
+        <div class="miyu-detail-value" role="cell">
+          ${renderLocalizedBlock(row.text, language, 'miyu-localized-value')}
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }
+
+  function renderExplanationPanel(draft, profile) {
+    if (!draft) return '';
+    const language = draft.language;
+    const sections = draft.sections;
+    const summaryItems = sections.facialFeatures.items.map(item =>
+      `<li>${renderLocalizedBlock(item, language, 'miyu-localized-summary-item')}</li>`
+    ).join('');
+    const makeupLabel = draft.gender === 'male'
+      ? content.SECTION_LABELS.grooming
+      : content.SECTION_LABELS.makeup;
+    const visual = draft.image
+      ? `<img src="${asset(draft.image)}" data-asset="${escapeHtml(draft.image)}" alt="${escapeHtml(draft.typeName)} ${draft.gender === 'male' ? '남성' : '여성'} 무드 참고 이미지">`
+      : `<span class="miyu-explanation-visual-code">${escapeHtml(draft.typeCode)}</span>
+        ${renderLocalizedBlock(draft.localizedTypeName, language, 'miyu-visual-type-name')}`;
+    return `<section class="miyu-explanation-panel"
+      data-gender="${escapeHtml(draft.gender)}"
+      data-language="${escapeHtml(draft.translated.language)}">
+      <header class="miyu-explanation-meta">
+        <div>
+          <p>MIYU CONSULTATION NOTE</p>
+          ${renderLocalizedBlock(draft.localizedGroupName, language, 'miyu-explanation-group-name')}
+        </div>
+        <dl>
+          <div><dt>고객</dt><dd>${escapeHtml(profile.customerName)}</dd></div>
+          <div><dt>컨설턴트</dt><dd>${escapeHtml(profile.consultantName)}</dd></div>
+          <div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div>
+        </dl>
+      </header>
+      <div class="miyu-explanation-layout">
+        <div class="miyu-explanation-visual" data-has-image="${Boolean(draft.image)}">
+          ${visual}
+        </div>
+        <div class="miyu-explanation-copy">
+          <article lang="${escapeHtml(draft.Korean.htmlLang)}">
+            <p>${escapeHtml(draft.Korean.label)}</p>
+            <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName.ko)}</h3>
+          </article>
+          <article lang="${escapeHtml(draft.translated.htmlLang)}">
+            <p>${escapeHtml(draft.translated.label)}</p>
+            <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName[language])}</h3>
+          </article>
+        </div>
+      </div>
+      <div class="miyu-explanation-sections">
+        <section class="miyu-explanation-section miyu-facial-features">
+          ${renderSectionHeading(sections.facialFeatures.label, language)}
+          <ul class="miyu-summary-list">${summaryItems}</ul>
+          ${renderSectionHeading(content.SECTION_LABELS.details, language)}
+          ${renderDetailTable(sections.facialFeatures.details, language)}
+        </section>
+        <section class="miyu-explanation-section miyu-mood">
+          ${renderSectionHeading(sections.mood.label, language)}
+          ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
+          ${renderLocalizedBlock(sections.mood.definition, language, 'miyu-localized-copy')}
+          ${renderLocalizedBlock(sections.mood.keywords, language, 'miyu-localized-copy miyu-mood-keywords')}
+        </section>
+        <section class="miyu-explanation-section miyu-makeup">
+          ${renderSectionHeading(makeupLabel, language)}
+          ${renderLocalizedBlock(sections.makeup, language, 'miyu-localized-copy')}
+        </section>
+        <section class="miyu-explanation-section miyu-hair">
+          ${renderSectionHeading(content.SECTION_LABELS.hair, language)}
+          ${renderLocalizedBlock(sections.hair, language, 'miyu-localized-copy')}
+        </section>
+        <section class="miyu-explanation-section miyu-accessory-fashion">
+          ${renderSectionHeading(content.SECTION_LABELS.accessoryFashion, language)}
+          ${renderLocalizedBlock(sections.accessoryFashion, language, 'miyu-localized-copy')}
+        </section>
+      </div>
+    </section>`;
   }
 
   function createController(adapters) {
@@ -243,22 +415,40 @@
     }
 
     function start(profile) {
-      const name = String(profile.name || '').trim();
-      if (!name) return { error: '이름을 입력해 주세요' };
+      const nextProfile = {
+        customerName: String(profile.customerName || '').trim(),
+        consultantName: String(profile.consultantName || '').trim(),
+        explanationLanguage: String(profile.explanationLanguage || ''),
+        gender: String(profile.gender || ''),
+        diagnosisDate: String(profile.diagnosisDate || '')
+      };
+      const validation = core.validateProfile(nextProfile);
+      if (!validation.valid) {
+        return { error: validation.error, field: validation.field };
+      }
       state = {
-        ...state,
-        profile: {
-          name,
-          date: String(profile.date || state.profile.date || today()),
-          personalColor: String(profile.personalColor || '').trim()
-        }
+        ...core.createInitialState(today()),
+        profile: nextProfile
       };
       save();
-      const firstIncomplete = core.firstIncompleteQuestion(state.answers);
-      location.hash = firstIncomplete === core.QUESTIONS.length
-        ? '#/diagnosis/result'
-        : `#/diagnosis/question/${firstIncomplete + 1}`;
-      return { error: null };
+      location.hash = '#/diagnosis/intro/1';
+      return { error: null, field: null };
+    }
+
+    function previousIntro(pageNumber) {
+      location.hash = pageNumber <= 1 ? '#/' : `#/diagnosis/intro/${pageNumber - 1}`;
+    }
+
+    function nextIntro(pageNumber) {
+      location.hash = pageNumber >= 3 ? '#/diagnosis/bridge' : `#/diagnosis/intro/${pageNumber + 1}`;
+    }
+
+    function previousBridge() {
+      location.hash = '#/diagnosis/intro/3';
+    }
+
+    function beginDiagnosis() {
+      location.hash = '#/diagnosis/question/1';
     }
 
     function selectAnswer(questionIndex, optionCode) {
@@ -325,7 +515,7 @@
 
     function newDiagnosis() {
       const hasProgress = Boolean(
-        state.profile.name
+        state.profile.customerName
         || state.selectedType
         || state.answers.some(answer => answer.length)
       );
@@ -341,6 +531,20 @@
     function resolveRoute(hash) {
       if (hash === '#/' || hash === '#/diagnosis' || hash === '#/diagnosis/start') {
         return { kind: 'start', state };
+      }
+
+      if (!core.validateProfile(state.profile).valid) {
+        location.hash = '#/';
+        return { kind: 'redirect', state };
+      }
+
+      const introMatch = hash.match(/^#\/diagnosis\/intro\/([1-3])$/);
+      if (introMatch) {
+        return { kind: 'intro', state, pageNumber: Number(introMatch[1]) };
+      }
+
+      if (hash === '#/diagnosis/bridge') {
+        return { kind: 'bridge', state };
       }
 
       const questionMatch = hash.match(/^#\/diagnosis\/question\/(\d+)$/);
@@ -377,6 +581,10 @@
     return {
       getState,
       start,
+      previousIntro,
+      nextIntro,
+      previousBridge,
+      beginDiagnosis,
       selectAnswer,
       previous,
       next,
@@ -386,6 +594,24 @@
       newDiagnosis,
       resolveRoute
     };
+  }
+
+  function getMountedProfile() {
+    return mountedController ? mountedController.getState().profile : null;
+  }
+
+  function isMaleLegacyRoute(hash, profile) {
+    return Boolean(
+      profile
+      && profile.gender === 'male'
+      && /^#\/(index|macro(?:\/|$)|moodbook(?:\/|$))/.test(hash)
+    );
+  }
+
+  function redirectMaleLegacyRoute(hash, profile, location) {
+    if (!isMaleLegacyRoute(hash, profile)) return false;
+    location.hash = '#/diagnosis/result';
+    return true;
   }
 
   function normalizeLegacyTypeOrder() {
@@ -454,6 +680,75 @@
     });
   }
 
+  function decorateExplanation(catId) {
+    if (typeof document === 'undefined' || !mountedController) return;
+    const state = mountedController.getState();
+    if (!core.validateProfile(state.profile).valid) return;
+
+    const type = core.TYPES.find(item => item.hash === `#/cat/${catId}`);
+    const section = document.querySelector(`.category-section[data-cat-id="${catId}"]`);
+    if (!type || !section) return;
+
+    document.querySelectorAll('.miyu-explanation-panel').forEach(panel => panel.remove());
+    const draft = content.getExplanation(
+      type.code,
+      state.profile.gender,
+      state.profile.explanationLanguage
+    );
+    const header = section.querySelector('.cat-header');
+    if (!draft || !header) return;
+    header.insertAdjacentHTML('afterend', renderExplanationPanel(draft, state.profile));
+
+    const isMale = state.profile.gender === 'male';
+    const language = state.profile.explanationLanguage;
+    if (isMale) {
+      const topNav = document.getElementById('topNav');
+      if (topNav) topNav.style.display = 'none';
+    }
+    section.classList.add('miyu-explanation-decorated');
+    section.classList.toggle('miyu-explanation-male', isMale);
+    const summary = section.querySelector('.cat-summary-block');
+    const averageFace = summary?.querySelector('.cat-avg-face')
+      || section.querySelector(':scope > .cat-avg-face');
+    const peopleGrid = section.querySelector('.people-grid');
+    section.querySelectorAll('.miyu-legacy-section-heading').forEach(heading => heading.remove());
+
+    if (!isMale && averageFace) {
+      averageFace.querySelectorAll('.miyu-localized-heading').forEach(heading => heading.remove());
+      averageFace.insertAdjacentHTML(
+        'afterbegin',
+        renderSectionHeading(content.SECTION_LABELS.averageFace, language)
+      );
+      if (peopleGrid) peopleGrid.parentNode.insertBefore(averageFace, peopleGrid);
+    }
+    if (!isMale && peopleGrid) {
+      peopleGrid.insertAdjacentHTML(
+        'beforebegin',
+        `<div class="miyu-legacy-section-heading">${renderSectionHeading(content.SECTION_LABELS.exampleCelebrities, language)}</div>`
+      );
+    }
+
+    const representative = section.querySelector('.cat-representative');
+    if (representative) {
+      if (!representative.dataset.personName) {
+        representative.dataset.personName = representative.textContent
+          .replace(/^대표 인물\s*·\s*/, '')
+          .trim();
+      }
+      representative.innerHTML = `${renderLocalizedBlock(
+        content.SECTION_LABELS.exampleCelebrities,
+        language,
+        'miyu-legacy-representative-label'
+      )}<span class="miyu-legacy-person-name">${escapeHtml(representative.dataset.personName)}</span>`;
+    }
+    const macroEn = section.querySelector('.macro-en');
+    const macroKr = section.querySelector('.macro-kr');
+    if (type.group === 'B') {
+      if (macroEn) macroEn.textContent = isMale ? 'Boyish' : 'Feminine';
+      if (macroKr) macroKr.textContent = isMale ? '보이시' : '페미닌';
+    }
+  }
+
   function mount(appElement, adapters) {
     if (!appElement || appElement.dataset.mounted === 'true') return;
     appElement.dataset.mounted = 'true';
@@ -472,12 +767,14 @@
 
       const view = appElement.querySelector('.miyu-diagnosis-view');
       if (route.kind === 'start') view.innerHTML = renderStartView(route.state);
+      if (route.kind === 'intro') view.innerHTML = renderIntroView(route.state, route.pageNumber);
+      if (route.kind === 'bridge') view.innerHTML = renderBridgeView(route.state);
       if (route.kind === 'question') {
         view.innerHTML = renderQuestionView(route.state, route.questionIndex);
       }
       if (route.kind === 'result') view.innerHTML = renderResultView(route.state);
       appElement.style.display = 'block';
-      appElement.classList.remove('miyu-drawer-open', 'miyu-modal-open');
+      appElement.classList.remove('miyu-drawer-open');
       const topNav = document.getElementById('topNav');
       if (topNav) topNav.style.display = 'none';
       if (options.preserveScroll && typeof root.requestAnimationFrame === 'function') {
@@ -492,12 +789,17 @@
       event.preventDefault();
       const form = new FormData(event.target);
       const result = mountedController.start({
-        name: form.get('clientName'),
-        date: form.get('diagnosisDate'),
-        personalColor: form.get('personalColor')
+        customerName: form.get('customerName'),
+        consultantName: form.get('consultantName'),
+        explanationLanguage: form.get('explanationLanguage'),
+        gender: form.get('gender'),
+        diagnosisDate: form.get('diagnosisDate')
       });
       if (result.error) {
-        const error = appElement.querySelector('[data-profile-error]');
+        appElement.querySelectorAll('[data-profile-error]').forEach(element => {
+          element.textContent = '';
+        });
+        const error = appElement.querySelector(`[data-profile-error="${result.field}"]`);
         if (error) error.textContent = result.error;
       }
     });
@@ -514,20 +816,22 @@
         appElement.classList.remove('miyu-drawer-open');
         return;
       }
-      if (action === 'open-image') {
-        const modal = appElement.querySelector('.miyu-image-modal');
-        const image = modal?.querySelector('img');
-        if (image) {
-          image.src = asset(target.dataset.image);
-          image.alt = target.querySelector('img')?.alt || '진단 참고 이미지';
-        }
-        appElement.classList.add('miyu-modal-open');
-        document.body.style.overflow = 'hidden';
+      if (action === 'previous-intro') {
+        const page = Number(target.closest('[data-intro-page]').dataset.introPage);
+        mountedController.previousIntro(page);
         return;
       }
-      if (action === 'close-image') {
-        appElement.classList.remove('miyu-modal-open');
-        document.body.style.overflow = '';
+      if (action === 'next-intro') {
+        const page = Number(target.closest('[data-intro-page]').dataset.introPage);
+        mountedController.nextIntro(page);
+        return;
+      }
+      if (action === 'previous-bridge') {
+        mountedController.previousBridge();
+        return;
+      }
+      if (action === 'begin-diagnosis') {
+        mountedController.beginDiagnosis();
         return;
       }
       if (action === 'select-answer') {
@@ -571,8 +875,7 @@
 
     appElement.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') {
-        appElement.classList.remove('miyu-drawer-open', 'miyu-modal-open');
-        document.body.style.overflow = '';
+        appElement.classList.remove('miyu-drawer-open');
       }
     });
   }
@@ -583,15 +886,16 @@
     if (route.kind === 'redirect') return;
     const view = mountedApp.querySelector('.miyu-diagnosis-view');
     if (route.kind === 'start') view.innerHTML = renderStartView(route.state);
+    if (route.kind === 'intro') view.innerHTML = renderIntroView(route.state, route.pageNumber);
+    if (route.kind === 'bridge') view.innerHTML = renderBridgeView(route.state);
     if (route.kind === 'question') {
       view.innerHTML = renderQuestionView(route.state, route.questionIndex);
     }
     if (route.kind === 'result') view.innerHTML = renderResultView(route.state);
     mountedApp.style.display = 'block';
-    mountedApp.classList.remove('miyu-drawer-open', 'miyu-modal-open');
+    mountedApp.classList.remove('miyu-drawer-open');
     const topNav = document.getElementById('topNav');
     if (topNav) topNav.style.display = 'none';
-    document.body.style.overflow = '';
     if (typeof root.scrollTo === 'function') root.scrollTo({ top: 0, behavior: 'auto' });
   }
 
@@ -599,11 +903,20 @@
     STORAGE_KEY,
     escapeHtml,
     renderStartView,
+    renderIntroView,
+    renderBridgeView,
     renderProgressDrawer,
     renderQuestionView,
     renderResultView,
+    renderLocalizedBlock,
+    renderDetailTable,
+    renderExplanationPanel,
     createController,
+    getMountedProfile,
+    isMaleLegacyRoute,
+    redirectMaleLegacyRoute,
     normalizeLegacyTypeOrder,
+    decorateExplanation,
     mount,
     renderRoute
   };

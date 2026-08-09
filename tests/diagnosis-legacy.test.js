@@ -47,6 +47,18 @@ test('기존 인덱스의 D카드는 보이는 코드와 이미지 이름까지 
 });
 
 
+test('해설 직접 링크는 선택한 타입만 즉시 표시한다', async () => {
+  const page = await browser.newPage({ viewport: { width: 1194, height: 834 } });
+  await page.goto(`${DIST_URL}#/cat/18`);
+
+  const visibleSections = page.locator('.category-section:not(.lv3-hidden)');
+  assert.equal(await visibleSections.count(), 1);
+  assert.equal(await visibleSections.first().getAttribute('data-cat-id'), '18');
+  assert.match((await visibleSections.locator('.cat-name').textContent()).trim(), /딥시크/);
+  await page.close();
+});
+
+
 test('기존 출력 버튼은 이미지 준비 뒤 인쇄 기능을 호출한다', async () => {
   const page = await browser.newPage({ viewport: { width: 1194, height: 834 } });
   await page.goto(`${DIST_URL}#/macro/A`);

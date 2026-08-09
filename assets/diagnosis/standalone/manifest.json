@@ -1,0 +1,485 @@
+{
+  "version": 1,
+  "assets": {
+    "questions/q01-a.png": {
+      "file": "questions/q01-a.jpg",
+      "mime": "image/jpeg",
+      "width": 153,
+      "height": 161
+    },
+    "questions/male/q01-a.png": {
+      "file": "questions/male/q01-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q01-b.png": {
+      "file": "questions/q01-b.jpg",
+      "mime": "image/jpeg",
+      "width": 150,
+      "height": 184
+    },
+    "questions/male/q01-b.png": {
+      "file": "questions/male/q01-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q01-c-1.png": {
+      "file": "questions/q01-c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 183,
+      "height": 183
+    },
+    "questions/q01-c-2.png": {
+      "file": "questions/q01-c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 130,
+      "height": 157
+    },
+    "questions/male/q01-c-1.png": {
+      "file": "questions/male/q01-c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/male/q01-c-2.png": {
+      "file": "questions/male/q01-c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q01-d.png": {
+      "file": "questions/q01-d.jpg",
+      "mime": "image/jpeg",
+      "width": 149,
+      "height": 151
+    },
+    "questions/male/q01-d.png": {
+      "file": "questions/male/q01-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q02-a.png": {
+      "file": "questions/q02-a.jpg",
+      "mime": "image/jpeg",
+      "width": 155,
+      "height": 95
+    },
+    "questions/male/q02-a.png": {
+      "file": "questions/male/q02-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q02-b.png": {
+      "file": "questions/q02-b.jpg",
+      "mime": "image/jpeg",
+      "width": 144,
+      "height": 102
+    },
+    "questions/male/q02-b.png": {
+      "file": "questions/male/q02-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q02-c.png": {
+      "file": "questions/q02-c.jpg",
+      "mime": "image/jpeg",
+      "width": 143,
+      "height": 69
+    },
+    "questions/male/q02-c.png": {
+      "file": "questions/male/q02-c.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q02-d.png": {
+      "file": "questions/q02-d.jpg",
+      "mime": "image/jpeg",
+      "width": 134,
+      "height": 65
+    },
+    "questions/male/q02-d.png": {
+      "file": "questions/male/q02-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q03-a.png": {
+      "file": "questions/q03-a.jpg",
+      "mime": "image/jpeg",
+      "width": 118,
+      "height": 63
+    },
+    "questions/male/q03-a.png": {
+      "file": "questions/male/q03-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q03-b.png": {
+      "file": "questions/q03-b.jpg",
+      "mime": "image/jpeg",
+      "width": 120,
+      "height": 64
+    },
+    "questions/male/q03-b.png": {
+      "file": "questions/male/q03-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q03-c.png": {
+      "file": "questions/q03-c.jpg",
+      "mime": "image/jpeg",
+      "width": 119,
+      "height": 64
+    },
+    "questions/male/q03-c.png": {
+      "file": "questions/male/q03-c.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q03-d.png": {
+      "file": "questions/q03-d.jpg",
+      "mime": "image/jpeg",
+      "width": 151,
+      "height": 80
+    },
+    "questions/male/q03-d.png": {
+      "file": "questions/male/q03-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q04-a.png": {
+      "file": "questions/q04-a.jpg",
+      "mime": "image/jpeg",
+      "width": 64,
+      "height": 28
+    },
+    "questions/male/q04-a.png": {
+      "file": "questions/male/q04-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q04-b.png": {
+      "file": "questions/q04-b.jpg",
+      "mime": "image/jpeg",
+      "width": 41,
+      "height": 20
+    },
+    "questions/male/q04-b.png": {
+      "file": "questions/male/q04-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q04-c.png": {
+      "file": "questions/q04-c.jpg",
+      "mime": "image/jpeg",
+      "width": 89,
+      "height": 40
+    },
+    "questions/male/q04-c.png": {
+      "file": "questions/male/q04-c.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q04-d.png": {
+      "file": "questions/q04-d.jpg",
+      "mime": "image/jpeg",
+      "width": 85,
+      "height": 49
+    },
+    "questions/male/q04-d.png": {
+      "file": "questions/male/q04-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q05-a.png": {
+      "file": "questions/q05-a.jpg",
+      "mime": "image/jpeg",
+      "width": 127,
+      "height": 84
+    },
+    "questions/male/q05-a.png": {
+      "file": "questions/male/q05-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q05-b.png": {
+      "file": "questions/q05-b.jpg",
+      "mime": "image/jpeg",
+      "width": 130,
+      "height": 60
+    },
+    "questions/male/q05-b.png": {
+      "file": "questions/male/q05-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q05-c.png": {
+      "file": "questions/q05-c.jpg",
+      "mime": "image/jpeg",
+      "width": 175,
+      "height": 100
+    },
+    "questions/male/q05-c.png": {
+      "file": "questions/male/q05-c.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q05-d.png": {
+      "file": "questions/q05-d.jpg",
+      "mime": "image/jpeg",
+      "width": 182,
+      "height": 98
+    },
+    "questions/male/q05-d.png": {
+      "file": "questions/male/q05-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q06-a.png": {
+      "file": "questions/q06-a.jpg",
+      "mime": "image/jpeg",
+      "width": 180,
+      "height": 69
+    },
+    "questions/male/q06-a.png": {
+      "file": "questions/male/q06-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q06-b.png": {
+      "file": "questions/q06-b.jpg",
+      "mime": "image/jpeg",
+      "width": 214,
+      "height": 65
+    },
+    "questions/male/q06-b.png": {
+      "file": "questions/male/q06-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q06-c-1.png": {
+      "file": "questions/q06-c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 125,
+      "height": 44
+    },
+    "questions/q06-c-2.png": {
+      "file": "questions/q06-c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 134,
+      "height": 50
+    },
+    "questions/male/q06-c-1.png": {
+      "file": "questions/male/q06-c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/male/q06-c-2.png": {
+      "file": "questions/male/q06-c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q06-d.png": {
+      "file": "questions/q06-d.jpg",
+      "mime": "image/jpeg",
+      "width": 226,
+      "height": 65
+    },
+    "questions/male/q06-d.png": {
+      "file": "questions/male/q06-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q07-a.png": {
+      "file": "questions/q07-a.jpg",
+      "mime": "image/jpeg",
+      "width": 52,
+      "height": 64
+    },
+    "questions/male/q07-a.png": {
+      "file": "questions/male/q07-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q07-b.png": {
+      "file": "questions/q07-b.jpg",
+      "mime": "image/jpeg",
+      "width": 64,
+      "height": 91
+    },
+    "questions/male/q07-b.png": {
+      "file": "questions/male/q07-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q07-c.png": {
+      "file": "questions/q07-c.jpg",
+      "mime": "image/jpeg",
+      "width": 44,
+      "height": 58
+    },
+    "questions/male/q07-c.png": {
+      "file": "questions/male/q07-c.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q07-d.png": {
+      "file": "questions/q07-d.jpg",
+      "mime": "image/jpeg",
+      "width": 74,
+      "height": 115
+    },
+    "questions/male/q07-d.png": {
+      "file": "questions/male/q07-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q08-a.png": {
+      "file": "questions/q08-a.jpg",
+      "mime": "image/jpeg",
+      "width": 112,
+      "height": 54
+    },
+    "questions/male/q08-a.png": {
+      "file": "questions/male/q08-a.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q08-b.png": {
+      "file": "questions/q08-b.jpg",
+      "mime": "image/jpeg",
+      "width": 153,
+      "height": 69
+    },
+    "questions/male/q08-b.png": {
+      "file": "questions/male/q08-b.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q08-c.png": {
+      "file": "questions/q08-c.jpg",
+      "mime": "image/jpeg",
+      "width": 130,
+      "height": 67
+    },
+    "questions/male/q08-c.png": {
+      "file": "questions/male/q08-c.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "questions/q08-d.png": {
+      "file": "questions/q08-d.jpg",
+      "mime": "image/jpeg",
+      "width": 180,
+      "height": 94
+    },
+    "questions/male/q08-d.png": {
+      "file": "questions/male/q08-d.jpg",
+      "mime": "image/jpeg",
+      "width": 800,
+      "height": 1000
+    },
+    "types/a-1.png": {
+      "file": "types/a-1.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 91
+    },
+    "types/a-2.png": {
+      "file": "types/a-2.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 91
+    },
+    "types/a-3.png": {
+      "file": "types/a-3.jpg",
+      "mime": "image/jpeg",
+      "width": 78,
+      "height": 91
+    },
+    "types/b-1.png": {
+      "file": "types/b-1.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 96
+    },
+    "types/b-2.png": {
+      "file": "types/b-2.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 96
+    },
+    "types/b-3.png": {
+      "file": "types/b-3.jpg",
+      "mime": "image/jpeg",
+      "width": 78,
+      "height": 96
+    },
+    "types/c-1.png": {
+      "file": "types/c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 92
+    },
+    "types/c-2.png": {
+      "file": "types/c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 92
+    },
+    "types/c-3.png": {
+      "file": "types/c-3.jpg",
+      "mime": "image/jpeg",
+      "width": 78,
+      "height": 92
+    },
+    "types/d-1.png": {
+      "file": "types/d-1.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 93
+    },
+    "types/d-2.png": {
+      "file": "types/d-2.jpg",
+      "mime": "image/jpeg",
+      "width": 72,
+      "height": 93
+    },
+    "types/d-3.png": {
+      "file": "types/d-3.jpg",
+      "mime": "image/jpeg",
+      "width": 78,
+      "height": 93
+    }
+  }
+}
