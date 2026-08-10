@@ -227,6 +227,18 @@
         content: joinedLocalized(type.common.representativeSummary, language)
       },
       {
+        id: 'facial-details-1',
+        title: data.SECTION_LABELS.details,
+        content: joinedLocalized(type.common.details.slice(0, 5).map(row => row.text), language),
+        details: type.common.details.slice(0, 5)
+      },
+      {
+        id: 'facial-details-2',
+        title: data.SECTION_LABELS.details,
+        content: joinedLocalized(type.common.details.slice(5).map(row => row.text), language),
+        details: type.common.details.slice(5)
+      },
+      {
         id: 'mood',
         title: data.SECTION_LABELS.mood,
         content: joinedLocalized([

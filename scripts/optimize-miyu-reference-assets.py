@@ -15,10 +15,10 @@ GROUPS = ('a', 'b', 'c', 'd')
 TYPES = ('a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3')
 EXPECTED = (
     [f'intro/{group}.jpg' for group in GROUPS]
-    + [f'female/face/{code}.jpg' for code in TYPES]
+    + [f'average/female/{code}.jpg' for code in TYPES]
     + [f'female/makeup/{code}.jpg' for code in TYPES]
     + [f'female/hair/{group}.jpg' for group in GROUPS]
-    + [f'male/face/{code}.jpg' for code in TYPES]
+    + [f'average/male/{code}.jpg' for code in TYPES]
     + [f'male/hair/{group}.jpg' for group in GROUPS]
 )
 

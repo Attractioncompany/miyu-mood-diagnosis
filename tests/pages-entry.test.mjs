@@ -128,7 +128,7 @@ test('고객 정보 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진�
 });
 
 
-test('남성 일본어 진단은 남성 문항 이미지와 전체 이중언어 해설을 표시한다', async () => {
+test('남성 일본어 진단은 남성 문항 이미지와 페이지형 이중언어 해설을 표시한다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   await page.addInitScript(savedState => {
     sessionStorage.setItem('miyuDiagnosisV17', JSON.stringify(savedState));
@@ -149,8 +149,8 @@ test('남성 일본어 진단은 남성 문항 이미지와 전체 이중언어 
 
   const panel = page.locator('.miyu-explanation-panel');
   await panel.waitFor({ state: 'visible' });
-  assert.match(await panel.textContent(), /Boyish · 보이시/);
-  assert.equal(await panel.locator('.miyu-detail-row').count(), 10);
+  assert.match(await panel.textContent(), /보이시 · B-1 로맨틱/);
+  assert.equal(await panel.locator('.miyu-detail-row').count(), 0);
   assert.ok(await panel.locator('[lang="ko"]').count() > 0);
   assert.ok(await panel.locator('[lang="ja"]').count() > 0);
   assert.equal(

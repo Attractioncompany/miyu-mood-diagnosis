@@ -65,10 +65,10 @@ function expectedReferenceAssetKeys() {
   const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
   return [
     ...groups.map(group => `reference/intro/${group}.jpg`),
-    ...types.map(type => `reference/female/face/${type}.jpg`),
+    ...types.map(type => `reference/average/female/${type}.jpg`),
     ...types.map(type => `reference/female/makeup/${type}.jpg`),
     ...groups.map(group => `reference/female/hair/${group}.jpg`),
-    ...types.map(type => `reference/male/face/${type}.jpg`),
+    ...types.map(type => `reference/average/male/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/${group}.jpg`)
   ].sort();
 }
@@ -102,7 +102,9 @@ test('모든 고객 노출 예시 연예인 이름은 공식 영문 매핑이 �
 
 test('연예인 이름 치환기는 공개 인터페이스를 제공하고 누락된 이름에서 중단한다', () => {
   assert.equal(celebrityNames.CELEBRITY_NAMES['블랙핑크 지수'], 'BLACKPINK · Jisoo');
-  assert.equal(celebrityNames.getEnglishLabel('배우 김태리'), 'Kim Tae-ri · ACTOR');
+  assert.equal(celebrityNames.getEnglishLabel('에스파 윈터'), 'Winter (aespa)');
+  assert.equal(celebrityNames.getEnglishLabel('배우 김태리'), 'Kim Tae-ri (Actor)');
+  assert.equal(celebrityNames.getEnglishLabel('가수 아이유'), 'IU (Solo Artist)');
   assert.throws(
     () => celebrityNames.replaceCelebrityNames('<div class="person-name">매핑 없는 이름</div>'),
     /Missing celebrity English label: 매핑 없는 이름/
@@ -118,7 +120,7 @@ test('동적 CAT_PERSONS 이름도 공식 영문으로 바꾸고 누락된 매�
   const people = JSON.parse(match[1]);
   const labels = Object.values(people).flat().map(person => person.name);
   assert.equal(labels.length, 97);
-  assert.match(labels.join('\n'), /TWICE · Momo/);
+  assert.match(labels.join('\n'), /Momo \(TWICE\)/);
   assert.doesNotMatch(labels.join('\n'), /[가-힣]/);
   assert.throws(
     () => celebrityNames.replaceDynamicCelebrityNames('const CAT_PERSONS = {"01":[{"name":"없는 인물"}]};'),

@@ -64,12 +64,15 @@ test('해설은 평균 얼굴과 사진 참고가 있는 메이크업·헤어 �
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
 });
 
-test('해설은 상담 순서대로 한 섹션씩 넘길 수 있는 여섯 페이지를 제공한다', () => {
+test('해설은 긴 이목구비 상세를 나눈 여덟 페이지로 제공한다', () => {
   const draft = content.getExplanation('A-1', 'female', 'ja');
 
   assert.deepEqual(draft.pages.map(page => page.id), [
-    'summary', 'facial-features', 'mood', 'makeup', 'hair', 'accessory-fashion'
+    'summary', 'facial-features', 'facial-details-1', 'facial-details-2',
+    'mood', 'makeup', 'hair', 'accessory-fashion'
   ]);
+  assert.equal(draft.pages[2].details.length, 5);
+  assert.equal(draft.pages[3].details.length, 5);
   assert.ok(draft.pages.every(page => page.title.ko.trim() && page.title.ja.trim()));
   assert.ok(draft.pages.every(page => page.content.ko.trim() && page.content.ja.trim()));
 });

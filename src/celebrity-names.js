@@ -105,10 +105,23 @@
     '하츠투하츠 지우': 'Hearts2Hearts · Jiwoo'
   });
 
+  const OCCUPATION_LABELS = Object.freeze({
+    'ACTOR': 'Actor',
+    'SOLO ARTIST': 'Solo Artist',
+    'FIGURE SKATER': 'Figure Skater'
+  });
+
+  function formatCelebrityLabel(canonicalLabel) {
+    const [left, right] = String(canonicalLabel || '').split(' · ');
+    if (!left || !right) return '';
+    if (OCCUPATION_LABELS[right]) return `${left} (${OCCUPATION_LABELS[right]})`;
+    return `${right} (${left})`;
+  }
+
   function getEnglishLabel(koreanLabel) {
     const key = String(koreanLabel || '').trim();
     return Object.prototype.hasOwnProperty.call(CELEBRITY_NAMES, key)
-      ? CELEBRITY_NAMES[key]
+      ? formatCelebrityLabel(CELEBRITY_NAMES[key])
       : '';
   }
 
@@ -162,6 +175,7 @@
 
   return Object.freeze({
     CELEBRITY_NAMES,
+    formatCelebrityLabel,
     getEnglishLabel,
     replaceDynamicCelebrityNames,
     replaceCelebrityNames

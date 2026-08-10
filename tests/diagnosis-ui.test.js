@@ -280,8 +280,8 @@ test('해설 패널은 한국어와 선택 언어 및 이미지 슬롯을 함께
 test('해설은 평균 얼굴을 이목구비 특징보다 먼저, 스타일 사진과 함께 표시한다', () => {
   const draft = content.getExplanation('B-2', 'female', 'ja');
   const facial = ui.renderExplanationPanel(draft, validProfile(), 1);
-  const makeup = ui.renderExplanationPanel(draft, validProfile(), 3);
-  const hair = ui.renderExplanationPanel(draft, validProfile(), 4);
+  const makeup = ui.renderExplanationPanel(draft, validProfile(), 5);
+  const hair = ui.renderExplanationPanel(draft, validProfile(), 6);
 
   assert.match(facial, /miyu-average-face/);
   assert.match(facial, /miyu-facial-features/);
@@ -299,8 +299,9 @@ test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시
   const html = ui.renderExplanationPanel(draft, state.profile, 0);
 
   assert.match(html, /class="miyu-type-identity"/);
-  assert.match(html, /Blossom · 블로썸/);
-  assert.match(html, /A-1 판타지/);
+  assert.match(html, /블로썸 · A-1 판타지/);
+  assert.match(html, /ブロッサム · A-1 ファンタジー/);
+  assert.doesNotMatch(html, /Blossom · 블로썸 · A-1/);
   assert.match(html, /data-action="explanation-next"/);
   assert.doesNotMatch(html, /miyu-mood/);
   assert.doesNotMatch(html, /miyu-hair/);
@@ -340,7 +341,7 @@ test('남성 해설은 메이크업 대신 그루밍을 두 언어로 표시한�
   const html = ui.renderExplanationPanel(draft, validProfile({
     explanationLanguage: 'zh-TW',
     gender: 'male'
-  }), 3);
+  }), 5);
 
   assert.match(html, /그루밍/);
   assert.match(html, /儀容整理/);
@@ -438,7 +439,7 @@ test('고객 정보 없이 결과 주소를 직접 열면 시작 화면으로 �
   assert.equal(location.hash, '#/');
 });
 
-test('최종 타입 확정은 선택만으로 이동하지 않고 별도 확정 때 해설로 이동한다', () => {
+test('최종 타입 확정은 선택만으로 이동하지 않고 새 해설 첫 페이지로 이동한다', () => {
   const state = answeredState();
   state.selectedType = null;
   const storage = createMemoryStorage({
@@ -456,5 +457,24 @@ test('최종 타입 확정은 선택만으로 이동하지 않고 별도 확정 
   assert.equal(location.hash, '#/diagnosis/result');
 
   controller.confirmType();
-  assert.equal(location.hash, '#/cat/13');
+  assert.equal(location.hash, '#/diagnosis/explanation/d-1/1');
+  assert.equal(controller.resolveRoute(location.hash).kind, 'explanation');
+});
+
+test('해설 주소는 선택한 최종 타입의 페이지 범위 안에서만 연다', () => {
+  const state = answeredState();
+  state.selectedType = 'C-2';
+  const location = { hash: '#/diagnosis/explanation/c-2/999' };
+  const controller = ui.createController({
+    storage: createMemoryStorage({ [ui.STORAGE_KEY]: JSON.stringify(state) }),
+    location,
+    confirm: () => true,
+    today: () => '2026-07-27'
+  });
+
+  const view = controller.resolveRoute(location.hash);
+
+  assert.equal(view.kind, 'explanation');
+  assert.equal(view.typeCode, 'C-2');
+  assert.equal(view.pageIndex, 7);
 });
