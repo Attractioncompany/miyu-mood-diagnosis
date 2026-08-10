@@ -247,10 +247,8 @@ test('남성 결과 화면은 B그룹을 보이시로 표시한다', () => {
 });
 
 test('고객 해설은 승인한 다섯 섹션 순서로만 표시하고 초안 표기를 숨긴다', () => {
-  const html = ui.renderExplanationPanel(
-    content.getExplanation('B-2', 'female', 'ja'),
-    validProfile()
-  );
+  const draft = content.getExplanation('B-2', 'female', 'ja');
+  const html = draft.pages.map((_, index) => ui.renderExplanationPanel(draft, validProfile(), index)).join('');
   const classes = [
     'miyu-facial-features', 'miyu-mood', 'miyu-makeup',
     'miyu-hair', 'miyu-accessory-fashion'
@@ -269,10 +267,10 @@ test('해설 패널은 한국어와 선택 언어 및 이미지 슬롯을 함께
   const html = ui.renderExplanationPanel(draft, validProfile({
     gender: 'male',
     diagnosisDate: '2026-07-30'
-  }));
+  }), 1);
 
-  assert.match(html, /한국어/);
-  assert.match(html, /日本語/);
+  assert.match(html, /lang="ko"/);
+  assert.match(html, /lang="ja"/);
   assert.match(html, /김컨설턴트/);
   assert.match(html, /miyu-explanation-visual/);
   assert.match(html, /data-gender="male"/);
@@ -280,16 +278,17 @@ test('해설 패널은 한국어와 선택 언어 및 이미지 슬롯을 함께
 });
 
 test('해설은 평균 얼굴을 이목구비 특징보다 먼저, 스타일 사진과 함께 표시한다', () => {
-  const html = ui.renderExplanationPanel(
-    content.getExplanation('B-2', 'female', 'ja'),
-    validProfile()
-  );
+  const draft = content.getExplanation('B-2', 'female', 'ja');
+  const facial = ui.renderExplanationPanel(draft, validProfile(), 1);
+  const makeup = ui.renderExplanationPanel(draft, validProfile(), 3);
+  const hair = ui.renderExplanationPanel(draft, validProfile(), 4);
 
-  assert.ok(html.indexOf('miyu-average-face') < html.indexOf('miyu-facial-features'));
-  assert.match(html, /miyu-makeup-examples/);
-  assert.match(html, /miyu-hair-examples/);
-  assert.match(html, /메이크업 예시/);
-  assert.match(html, /メイク例/);
+  assert.match(facial, /miyu-average-face/);
+  assert.match(facial, /miyu-facial-features/);
+  assert.match(makeup, /miyu-makeup-examples/);
+  assert.match(hair, /miyu-hair-examples/);
+  assert.match(makeup, /메이크업 예시/);
+  assert.match(makeup, /メイク例/);
 });
 
 test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시한다', () => {
@@ -309,7 +308,7 @@ test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시
 
 test('해설 패널은 모든 고객용 섹션을 한국어와 선택 언어로 표시한다', () => {
   const draft = content.getExplanation('C-3', 'female', 'ja');
-  const html = ui.renderExplanationPanel(draft, validProfile());
+  const html = draft.pages.map((_, index) => ui.renderExplanationPanel(draft, validProfile(), index)).join('');
 
   for (const marker of [
     'miyu-facial-features',
@@ -341,7 +340,7 @@ test('남성 해설은 메이크업 대신 그루밍을 두 언어로 표시한�
   const html = ui.renderExplanationPanel(draft, validProfile({
     explanationLanguage: 'zh-TW',
     gender: 'male'
-  }));
+  }), 3);
 
   assert.match(html, /그루밍/);
   assert.match(html, /儀容整理/);
