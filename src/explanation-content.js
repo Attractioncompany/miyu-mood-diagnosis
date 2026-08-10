@@ -195,6 +195,76 @@
     return true;
   }
 
+  function localizedText(value, language) {
+    return {
+      ko: String(value && value.ko || ''),
+      [language]: String(value && value[language] || '')
+    };
+  }
+
+  function joinedLocalized(values, language) {
+    const asArray = Array.isArray(values) ? values : [values];
+    return {
+      ko: asArray.map(value => value && value.ko).filter(Boolean).join(' '),
+      [language]: asArray.map(value => value && value[language]).filter(Boolean).join(' ')
+    };
+  }
+
+  function buildExplanationPages(type, genderContent, sections, language) {
+    const careLabel = genderContent.grooming
+      ? data.SECTION_LABELS.grooming
+      : data.SECTION_LABELS.makeup;
+    const careCopy = sections.makeup.copy;
+    return [
+      {
+        id: 'summary',
+        title: data.SECTION_LABELS.representativeSummary,
+        content: localizedText(genderContent.overview, language)
+      },
+      {
+        id: 'facial-features',
+        title: data.SECTION_LABELS.facialFeatures,
+        content: joinedLocalized(type.common.representativeSummary, language)
+      },
+      {
+        id: 'facial-details-1',
+        title: data.SECTION_LABELS.details,
+        content: joinedLocalized(type.common.details.slice(0, 5).map(row => row.text), language),
+        details: type.common.details.slice(0, 5)
+      },
+      {
+        id: 'facial-details-2',
+        title: data.SECTION_LABELS.details,
+        content: joinedLocalized(type.common.details.slice(5).map(row => row.text), language),
+        details: type.common.details.slice(5)
+      },
+      {
+        id: 'mood',
+        title: data.SECTION_LABELS.mood,
+        content: joinedLocalized([
+          sections.mood.overview,
+          sections.mood.definition,
+          sections.mood.keywords
+        ], language)
+      },
+      {
+        id: 'makeup',
+        title: careLabel,
+        content: localizedText(careCopy, language)
+      },
+      {
+        id: 'hair',
+        title: data.SECTION_LABELS.hair,
+        content: joinedLocalized([sections.hair.copy, sections.hair.avoid], language)
+      },
+      {
+        id: 'accessory-fashion',
+        title: data.SECTION_LABELS.accessoryFashion,
+        content: localizedText(sections.accessoryFashion, language)
+      }
+    ];
+  }
+
   function getExplanation(typeCode, gender, language) {
     const type = getRawTypeContent(typeCode);
     if (!type) return null;
@@ -208,7 +278,7 @@
     const genderContent = type.gender[safeGender];
     const localizedGroupName = data.GROUP_LABELS[safeGender][type.group];
     const averageFace = {
-      image: `reference/${safeGender}/face/${typeCode.toLowerCase()}.jpg`,
+      image: `reference/average/${safeGender}/${typeCode.toLowerCase()}.jpg`,
       caption: data.REFERENCE_CAPTIONS.averageFace[safeGender]
     };
     const makeupCopy = type.recommendations.makeup[safeGender];
@@ -286,6 +356,7 @@
         summary: genderContent.overview[selectedLanguage]
       },
       averageFace,
+      pages: buildExplanationPages(type, genderContent, sections, selectedLanguage),
       image: type.image || null,
       draft: type.draft !== false
     };

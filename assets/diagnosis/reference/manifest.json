@@ -25,77 +25,77 @@
       "width": 174,
       "height": 264
     },
-    "reference/female/face/a-1.jpg": {
-      "file": "diagnosis/reference/female/face/a-1.jpg",
+    "reference/average/female/a-1.jpg": {
+      "file": "diagnosis/reference/average/female/a-1.jpg",
       "mime": "image/jpeg",
       "width": 720,
-      "height": 873
-    },
-    "reference/female/face/a-2.jpg": {
-      "file": "diagnosis/reference/female/face/a-2.jpg",
-      "mime": "image/jpeg",
-      "width": 448,
-      "height": 340
-    },
-    "reference/female/face/a-3.jpg": {
-      "file": "diagnosis/reference/female/face/a-3.jpg",
-      "mime": "image/jpeg",
-      "width": 506,
       "height": 900
     },
-    "reference/female/face/b-1.jpg": {
-      "file": "diagnosis/reference/female/face/b-1.jpg",
-      "mime": "image/jpeg",
-      "width": 553,
-      "height": 460
-    },
-    "reference/female/face/b-2.jpg": {
-      "file": "diagnosis/reference/female/face/b-2.jpg",
-      "mime": "image/jpeg",
-      "width": 253,
-      "height": 357
-    },
-    "reference/female/face/b-3.jpg": {
-      "file": "diagnosis/reference/female/face/b-3.jpg",
-      "mime": "image/jpeg",
-      "width": 406,
-      "height": 532
-    },
-    "reference/female/face/c-1.jpg": {
-      "file": "diagnosis/reference/female/face/c-1.jpg",
-      "mime": "image/jpeg",
-      "width": 313,
-      "height": 412
-    },
-    "reference/female/face/c-2.jpg": {
-      "file": "diagnosis/reference/female/face/c-2.jpg",
-      "mime": "image/jpeg",
-      "width": 379,
-      "height": 430
-    },
-    "reference/female/face/c-3.jpg": {
-      "file": "diagnosis/reference/female/face/c-3.jpg",
-      "mime": "image/jpeg",
-      "width": 232,
-      "height": 334
-    },
-    "reference/female/face/d-1.jpg": {
-      "file": "diagnosis/reference/female/face/d-1.jpg",
+    "reference/average/female/a-2.jpg": {
+      "file": "diagnosis/reference/average/female/a-2.jpg",
       "mime": "image/jpeg",
       "width": 720,
-      "height": 650
+      "height": 900
     },
-    "reference/female/face/d-2.jpg": {
-      "file": "diagnosis/reference/female/face/d-2.jpg",
+    "reference/average/female/a-3.jpg": {
+      "file": "diagnosis/reference/average/female/a-3.jpg",
       "mime": "image/jpeg",
       "width": 720,
-      "height": 861
+      "height": 900
     },
-    "reference/female/face/d-3.jpg": {
-      "file": "diagnosis/reference/female/face/d-3.jpg",
+    "reference/average/female/b-1.jpg": {
+      "file": "diagnosis/reference/average/female/b-1.jpg",
       "mime": "image/jpeg",
-      "width": 373,
-      "height": 628
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/b-2.jpg": {
+      "file": "diagnosis/reference/average/female/b-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/b-3.jpg": {
+      "file": "diagnosis/reference/average/female/b-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/c-1.jpg": {
+      "file": "diagnosis/reference/average/female/c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/c-2.jpg": {
+      "file": "diagnosis/reference/average/female/c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/c-3.jpg": {
+      "file": "diagnosis/reference/average/female/c-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/d-1.jpg": {
+      "file": "diagnosis/reference/average/female/d-1.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/d-2.jpg": {
+      "file": "diagnosis/reference/average/female/d-2.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/average/female/d-3.jpg": {
+      "file": "diagnosis/reference/average/female/d-3.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
     },
     "reference/female/makeup/a-1.jpg": {
       "file": "diagnosis/reference/female/makeup/a-1.jpg",
@@ -193,74 +193,74 @@
       "width": 720,
       "height": 473
     },
-    "reference/male/face/a-1.jpg": {
-      "file": "diagnosis/reference/male/face/a-1.jpg",
+    "reference/average/male/a-1.jpg": {
+      "file": "diagnosis/reference/average/male/a-1.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/a-2.jpg": {
-      "file": "diagnosis/reference/male/face/a-2.jpg",
+    "reference/average/male/a-2.jpg": {
+      "file": "diagnosis/reference/average/male/a-2.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/a-3.jpg": {
-      "file": "diagnosis/reference/male/face/a-3.jpg",
+    "reference/average/male/a-3.jpg": {
+      "file": "diagnosis/reference/average/male/a-3.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/b-1.jpg": {
-      "file": "diagnosis/reference/male/face/b-1.jpg",
+    "reference/average/male/b-1.jpg": {
+      "file": "diagnosis/reference/average/male/b-1.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/b-2.jpg": {
-      "file": "diagnosis/reference/male/face/b-2.jpg",
+    "reference/average/male/b-2.jpg": {
+      "file": "diagnosis/reference/average/male/b-2.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/b-3.jpg": {
-      "file": "diagnosis/reference/male/face/b-3.jpg",
+    "reference/average/male/b-3.jpg": {
+      "file": "diagnosis/reference/average/male/b-3.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/c-1.jpg": {
-      "file": "diagnosis/reference/male/face/c-1.jpg",
+    "reference/average/male/c-1.jpg": {
+      "file": "diagnosis/reference/average/male/c-1.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/c-2.jpg": {
-      "file": "diagnosis/reference/male/face/c-2.jpg",
+    "reference/average/male/c-2.jpg": {
+      "file": "diagnosis/reference/average/male/c-2.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/c-3.jpg": {
-      "file": "diagnosis/reference/male/face/c-3.jpg",
+    "reference/average/male/c-3.jpg": {
+      "file": "diagnosis/reference/average/male/c-3.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/d-1.jpg": {
-      "file": "diagnosis/reference/male/face/d-1.jpg",
+    "reference/average/male/d-1.jpg": {
+      "file": "diagnosis/reference/average/male/d-1.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/d-2.jpg": {
-      "file": "diagnosis/reference/male/face/d-2.jpg",
+    "reference/average/male/d-2.jpg": {
+      "file": "diagnosis/reference/average/male/d-2.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
     },
-    "reference/male/face/d-3.jpg": {
-      "file": "diagnosis/reference/male/face/d-3.jpg",
+    "reference/average/male/d-3.jpg": {
+      "file": "diagnosis/reference/average/male/d-3.jpg",
       "mime": "image/jpeg",
       "width": 720,
       "height": 900

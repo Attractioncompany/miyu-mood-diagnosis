@@ -316,6 +316,11 @@
     </div>`;
   }
 
+  function localizedGroupDisplayName(localized, language) {
+    const value = String(localized && localized[language] || '');
+    return value.split(' · ').at(-1) || value;
+  }
+
   function renderReferenceImage(reference, language, className, eager = false) {
     if (!reference || !reference.image) return '';
     return `<figure class="${escapeHtml(className)}">
@@ -343,26 +348,77 @@
     </div>`;
   }
 
-  function renderExplanationPanel(draft, profile) {
-    if (!draft) return '';
+  function renderExplanationPage(draft, page) {
     const language = draft.language;
     const sections = draft.sections;
     const summaryItems = sections.facialFeatures.items.map(item =>
       `<li>${renderLocalizedBlock(item, language, 'miyu-localized-summary-item')}</li>`
     ).join('');
-    const makeupLabel = draft.gender === 'male'
-      ? content.SECTION_LABELS.grooming
-      : content.SECTION_LABELS.makeup;
-    const exampleLabel = draft.gender === 'male'
-      ? content.SECTION_LABELS.groomingExample
-      : content.SECTION_LABELS.makeupExample;
+    if (page.id === 'summary') {
+      return `<section class="miyu-explanation-section miyu-page-summary">
+        ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
+      </section>`;
+    }
+    if (page.id === 'facial-features') {
+      return `<section class="miyu-explanation-section miyu-facial-features">
+        <div class="miyu-explanation-layout">
+          ${renderReferenceImage(draft.averageFace, language, 'miyu-explanation-visual miyu-average-face-visual', true)}
+          <div><ul class="miyu-summary-list">${summaryItems}</ul></div>
+        </div>
+      </section>`;
+    }
+    if (page.id === 'facial-details-1' || page.id === 'facial-details-2') {
+      return `<section class="miyu-explanation-section miyu-facial-details">
+        ${renderDetailTable(page.details, language)}
+      </section>`;
+    }
+    if (page.id === 'mood') {
+      return `<section class="miyu-explanation-section miyu-mood">
+        ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
+        ${renderLocalizedBlock(sections.mood.definition, language, 'miyu-localized-copy')}
+        ${renderLocalizedBlock(sections.mood.keywords, language, 'miyu-localized-copy miyu-mood-keywords')}
+      </section>`;
+    }
+    if (page.id === 'makeup') {
+      const exampleLabel = draft.gender === 'male'
+        ? content.SECTION_LABELS.groomingExample
+        : content.SECTION_LABELS.makeupExample;
+      return `<section class="miyu-explanation-section miyu-makeup">
+        ${renderLocalizedBlock(sections.makeup.copy, language, 'miyu-localized-copy')}
+        ${renderSectionHeading(exampleLabel, language)}
+        ${renderReferenceGallery(sections.makeup.examples, language, 'miyu-makeup-examples')}
+      </section>`;
+    }
+    if (page.id === 'hair') {
+      return `<section class="miyu-explanation-section miyu-hair">
+        ${renderLocalizedBlock(sections.hair.copy, language, 'miyu-localized-copy')}
+        ${renderSectionHeading(content.SECTION_LABELS.avoid, language)}
+        ${renderLocalizedBlock(sections.hair.avoid, language, 'miyu-localized-copy')}
+        ${renderSectionHeading(content.SECTION_LABELS.hairExample, language)}
+        ${renderReferenceGallery(sections.hair.examples, language, 'miyu-hair-examples')}
+      </section>`;
+    }
+    return `<section class="miyu-explanation-section miyu-accessory-fashion">
+      ${renderLocalizedBlock(sections.accessoryFashion, language, 'miyu-localized-copy')}
+    </section>`;
+  }
+
+  function renderExplanationPanel(draft, profile, pageIndex = 0) {
+    if (!draft) return '';
+    const language = draft.language;
+    const safeIndex = Math.max(0, Math.min(draft.pages.length - 1, Number(pageIndex) || 0));
+    const page = draft.pages[safeIndex];
     return `<section class="miyu-explanation-panel"
       data-gender="${escapeHtml(draft.gender)}"
-      data-language="${escapeHtml(draft.translated.language)}">
+      data-language="${escapeHtml(draft.translated.language)}"
+      data-explanation-page="${safeIndex}">
       <header class="miyu-explanation-meta">
-        <div>
-          <p>MIYU CONSULTATION NOTE</p>
-          ${renderLocalizedBlock(draft.localizedGroupName, language, 'miyu-explanation-group-name')}
+        <p>MIYU CONSULTATION NOTE</p>
+        <div class="miyu-type-identity">
+          ${renderLocalizedBlock({
+            ko: `${localizedGroupDisplayName(draft.localizedGroupName, 'ko')} · ${draft.typeCode} ${draft.localizedTypeName.ko}`,
+            [language]: `${localizedGroupDisplayName(draft.localizedGroupName, language)} · ${draft.typeCode} ${draft.localizedTypeName[language]}`
+          }, language, 'miyu-type-identity-name')}
         </div>
         <dl>
           <div><dt>고객</dt><dd>${escapeHtml(profile.customerName)}</dd></div>
@@ -370,55 +426,25 @@
           <div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div>
         </dl>
       </header>
-      <section class="miyu-average-face miyu-reference-section">
-        ${renderSectionHeading(content.SECTION_LABELS.averageFace, language)}
-        <div class="miyu-explanation-layout">
-          ${renderReferenceImage(draft.averageFace, language, 'miyu-explanation-visual miyu-average-face-visual', true)}
-          <div class="miyu-explanation-copy">
-            <article lang="${escapeHtml(draft.Korean.htmlLang)}">
-              <p>${escapeHtml(draft.Korean.label)}</p>
-              <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName.ko)}</h3>
-            </article>
-            <article lang="${escapeHtml(draft.translated.htmlLang)}">
-              <p>${escapeHtml(draft.translated.label)}</p>
-              <h3>${escapeHtml(draft.typeCode)} ${escapeHtml(draft.localizedTypeName[language])}</h3>
-            </article>
-          </div>
-        </div>
-      </section>
-      <div class="miyu-explanation-sections">
-        <section class="miyu-explanation-section miyu-facial-features">
-          ${renderSectionHeading(sections.facialFeatures.label, language)}
-          <ul class="miyu-summary-list">${summaryItems}</ul>
-          ${renderSectionHeading(content.SECTION_LABELS.details, language)}
-          ${renderDetailTable(sections.facialFeatures.details, language)}
-        </section>
-        <section class="miyu-explanation-section miyu-mood">
-          ${renderSectionHeading(sections.mood.label, language)}
-          ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
-          ${renderLocalizedBlock(sections.mood.definition, language, 'miyu-localized-copy')}
-          ${renderLocalizedBlock(sections.mood.keywords, language, 'miyu-localized-copy miyu-mood-keywords')}
-        </section>
-        <section class="miyu-explanation-section miyu-makeup">
-          ${renderSectionHeading(makeupLabel, language)}
-          ${renderLocalizedBlock(sections.makeup.copy, language, 'miyu-localized-copy')}
-          ${renderSectionHeading(exampleLabel, language)}
-          ${renderReferenceGallery(sections.makeup.examples, language, 'miyu-makeup-examples')}
-        </section>
-        <section class="miyu-explanation-section miyu-hair">
-          ${renderSectionHeading(content.SECTION_LABELS.hair, language)}
-          ${renderLocalizedBlock(sections.hair.copy, language, 'miyu-localized-copy')}
-          ${renderSectionHeading(content.SECTION_LABELS.avoid, language)}
-          ${renderLocalizedBlock(sections.hair.avoid, language, 'miyu-localized-copy')}
-          ${renderSectionHeading(content.SECTION_LABELS.hairExample, language)}
-          ${renderReferenceGallery(sections.hair.examples, language, 'miyu-hair-examples')}
-        </section>
-        <section class="miyu-explanation-section miyu-accessory-fashion">
-          ${renderSectionHeading(content.SECTION_LABELS.accessoryFashion, language)}
-          ${renderLocalizedBlock(sections.accessoryFashion, language, 'miyu-localized-copy')}
-        </section>
+      <div class="miyu-explanation-page-head">
+        ${renderSectionHeading(page.title, language)}
+        <span>${safeIndex + 1} / ${draft.pages.length}</span>
       </div>
+      ${renderExplanationPage(draft, page)}
+      <footer class="miyu-explanation-pager">
+        <button class="miyu-button miyu-secondary" type="button" data-action="explanation-previous"${safeIndex === 0 ? ' disabled' : ''}>이전</button>
+        <button class="miyu-button miyu-primary" type="button" data-action="explanation-next"${safeIndex === draft.pages.length - 1 ? ' disabled' : ''}>다음</button>
+      </footer>
     </section>`;
+  }
+
+  function renderExplanationView(state, typeCode, pageIndex = 0) {
+    const draft = content.getExplanation(
+      typeCode,
+      state.profile.gender,
+      state.profile.explanationLanguage
+    );
+    return draft ? renderExplanationPanel(draft, state.profile, pageIndex) : '';
   }
 
   function createController(adapters) {
@@ -531,8 +557,29 @@
 
     function confirmType() {
       if (!state.selectedType) return { error: '최종 타입을 선택해 주세요' };
-      location.hash = core.explanationHash(state.selectedType);
+      location.hash = `#/diagnosis/explanation/${state.selectedType.toLowerCase()}/1`;
       return { error: null };
+    }
+
+    function moveExplanation(pageIndex, direction) {
+      const typeCode = state.selectedType;
+      const draft = typeCode && content.getExplanation(
+        typeCode,
+        state.profile.gender,
+        state.profile.explanationLanguage
+      );
+      if (!draft) return { error: '최종 타입을 선택해 주세요' };
+      const nextIndex = Math.max(0, Math.min(draft.pages.length - 1, pageIndex + direction));
+      location.hash = `#/diagnosis/explanation/${typeCode.toLowerCase()}/${nextIndex + 1}`;
+      return { error: null };
+    }
+
+    function previousExplanation(pageIndex) {
+      return moveExplanation(pageIndex, -1);
+    }
+
+    function nextExplanation(pageIndex) {
+      return moveExplanation(pageIndex, 1);
     }
 
     function newDiagnosis() {
@@ -596,6 +643,31 @@
         return { kind: 'result', state };
       }
 
+      const explanationMatch = hash.match(/^#\/diagnosis\/explanation\/([a-d]-[1-3])\/(\d+)$/i);
+      if (explanationMatch) {
+        const typeCode = explanationMatch[1].toUpperCase();
+        if (state.selectedType !== typeCode) {
+          location.hash = '#/diagnosis/result';
+          return { kind: 'redirect', state };
+        }
+        const draft = content.getExplanation(
+          typeCode,
+          state.profile.gender,
+          state.profile.explanationLanguage
+        );
+        if (!draft) {
+          location.hash = '#/diagnosis/result';
+          return { kind: 'redirect', state };
+        }
+        const requestedIndex = Number(explanationMatch[2]) - 1;
+        return {
+          kind: 'explanation',
+          state,
+          typeCode,
+          pageIndex: Math.max(0, Math.min(draft.pages.length - 1, requestedIndex))
+        };
+      }
+
       location.hash = '#/';
       return { kind: 'redirect', state };
     }
@@ -613,6 +685,8 @@
       gotoQuestion,
       selectType,
       confirmType,
+      previousExplanation,
+      nextExplanation,
       newDiagnosis,
       resolveRoute
     };
@@ -788,6 +862,9 @@
         view.innerHTML = renderQuestionView(route.state, route.questionIndex);
       }
       if (route.kind === 'result') view.innerHTML = renderResultView(route.state);
+      if (route.kind === 'explanation') {
+        view.innerHTML = renderExplanationView(route.state, route.typeCode, route.pageIndex);
+      }
       appElement.style.display = 'block';
       appElement.classList.remove('miyu-drawer-open');
       const topNav = document.getElementById('topNav');
@@ -883,6 +960,12 @@
         mountedController.confirmType();
         return;
       }
+      if (action === 'explanation-previous' || action === 'explanation-next') {
+        const pageIndex = Number(target.closest('[data-explanation-page]').dataset.explanationPage);
+        if (action === 'explanation-previous') mountedController.previousExplanation(pageIndex);
+        if (action === 'explanation-next') mountedController.nextExplanation(pageIndex);
+        return;
+      }
       if (action === 'new-diagnosis') {
         mountedController.newDiagnosis();
       }
@@ -907,6 +990,9 @@
       view.innerHTML = renderQuestionView(route.state, route.questionIndex);
     }
     if (route.kind === 'result') view.innerHTML = renderResultView(route.state);
+    if (route.kind === 'explanation') {
+      view.innerHTML = renderExplanationView(route.state, route.typeCode, route.pageIndex);
+    }
     mountedApp.style.display = 'block';
     mountedApp.classList.remove('miyu-drawer-open');
     const topNav = document.getElementById('topNav');
@@ -924,8 +1010,10 @@
     renderQuestionView,
     renderResultView,
     renderLocalizedBlock,
+    localizedGroupDisplayName,
     renderDetailTable,
     renderExplanationPanel,
+    renderExplanationView,
     createController,
     getMountedProfile,
     isMaleLegacyRoute,

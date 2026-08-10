@@ -37,10 +37,10 @@ function collectReferenceAssets(rootDir) {
   const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
   const expectedKeys = [
     ...groups.map(group => `reference/intro/${group}.jpg`),
-    ...types.map(type => `reference/female/face/${type}.jpg`),
+    ...types.map(type => `reference/average/female/${type}.jpg`),
     ...types.map(type => `reference/female/makeup/${type}.jpg`),
     ...groups.map(group => `reference/female/hair/${group}.jpg`),
-    ...types.map(type => `reference/male/face/${type}.jpg`),
+    ...types.map(type => `reference/average/male/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/${group}.jpg`)
   ].sort();
   const manifestKeys = Object.keys(manifest.assets).sort();

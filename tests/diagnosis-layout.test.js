@@ -34,10 +34,11 @@ function questionState(gender = 'female') {
 }
 
 
-function explanationHtml() {
+function explanationHtml(pageIndex = 1) {
   return ui.renderExplanationPanel(
     content.getExplanation('B-1', 'male', 'ja'),
-    completedState().profile
+    completedState().profile,
+    pageIndex
   );
 }
 
@@ -171,8 +172,8 @@ test('세로 태블릿은 해설 이미지와 두 언어를 위아래로 표시�
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   await page.setContent(`<style>${css}</style>${explanationHtml()}`);
 
-  const copyColumns = await page.locator('.miyu-explanation-copy').evaluate(element =>
-    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+  const translatedBelow = await page.locator('.miyu-summary-list .miyu-language-translated').first().evaluate(element =>
+    element.getBoundingClientRect().top >= element.previousElementSibling.getBoundingClientRect().bottom
   );
   const visualRatio = await page.locator('.miyu-explanation-visual').evaluate(element =>
     getComputedStyle(element).aspectRatio
@@ -181,7 +182,7 @@ test('세로 태블릿은 해설 이미지와 두 언어를 위아래로 표시�
     element.getBoundingClientRect().width
   );
 
-  assert.equal(copyColumns, 1);
+  assert.equal(translatedBelow, true);
   assert.equal(visualRatio, '4 / 5');
   assert.ok(visualWidth <= 380, `portrait visual width was ${visualWidth}`);
   await page.close();
@@ -191,21 +192,21 @@ test('세로 태블릿은 해설 이미지와 두 언어를 위아래로 표시�
 test('세로 태블릿의 평균 얼굴과 스타일 참고 이미지는 카드 안에서 보인다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
-  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+  await page.setContent(`<style>${css}</style>${explanationHtml(1)}${explanationHtml(5)}${explanationHtml(6)}`);
 
-  const figures = page.locator('.miyu-average-face, .miyu-reference-gallery');
+  const figures = page.locator('.miyu-average-face-visual, .miyu-reference-gallery');
   assert.equal(await figures.count(), 3);
-  assert.ok(await page.locator('.miyu-average-face img').count() >= 1);
+  assert.ok(await page.locator('.miyu-average-face-visual img').count() >= 1);
   assert.ok(await page.locator('.miyu-reference-gallery img').count() >= 2);
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
   await page.close();
 });
 
 
-test('세로 태블릿의 상세 10행은 셀 안에서 두 언어를 쌓고 가로로 넘치지 않는다', async () => {
+test('세로 태블릿의 상세 특징은 5행씩 나뉘고 셀 안에서 두 언어를 쌓는다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
-  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+  await page.setContent(`<style>${css}</style>${explanationHtml(2)}${explanationHtml(3)}`);
 
   const rows = page.locator('.miyu-detail-row');
   assert.equal(await rows.count(), 10);
@@ -237,7 +238,7 @@ test('세로 태블릿의 상세 10행은 셀 안에서 두 언어를 쌓고 가
 test('출력 화면은 한국어와 선택 언어를 모두 유지한다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
-  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+  await page.setContent(`<style>${css}</style>${explanationHtml(2)}`);
   await page.emulateMedia({ media: 'print' });
 
   assert.equal(await page.locator('.miyu-language-ko').first().isVisible(), true);
@@ -253,16 +254,15 @@ test('출력 화면은 한국어와 선택 언어를 모두 유지한다', async
 test('가로 태블릿은 이미지 옆에 한국어와 선택 언어를 2열로 표시한다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 1194, height: 834 } });
-  await page.setContent(`<style>${css}</style>${explanationHtml()}`);
+  await page.setContent(`<style>${css}</style>${explanationHtml(1)}`);
 
   const layoutColumns = await page.locator('.miyu-explanation-layout').evaluate(element =>
     getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
   );
-  const copyColumns = await page.locator('.miyu-explanation-copy').evaluate(element =>
-    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
-  );
+  const hasBilingualSummary = await page.locator('.miyu-summary-list [lang="ko"]').count()
+    && await page.locator('.miyu-summary-list [lang="ja"]').count();
 
   assert.equal(layoutColumns, 2);
-  assert.equal(copyColumns, 2);
+  assert.ok(hasBilingualSummary);
   await page.close();
 });
