@@ -292,6 +292,21 @@ test('해설은 평균 얼굴을 이목구비 특징보다 먼저, 스타일 사
   assert.match(html, /メイク例/);
 });
 
+test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시한다', () => {
+  const state = answeredState();
+  state.selectedType = 'A-1';
+  const draft = content.getExplanation('A-1', 'female', 'ja');
+
+  const html = ui.renderExplanationPanel(draft, state.profile, 0);
+
+  assert.match(html, /class="miyu-type-identity"/);
+  assert.match(html, /Blossom · 블로썸/);
+  assert.match(html, /A-1 판타지/);
+  assert.match(html, /data-action="explanation-next"/);
+  assert.doesNotMatch(html, /miyu-mood/);
+  assert.doesNotMatch(html, /miyu-hair/);
+});
+
 test('해설 패널은 모든 고객용 섹션을 한국어와 선택 언어로 표시한다', () => {
   const draft = content.getExplanation('C-3', 'female', 'ja');
   const html = ui.renderExplanationPanel(draft, validProfile());

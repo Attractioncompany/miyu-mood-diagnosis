@@ -54,14 +54,24 @@ test('해설은 평균 얼굴과 사진 참고가 있는 메이크업·헤어 �
   const female = content.getExplanation('A-1', 'female', 'zh-TW');
   const male = content.getExplanation('A-1', 'male', 'ja');
 
-  assert.match(female.averageFace.image, /^reference\/female\/face\/a-1\.jpg$/);
-  assert.match(male.averageFace.image, /^reference\/male\/face\/a-1\.jpg$/);
+  assert.match(female.averageFace.image, /^reference\/average\/female\/a-1\.jpg$/);
+  assert.match(male.averageFace.image, /^reference\/average\/male\/a-1\.jpg$/);
   assert.equal(female.sections.makeup.examples.length, 1);
   assert.equal(female.sections.hair.examples.length, 1);
   assert.equal(male.sections.makeup.examples.length, 1);
   assert.equal(male.sections.hair.examples.length, 1);
   assert.ok(female.sections.makeup.copy['zh-TW'].trim());
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
+});
+
+test('해설은 상담 순서대로 한 섹션씩 넘길 수 있는 여섯 페이지를 제공한다', () => {
+  const draft = content.getExplanation('A-1', 'female', 'ja');
+
+  assert.deepEqual(draft.pages.map(page => page.id), [
+    'summary', 'facial-features', 'mood', 'makeup', 'hair', 'accessory-fashion'
+  ]);
+  assert.ok(draft.pages.every(page => page.title.ko.trim() && page.title.ja.trim()));
+  assert.ok(draft.pages.every(page => page.content.ko.trim() && page.content.ja.trim()));
 });
 
 test('추천 문구의 언어가 빠지면 완전성 검사가 실패한다', () => {
