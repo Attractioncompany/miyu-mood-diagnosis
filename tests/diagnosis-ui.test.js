@@ -139,6 +139,19 @@ test('소개 2페이지는 네 개의 얼굴 카드와 두 언어를 표시한�
   assert.match(html, /華やかで愛らしい/);
 });
 
+test('남성 소개와 결과 타입 카드는 여성 전용 이미지를 참조하지 않는다', () => {
+  const state = answeredState();
+  state.profile.gender = 'male';
+
+  const intro = ui.renderIntroView(state, 2);
+  const result = ui.renderResultView(state);
+
+  assert.match(intro, /reference\/average\/male\/a-2\.jpg/);
+  assert.doesNotMatch(intro, /reference\/intro\/a\.jpg/);
+  assert.match(result, /reference\/average\/male\/a-1\.jpg/);
+  assert.doesNotMatch(result, /types\/a-1\.png/);
+});
+
 test('브릿지는 컨설턴트가 진단하고 결과를 설명한다고 안내한다', () => {
   const state = core.createInitialState('2026-08-09');
   state.profile = validProfile({ explanationLanguage: 'ja' });

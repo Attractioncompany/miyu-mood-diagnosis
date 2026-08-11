@@ -79,7 +79,7 @@
         ? ['A', 'B', 'C', 'D'].map(group => ({
             group,
             label: data.GROUP_LABELS[safeGender][group],
-            image: data.INTRO_GROUP_VISUALS[group].image,
+            image: data.INTRO_GROUP_VISUALS[group].image[safeGender],
             caption: data.INTRO_GROUP_VISUALS[group].caption
           }))
         : []
@@ -128,7 +128,8 @@
       }
     }
     for (const [group, reference] of Object.entries(data.INTRO_GROUP_VISUALS || {})) {
-      if (!reference.image || !reference.image.startsWith('reference/intro/')) {
+      if (!reference.image || !reference.image.female?.startsWith('reference/intro/')
+        || !reference.image.male?.startsWith('reference/average/male/')) {
         throw new Error(`Missing intro reference: ${group}`);
       }
       assertLocalizedValue(reference.caption, `intro reference caption: ${group}`);

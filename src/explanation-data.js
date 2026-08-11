@@ -58,10 +58,10 @@
   };
 
   const INTRO_GROUP_VISUALS = {
-    A: { image: 'reference/intro/a.jpg', caption: localized('화사하고 사랑스러운', '華やかで愛らしい', '明媚又甜美', '明媚又甜美') },
-    B: { image: 'reference/intro/b.jpg', caption: localized('부드럽고 우아한', 'やわらかく上品な', '柔和又优雅', '柔和又優雅') },
-    C: { image: 'reference/intro/c.jpg', caption: localized('분위기와 개성이 돋보이는', '雰囲気と個性が際立つ', '氛围与个性突出', '氛圍與個性突出') },
-    D: { image: 'reference/intro/d.jpg', caption: localized('선명하고 세련된', '明確で洗練された', '鲜明又利落', '鮮明又俐落') }
+    A: { image: { female: 'reference/intro/a.jpg', male: 'reference/average/male/a-2.jpg' }, caption: localized('화사하고 사랑스러운', '華やかで愛らしい', '明媚又甜美', '明媚又甜美') },
+    B: { image: { female: 'reference/intro/b.jpg', male: 'reference/average/male/b-2.jpg' }, caption: localized('부드럽고 우아한', 'やわらかく上品な', '柔和又优雅', '柔和又優雅') },
+    C: { image: { female: 'reference/intro/c.jpg', male: 'reference/average/male/c-2.jpg' }, caption: localized('분위기와 개성이 돋보이는', '雰囲気と個性が際立つ', '氛围与个性突出', '氛圍與個性突出') },
+    D: { image: { female: 'reference/intro/d.jpg', male: 'reference/average/male/d-2.jpg' }, caption: localized('선명하고 세련된', '明確で洗練された', '鲜明又利落', '鮮明又俐落') }
   };
 
   const INTRO_PAGES = [

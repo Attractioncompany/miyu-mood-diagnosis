@@ -246,6 +246,9 @@
       const rank = ranks[group];
       const groupName = content.getGroupName(group, state.profile.gender);
       const typeCards = groupTypes.map(type => {
+        const typeImage = state.profile.gender === 'male'
+          ? `reference/average/male/${type.code.toLowerCase()}.jpg`
+          : type.image;
         const selected = state.selectedType === type.code;
         return `<button class="miyu-type-card" type="button"
           data-action="select-type" data-type="${type.code}"
@@ -253,7 +256,7 @@
           aria-pressed="${selected}">
           ${renderRankBadge(rank)}
           ${selected ? '<span class="miyu-selected-badge">선택</span>' : ''}
-          <span class="miyu-type-photo"><img src="${asset(type.image)}" data-asset="${type.image}" alt="${escapeHtml(type.name)}"></span>
+          <span class="miyu-type-photo"><img src="${asset(typeImage)}" data-asset="${typeImage}" alt="${escapeHtml(type.name)}"></span>
           <span class="miyu-type-code">${type.code}</span>
           <strong>${escapeHtml(type.name)}</strong>
         </button>`;
