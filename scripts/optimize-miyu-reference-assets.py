@@ -20,6 +20,10 @@ EXPECTED = (
     + [f'female/hair/{group}.jpg' for group in GROUPS]
     + [f'average/male/{code}.jpg' for code in TYPES]
     + [f'male/hair/{group}.jpg' for group in GROUPS]
+    + [f'male/grooming/recommended/{group}.jpg' for group in GROUPS]
+    + [f'male/grooming/avoid/{group}.jpg' for group in GROUPS]
+    + [f'male/hair/recommended/{group}.jpg' for group in GROUPS]
+    + [f'male/hair/avoid/{group}.jpg' for group in GROUPS]
 )
 
 

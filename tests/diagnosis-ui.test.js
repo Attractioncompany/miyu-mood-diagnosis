@@ -294,14 +294,14 @@ test('해설은 평균 얼굴을 이목구비 특징보다 먼저, 스타일 사
   const draft = content.getExplanation('B-2', 'female', 'ja');
   const facial = ui.renderExplanationPanel(draft, validProfile(), 1);
   const makeup = ui.renderExplanationPanel(draft, validProfile(), 5);
-  const hair = ui.renderExplanationPanel(draft, validProfile(), 6);
+  const hair = ui.renderExplanationPanel(draft, validProfile(), 7);
 
   assert.match(facial, /miyu-average-face/);
   assert.match(facial, /miyu-facial-features/);
   assert.match(makeup, /miyu-makeup-examples/);
   assert.match(hair, /miyu-hair-examples/);
-  assert.match(makeup, /메이크업 예시/);
-  assert.match(makeup, /メイク例/);
+  assert.match(makeup, /추천 메이크업/);
+  assert.match(makeup, /おすすめのメイク/);
 });
 
 test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시한다', () => {
@@ -337,8 +337,9 @@ test('해설 패널은 모든 고객용 섹션을 한국어와 선택 언어로 
     '이목구비 특징', '顔立ちの特徴',
     '이 무드의 분위기', 'このムードの雰囲気',
     '액세서리 및 패션', 'アクセサリーとファッション',
-    '헤어', 'ヘア',
-    '메이크업', 'メイク',
+    '추천 헤어', 'おすすめのヘア',
+    '추천 메이크업', 'おすすめのメイク',
+    '피하면 좋은 헤어', '控えたいヘア',
   ]) assert.match(html, new RegExp(label));
 
   assert.match(html, /lang="ko"/);
@@ -357,7 +358,8 @@ test('남성 해설은 메이크업 대신 그루밍을 두 언어로 표시한�
   }), 5);
 
   assert.match(html, /그루밍/);
-  assert.match(html, /儀容整理/);
+  assert.match(html, /推薦的妝容與儀容/);
+  assert.match(html, /儀容示例/);
   assert.match(html, /lang="zh-Hant"/);
   assert.doesNotMatch(html, />메이크업</);
 });
@@ -489,5 +491,5 @@ test('해설 주소는 선택한 최종 타입의 페이지 범위 안에서만 
 
   assert.equal(view.kind, 'explanation');
   assert.equal(view.typeCode, 'C-2');
-  assert.equal(view.pageIndex, 7);
+  assert.equal(view.pageIndex, 9);
 });

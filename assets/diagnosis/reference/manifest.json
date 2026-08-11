@@ -288,6 +288,102 @@
       "mime": "image/jpeg",
       "width": 720,
       "height": 566
+    },
+    "reference/male/grooming/recommended/a.jpg": {
+      "file": "diagnosis/reference/male/grooming/recommended/a.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/recommended/b.jpg": {
+      "file": "diagnosis/reference/male/grooming/recommended/b.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/recommended/c.jpg": {
+      "file": "diagnosis/reference/male/grooming/recommended/c.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/recommended/d.jpg": {
+      "file": "diagnosis/reference/male/grooming/recommended/d.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/avoid/a.jpg": {
+      "file": "diagnosis/reference/male/grooming/avoid/a.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/avoid/b.jpg": {
+      "file": "diagnosis/reference/male/grooming/avoid/b.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/avoid/c.jpg": {
+      "file": "diagnosis/reference/male/grooming/avoid/c.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/grooming/avoid/d.jpg": {
+      "file": "diagnosis/reference/male/grooming/avoid/d.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/recommended/a.jpg": {
+      "file": "diagnosis/reference/male/hair/recommended/a.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/recommended/b.jpg": {
+      "file": "diagnosis/reference/male/hair/recommended/b.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/recommended/c.jpg": {
+      "file": "diagnosis/reference/male/hair/recommended/c.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/recommended/d.jpg": {
+      "file": "diagnosis/reference/male/hair/recommended/d.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/avoid/a.jpg": {
+      "file": "diagnosis/reference/male/hair/avoid/a.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/avoid/b.jpg": {
+      "file": "diagnosis/reference/male/hair/avoid/b.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/avoid/c.jpg": {
+      "file": "diagnosis/reference/male/hair/avoid/c.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/male/hair/avoid/d.jpg": {
+      "file": "diagnosis/reference/male/hair/avoid/d.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
     }
   }
 }
