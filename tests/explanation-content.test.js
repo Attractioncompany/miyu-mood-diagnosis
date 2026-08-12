@@ -70,16 +70,34 @@ test('해설은 평균 얼굴과 추천·피하면 좋은 방향 사진 참고�
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
 });
 
-test('해설은 긴 이목구비 상세와 추천·피하면 좋은 방향을 나눈 열 페이지로 제공한다', () => {
+test('PPT 기준으로 헤어는 대분류, 여성 메이크업은 타입명 기준으로 연결한다', () => {
+  const blossom = content.getExplanation('A-1', 'female', 'ja');
+  const charisma = content.getExplanation('D-1', 'female', 'ja');
+  const clear = content.getExplanation('D-2', 'female', 'ja');
+  const sharp = content.getExplanation('D-3', 'female', 'ja');
+
+  assert.match(blossom.sections.hair.copy.ko, /윤기.*볼륨.*레이어/);
+  assert.match(blossom.sections.hair.avoid.ko, /무거운 일자.*강한 블랙.*슬릭백/);
+  assert.match(charisma.sections.makeup.copy.ko, /레드립.*강렬한 음영/);
+  assert.match(charisma.sections.makeup.avoid.ko, /청순.*포인트 없는/);
+  assert.match(clear.sections.makeup.copy.ko, /정갈.*누드.*브릭/);
+  assert.match(sharp.sections.makeup.copy.ko, /직선적인 아이라인.*윤곽 음영/);
+  assert.match(sharp.sections.makeup.avoid.ko, /동글고 귀여운 치크.*과한 애굣살/);
+  assert.doesNotMatch(sharp.sections.makeup.copy.ko, /피하면 좋아요/);
+  assert.doesNotMatch(sharp.sections.makeup.copy.ja, /控えめにします/);
+});
+
+test('해설은 정체성 페이지와 추천·피하면 좋은 방향을 나눈 여덟 페이지로 제공한다', () => {
   const draft = content.getExplanation('A-1', 'female', 'ja');
 
   assert.deepEqual(draft.pages.map(page => page.id), [
-    'summary', 'facial-features', 'facial-details-1', 'facial-details-2',
-    'mood', 'makeup-recommended', 'makeup-avoid',
+    'identity', 'facial-details-1', 'facial-details-2',
+    'makeup-recommended', 'makeup-avoid',
     'hair-recommended', 'hair-avoid', 'accessory-fashion'
   ]);
+  assert.equal(draft.pages[1].details.length, 5);
   assert.equal(draft.pages[2].details.length, 5);
-  assert.equal(draft.pages[3].details.length, 5);
+  assert.match(draft.pages[0].content.ko, /신비|화사|생기|사랑스러움/);
   assert.ok(draft.pages.every(page => page.title.ko.trim() && page.title.ja.trim()));
   assert.ok(draft.pages.every(page => page.content.ko.trim() && page.content.ja.trim()));
 });
@@ -173,24 +191,11 @@ test('번체 해설은 명시적인 번체 문장이고 의미가 다른 글자�
   assert.doesNotMatch(definition, /髮達|椭|围/);
 });
 
-test('남성 B·C 여섯 타입의 머리 흐름은 번체에서 髮流로 표기한다', () => {
-  const affectedTypes = ['B-1', 'B-2', 'B-3', 'C-1', 'C-2', 'C-3'];
-  const expectedByGroup = {
-    B: '保留柔和髮流的端正髮型能增強舒適感。',
-    C: '保留自然髮流或單側走向，突出個人氛圍。'
-  };
-  const actual = affectedTypes.map(typeCode => [
-    typeCode,
-    content.getExplanation(typeCode, 'male', 'zh-TW')
-      .sections.hair['zh-TW']
-  ]);
-  const expected = affectedTypes.map(typeCode => [
-    typeCode,
-    expectedByGroup[typeCode[0]]
-  ]);
-
-  assert.deepEqual(actual, expected);
-  for (const [, hair] of actual) {
+test('남성 B·C 여섯 타입의 PPT 헤어 설명은 번체에서 髮流로 표기한다', () => {
+  for (const typeCode of ['B-1', 'B-2', 'B-3', 'C-1', 'C-2', 'C-3']) {
+    const hair = content.getExplanation(typeCode, 'male', 'zh-TW')
+      .sections.hair['zh-TW'];
+    assert.match(hair, /髮流/);
     assert.doesNotMatch(hair, /發流/);
   }
 });
