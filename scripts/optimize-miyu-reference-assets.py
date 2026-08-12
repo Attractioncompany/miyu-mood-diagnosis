@@ -16,14 +16,17 @@ TYPES = ('a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', '
 EXPECTED = (
     [f'intro/{group}.jpg' for group in GROUPS]
     + [f'average/female/{code}.jpg' for code in TYPES]
-    + [f'female/makeup/{code}.jpg' for code in TYPES]
-    + [f'female/hair/{group}.jpg' for group in GROUPS]
+    + [f'female/makeup/recommended/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
+    + [f'female/makeup/avoid/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
+    + [f'female/hair/recommended/{group}.jpg' for group in GROUPS]
+    + [f'female/hair/avoid/{group}.jpg' for group in GROUPS]
+    + [f'female/fashion/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
     + [f'average/male/{code}.jpg' for code in TYPES]
     + [f'male/hair/{group}.jpg' for group in GROUPS]
     + [f'male/grooming/recommended/{group}.jpg' for group in GROUPS]
     + [f'male/grooming/avoid/{group}.jpg' for group in GROUPS]
-    + [f'male/hair/recommended/{group}.jpg' for group in GROUPS]
-    + [f'male/hair/avoid/{group}.jpg' for group in GROUPS]
+    + [f'male/grooming-detail/{code}.jpg' for code in TYPES]
+    + [f'male/hair/avoid-ppt/{group}.jpg' for group in GROUPS]
 )
 
 

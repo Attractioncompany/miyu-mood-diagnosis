@@ -60,14 +60,31 @@ test('해설은 평균 얼굴과 추천·피하면 좋은 방향 사진 참고�
   assert.equal(female.sections.makeup.avoidExamples.length, 1);
   assert.equal(female.sections.hair.examples.length, 1);
   assert.equal(female.sections.hair.avoidExamples.length, 1);
+  assert.equal(female.sections.accessoryFashion.examples.length, 1);
+  assert.match(female.sections.makeup.examples[0].image, /^reference\/female\/makeup\/recommended\/fantasy\.jpg$/);
+  assert.match(female.sections.makeup.avoidExamples[0].image, /^reference\/female\/makeup\/avoid\/fantasy\.jpg$/);
+  assert.match(female.sections.hair.examples[0].image, /^reference\/female\/hair\/recommended\/a\.jpg$/);
+  assert.match(female.sections.hair.avoidExamples[0].image, /^reference\/female\/hair\/avoid\/a\.jpg$/);
+  assert.match(female.sections.accessoryFashion.examples[0].image, /^reference\/female\/fashion\/fantasy\.jpg$/);
   assert.equal(male.sections.makeup.examples.length, 1);
   assert.match(male.sections.makeup.examples[0].image, /^reference\/male\/grooming-detail\/a-1\.jpg$/);
   assert.match(male.sections.makeup.avoidExamples[0].image, /^reference\/male\/grooming\/avoid\/a\.jpg$/);
   assert.equal(male.sections.hair.examples.length, 1);
-  assert.match(male.sections.hair.examples[0].image, /^reference\/male\/hair\/recommended\/a\.jpg$/);
-  assert.match(male.sections.hair.avoidExamples[0].image, /^reference\/male\/hair\/avoid\/a\.jpg$/);
+  assert.match(male.sections.hair.examples[0].image, /^reference\/male\/hair\/a\.jpg$/);
+  assert.match(male.sections.hair.avoidExamples[0].image, /^reference\/male\/hair\/avoid-ppt\/a\.jpg$/);
   assert.ok(female.sections.makeup.copy['zh-TW'].trim());
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
+});
+
+test('PPT 시각 자료는 앱 번호가 아니라 타입명으로 연결해 D그룹이 뒤바뀌지 않는다', () => {
+  const charisma = content.getExplanation('D-1', 'female', 'ja');
+  const clear = content.getExplanation('D-2', 'female', 'ja');
+  const sharp = content.getExplanation('D-3', 'female', 'ja');
+
+  assert.match(charisma.sections.makeup.examples[0].image, /makeup\/recommended\/charisma\.jpg$/);
+  assert.match(clear.sections.makeup.examples[0].image, /makeup\/recommended\/clear\.jpg$/);
+  assert.match(sharp.sections.makeup.examples[0].image, /makeup\/recommended\/sharp\.jpg$/);
+  assert.match(charisma.sections.accessoryFashion.examples[0].image, /fashion\/charisma\.jpg$/);
 });
 
 test('PPT 기준으로 헤어는 대분류, 여성 메이크업은 타입명 기준으로 연결한다', () => {

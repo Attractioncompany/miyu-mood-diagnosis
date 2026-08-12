@@ -453,6 +453,10 @@
     }
     return `<section class="miyu-explanation-section miyu-accessory-fashion">
       ${renderLocalizedBlock(sections.accessoryFashion, language, 'miyu-localized-copy')}
+      ${sections.accessoryFashion.examples && sections.accessoryFashion.examples.length ? `
+        ${renderSectionHeading(content.SECTION_LABELS.fashion, language)}
+        ${renderReferenceGallery(sections.accessoryFashion.examples, language, 'miyu-fashion-examples')}
+      ` : ''}
     </section>`;
   }
 
