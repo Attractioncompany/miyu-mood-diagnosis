@@ -73,15 +73,17 @@ function expectedReferenceAssetKeys() {
   return [
     ...groups.map(group => `reference/intro/${group}.jpg`),
     ...types.map(type => `reference/average/female/${type}.jpg`),
-    ...types.map(type => `reference/female/makeup/${type}.jpg`),
-    ...groups.map(group => `reference/female/hair/${group}.jpg`),
+    ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/makeup/recommended/${type}.jpg`),
+    ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/makeup/avoid/${type}.jpg`),
+    ...groups.map(group => `reference/female/hair/recommended/${group}.jpg`),
+    ...groups.map(group => `reference/female/hair/avoid/${group}.jpg`),
+    ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/fashion/${type}.jpg`),
     ...types.map(type => `reference/average/male/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/avoid/${group}.jpg`),
     ...types.map(type => `reference/male/grooming-detail/${type}.jpg`),
-    ...groups.map(group => `reference/male/hair/recommended/${group}.jpg`),
-    ...groups.map(group => `reference/male/hair/avoid/${group}.jpg`)
+    ...groups.map(group => `reference/male/hair/avoid-ppt/${group}.jpg`)
   ].sort();
 }
 
@@ -227,7 +229,7 @@ test('로고·진단·시각 해설 이미지를 외부 경로 없이 HTML 안�
   const keys = Object.keys(assets).sort();
   const expectedKeys = [...expectedDiagnosisAssetKeys(), ...expectedReferenceAssetKeys()].sort();
 
-  assert.equal(new Set(expectedKeys).size, 157);
+  assert.equal(new Set(expectedKeys).size, 181);
   assert.equal(expectedKeys.filter(key => /^questions\/q\d/.test(key)).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('questions/male/')).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('types/')).length, 12);
@@ -243,7 +245,7 @@ test('로고·진단·시각 해설 이미지를 외부 경로 없이 HTML 안�
 });
 
 
-test('최적화 매니페스트는 80개 JPEG와 실제 크기를 고정한다', () => {
+test('최적화 진단 이미지 매니페스트는 80개 JPEG와 실제 크기를 고정한다', () => {
   assert.ok(fs.existsSync(standaloneManifestPath), 'optimized standalone manifest must exist');
   const manifest = JSON.parse(fs.readFileSync(standaloneManifestPath, 'utf8'));
   const assets = Object.values(manifest.assets);

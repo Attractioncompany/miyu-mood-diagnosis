@@ -74,15 +74,17 @@ function collectReferenceAssets(rootDir) {
   const expectedKeys = [
     ...groups.map(group => `reference/intro/${group}.jpg`),
     ...types.map(type => `reference/average/female/${type}.jpg`),
-    ...types.map(type => `reference/female/makeup/${type}.jpg`),
-    ...groups.map(group => `reference/female/hair/${group}.jpg`),
+    ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/makeup/recommended/${type}.jpg`),
+    ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/makeup/avoid/${type}.jpg`),
+    ...groups.map(group => `reference/female/hair/recommended/${group}.jpg`),
+    ...groups.map(group => `reference/female/hair/avoid/${group}.jpg`),
+    ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/fashion/${type}.jpg`),
     ...types.map(type => `reference/average/male/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/avoid/${group}.jpg`),
     ...types.map(type => `reference/male/grooming-detail/${type}.jpg`),
-    ...groups.map(group => `reference/male/hair/recommended/${group}.jpg`),
-    ...groups.map(group => `reference/male/hair/avoid/${group}.jpg`)
+    ...groups.map(group => `reference/male/hair/avoid-ppt/${group}.jpg`)
   ].sort();
   const manifestKeys = Object.keys(manifest.assets).sort();
   if (JSON.stringify(manifestKeys) !== JSON.stringify(expectedKeys)) {

@@ -38,6 +38,15 @@
     )
   };
 
+  // PPT의 D-1~3 표기 순서와 앱의 D-1~3 표기 순서가 다르므로, 시각 자료는
+  // 코드가 아닌 실제 타입명으로 연결한다.
+  const PPT_VISUAL_KEY_BY_TYPE_NAME = Object.freeze({
+    '판타지': 'fantasy', '프루티': 'fruity', '소다': 'soda',
+    '로맨틱': 'romantic', '소프트': 'soft', '엘레강스': 'elegance',
+    '빈티지': 'vintage', '세련': 'refined', '딥시크': 'deep-chic',
+    '카리스마': 'charisma', '클리어': 'clear', '샤프': 'sharp'
+  });
+
   const TYPE_DRAFTS = Object.fromEntries(
     TYPE_CODES.map(typeCode => {
       const type = data.TYPE_CONTENT[typeCode];
@@ -346,19 +355,21 @@
       : data.GROUP_CARE_AVOID[type.group][safeGender];
     const hairAvoid = data.GROUP_HAIR_AVOID[type.group][safeGender];
     const typeAsset = typeCode.toLowerCase();
+    const pptVisualAsset = PPT_VISUAL_KEY_BY_TYPE_NAME[type.name];
     const groupAsset = type.group.toLowerCase();
+    if (!pptVisualAsset) throw new Error(`Missing PPT visual key: ${type.name}`);
     const careExample = safeGender === 'female'
-      ? `reference/female/makeup/${typeAsset}.jpg`
+      ? `reference/female/makeup/recommended/${pptVisualAsset}.jpg`
       : `reference/male/grooming-detail/${typeAsset}.jpg`;
     const careAvoidExample = safeGender === 'female'
-      ? `reference/female/makeup/${typeAsset}.jpg`
+      ? `reference/female/makeup/avoid/${pptVisualAsset}.jpg`
       : `reference/male/grooming/avoid/${groupAsset}.jpg`;
     const hairExample = safeGender === 'female'
-      ? `reference/female/hair/${groupAsset}.jpg`
-      : `reference/male/hair/recommended/${groupAsset}.jpg`;
+      ? `reference/female/hair/recommended/${groupAsset}.jpg`
+      : `reference/male/hair/${groupAsset}.jpg`;
     const hairAvoidExample = safeGender === 'female'
-      ? `reference/female/hair/${groupAsset}.jpg`
-      : `reference/male/hair/avoid/${groupAsset}.jpg`;
+      ? `reference/female/hair/avoid/${groupAsset}.jpg`
+      : `reference/male/hair/avoid-ppt/${groupAsset}.jpg`;
     const sections = {
       facialFeatures: {
         label: data.SECTION_LABELS.facialFeatures,
@@ -377,12 +388,12 @@
         guide: structuredCareGuide,
         examples: [{
           image: careExample,
-          caption: data.REFERENCE_CAPTIONS.makeup[safeGender]
+          caption: data.REFERENCE_CAPTIONS.makeupRecommended[safeGender]
         }],
         avoid: careAvoid,
         avoidExamples: [{
           image: careAvoidExample,
-          caption: data.REFERENCE_CAPTIONS.makeup[safeGender]
+          caption: data.REFERENCE_CAPTIONS.makeupAvoid[safeGender]
         }]
       },
       hair: {
@@ -392,14 +403,20 @@
         avoid: hairAvoid,
         examples: [{
           image: hairExample,
-          caption: data.REFERENCE_CAPTIONS.hair[safeGender]
+          caption: data.REFERENCE_CAPTIONS.hairRecommended[safeGender]
         }],
         avoidExamples: [{
           image: hairAvoidExample,
-          caption: data.REFERENCE_CAPTIONS.hair[safeGender]
+          caption: data.REFERENCE_CAPTIONS.hairAvoid[safeGender]
         }]
       },
-      accessoryFashion: type.recommendations.accessoryFashion[safeGender]
+      accessoryFashion: {
+        ...type.recommendations.accessoryFashion[safeGender],
+        examples: safeGender === 'female' ? [{
+          image: `reference/female/fashion/${pptVisualAsset}.jpg`,
+          caption: data.REFERENCE_CAPTIONS.fashion.female
+        }] : []
+      }
     };
     Object.defineProperties(sections, {
       overview: { value: genderContent.overview },

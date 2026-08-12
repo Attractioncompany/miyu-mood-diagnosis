@@ -15,14 +15,28 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PPT = Path('/Users/oeuvre/Desktop/미유/무드진단/★무드 세부 분류. 20260805.pptx')
 OUTPUT = ROOT / 'assets' / 'diagnosis' / 'reference'
 GROUPS = ('a', 'b', 'c', 'd')
-TYPE_SLIDES = {
-    'a-1': 15, 'a-2': 22, 'a-3': 28,
-    'b-1': 45, 'b-2': 51, 'b-3': 56,
-    'c-1': 73, 'c-2': 79, 'c-3': 85,
-    'd-1': 100, 'd-2': 106, 'd-3': 112,
+# These names follow the PPT, not the app's D-1~3 order. The app resolves them
+# by type name so Clear/Sharp/Charisma cannot be interchanged.
+TYPE_VISUAL_SOURCES = {
+    'fantasy': {'face': 15, 'comparison': 17, 'fashion': (19, 20)},
+    'fruity': {'face': 22, 'comparison': 23, 'fashion': (25, 26)},
+    'soda': {'face': 28, 'comparison': 29, 'fashion': (31, 32)},
+    'romantic': {'face': 45, 'comparison': 46, 'fashion': (48, 49)},
+    'soft': {'face': 51, 'comparison': 52, 'fashion': (54, 55)},
+    'elegance': {'face': 56, 'comparison': 58, 'fashion': (60, 61)},
+    'vintage': {'face': 73, 'comparison': 74, 'fashion': (76, 77)},
+    'refined': {'face': 79, 'comparison': 80, 'fashion': (82, 83)},
+    'deep-chic': {'face': 85, 'comparison': 86, 'fashion': (88, 89)},
+    'clear': {'face': 100, 'comparison': 101, 'fashion': (103, 104)},
+    'sharp': {'face': 106, 'comparison': 107, 'fashion': (109, 110)},
+    'charisma': {'face': 112, 'comparison': 113, 'fashion': (115, 116)},
 }
-FEMALE_HAIR_SLIDES = {'a': 7, 'b': 38, 'c': 67, 'd': 95}
-MALE_HAIR_SLIDES = {'a': 13, 'b': 42, 'c': 70, 'd': 98}
+FEMALE_HAIR_RECOMMENDED_SLIDES = {
+    'a': (7, 8, 9), 'b': (37, 38, 39, 40), 'c': (66, 67, 68), 'd': (94, 95, 96)
+}
+FEMALE_HAIR_AVOID_SLIDES = {'a': (11,)}
+MALE_HAIR_RECOMMENDED_SLIDES = {'a': (13,), 'b': (42,), 'c': (70,), 'd': (98,)}
+MALE_HAIR_AVOID_SLIDES = {'a': (14,), 'b': (43,), 'c': (71,), 'd': (99,)}
 
 
 def open_picture(shape):
@@ -46,10 +60,18 @@ def intro_portrait(image: Image.Image):
     return image.crop((int(width * 0.64), int(height * 0.14), int(width * 0.98), int(height * 0.91)))
 
 
-def collage(slide, destination: Path, columns: int):
-    pictures = [open_picture(shape) for shape in picture_shapes(slide)]
+def sampled(images, limit=12):
+    if len(images) <= limit:
+        return images
+    return [images[round(index * (len(images) - 1) / (limit - 1))] for index in range(limit)]
+
+
+def collage_images(images, destination: Path, columns: int = 3, limit: int = 12):
+    pictures = sampled(images, limit)
+    if not pictures:
+        raise SystemExit(f'No pictures available for {destination}')
     rows = (len(pictures) + columns - 1) // columns
-    cell_width, cell_height, gap = 174, 230, 8
+    cell_width, cell_height, gap = 220, 250, 10
     canvas = Image.new(
         'RGB',
         (columns * cell_width + (columns + 1) * gap, rows * cell_height + (rows + 1) * gap),
@@ -63,6 +85,19 @@ def collage(slide, destination: Path, columns: int):
     jpg(canvas, destination, (720, 900))
 
 
+def slide_images(presentation, numbers):
+    return [open_picture(shape) for number in numbers for shape in picture_shapes(presentation.slides[number - 1])]
+
+
+def comparison_images(presentation, slide_number, side):
+    shapes = picture_shapes(presentation.slides[slide_number - 1])
+    midpoint = 7_500_000
+    selected = [shape for shape in shapes if (shape.left < midpoint) == (side == 'recommended')]
+    if not selected:
+        raise SystemExit(f'Missing {side} comparison pictures on slide {slide_number}')
+    return [open_picture(shape) for shape in selected]
+
+
 def import_assets(ppt_path: Path):
     if not ppt_path.is_file():
         raise SystemExit(f'Missing MIYU reference PPT: {ppt_path}')
@@ -74,17 +109,31 @@ def import_assets(ppt_path: Path):
     for group, shape in zip(GROUPS, intro_pictures):
         jpg(intro_portrait(open_picture(shape)), OUTPUT / 'intro' / f'{group}.jpg')
 
-    for code, slide_number in TYPE_SLIDES.items():
-        pictures = picture_shapes(presentation.slides[slide_number - 1])
+    for key, source in TYPE_VISUAL_SOURCES.items():
+        pictures = picture_shapes(presentation.slides[source['face'] - 1])
         if len(pictures) < 2:
-            raise SystemExit(f'Expected at least 2 type photos on slide {slide_number}: {code}')
-        jpg(open_picture(pictures[0]), OUTPUT / 'female' / 'face' / f'{code}.jpg')
-        jpg(open_picture(pictures[-1]), OUTPUT / 'female' / 'makeup' / f'{code}.jpg')
+            raise SystemExit(f'Expected at least 2 type photos on slide {source["face"]}: {key}')
+        collage_images(
+            comparison_images(presentation, source['comparison'], 'recommended'),
+            OUTPUT / 'female' / 'makeup' / 'recommended' / f'{key}.jpg'
+        )
+        collage_images(
+            comparison_images(presentation, source['comparison'], 'avoid'),
+            OUTPUT / 'female' / 'makeup' / 'avoid' / f'{key}.jpg'
+        )
+        collage_images(
+            slide_images(presentation, source['fashion']),
+            OUTPUT / 'female' / 'fashion' / f'{key}.jpg'
+        )
 
-    for group, slide_number in FEMALE_HAIR_SLIDES.items():
-        collage(presentation.slides[slide_number - 1], OUTPUT / 'female' / 'hair' / f'{group}.jpg', 4)
-    for group, slide_number in MALE_HAIR_SLIDES.items():
-        collage(presentation.slides[slide_number - 1], OUTPUT / 'male' / 'hair' / f'{group}.jpg', 5)
+    for group, slides in FEMALE_HAIR_RECOMMENDED_SLIDES.items():
+        collage_images(slide_images(presentation, slides), OUTPUT / 'female' / 'hair' / 'recommended' / f'{group}.jpg')
+    for group, slides in FEMALE_HAIR_AVOID_SLIDES.items():
+        collage_images(slide_images(presentation, slides), OUTPUT / 'female' / 'hair' / 'avoid' / f'{group}.jpg')
+    for group, slides in MALE_HAIR_RECOMMENDED_SLIDES.items():
+        collage_images(slide_images(presentation, slides), OUTPUT / 'male' / 'hair' / f'{group}.jpg')
+    for group, slides in MALE_HAIR_AVOID_SLIDES.items():
+        collage_images(slide_images(presentation, slides), OUTPUT / 'male' / 'hair' / 'avoid-ppt' / f'{group}.jpg')
 
 
 if __name__ == '__main__':
