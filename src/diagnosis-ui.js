@@ -192,6 +192,7 @@
           aria-pressed="${pressed}">
           <span class="miyu-option-code">${option.code}</span>
           <span class="miyu-option-label">${escapeHtml(option.label)}</span>
+          <span class="miyu-option-detail">${escapeHtml(option.detail || '')}</span>
           <span class="miyu-checkmark" aria-hidden="true">✓</span>
         </button>
         ${images ? `<div class="miyu-answer-image" data-image-count="${optionImages.length}">${images}</div>` : '<div class="miyu-answer-no-image" aria-hidden="true"></div>'}
@@ -211,6 +212,11 @@
         </div>
         <h1>${escapeHtml(question.title)}</h1>
         <p class="miyu-question-subtitle">${escapeHtml(question.subtitle)}</p>
+        <aside class="miyu-question-guidance" aria-label="${escapeHtml(question.title)} 선택 기준">
+          <p class="miyu-question-rule">정면·무표정 기준으로 먼저 보고, 두 특징이 모두 분명할 때만 최대 2개를 선택해요.</p>
+          <p><strong>판단 기준</strong>${escapeHtml(question.guide || '')}</p>
+          <p><strong>헷갈릴 때</strong>${escapeHtml(question.hint || '')}</p>
+        </aside>
         <div class="miyu-answer-grid">${cards}</div>
         <p class="miyu-selection-error" aria-live="polite"></p>
       </main>
