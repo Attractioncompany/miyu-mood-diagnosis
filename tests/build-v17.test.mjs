@@ -79,6 +79,7 @@ function expectedReferenceAssetKeys() {
     ...groups.map(group => `reference/male/hair/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/avoid/${group}.jpg`),
+    ...types.map(type => `reference/male/grooming-detail/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/hair/avoid/${group}.jpg`)
   ].sort();
@@ -226,7 +227,7 @@ test('로고·진단·시각 해설 이미지를 외부 경로 없이 HTML 안�
   const keys = Object.keys(assets).sort();
   const expectedKeys = [...expectedDiagnosisAssetKeys(), ...expectedReferenceAssetKeys()].sort();
 
-  assert.equal(new Set(expectedKeys).size, 145);
+  assert.equal(new Set(expectedKeys).size, 157);
   assert.equal(expectedKeys.filter(key => /^questions\/q\d/.test(key)).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('questions/male/')).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('types/')).length, 12);

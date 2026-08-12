@@ -384,6 +384,78 @@
       "mime": "image/jpeg",
       "width": 720,
       "height": 900
+    },
+    "reference/male/grooming-detail/a-1.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/a-1.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/a-2.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/a-2.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/a-3.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/a-3.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/b-1.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/b-1.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/b-2.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/b-2.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/b-3.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/b-3.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/c-1.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/c-1.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/c-2.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/c-2.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/c-3.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/c-3.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/d-1.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/d-1.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/d-2.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/d-2.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
+    },
+    "reference/male/grooming-detail/d-3.jpg": {
+      "file": "diagnosis/reference/male/grooming-detail/d-3.jpg",
+      "mime": "image/jpeg",
+      "width": 560,
+      "height": 699
     }
   }
 }

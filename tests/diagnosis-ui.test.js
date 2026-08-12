@@ -325,6 +325,28 @@ test('해설은 평균 얼굴을 이목구비 특징보다 먼저, 스타일 사
   assert.match(makeup, /おすすめのメイク/);
 });
 
+test('추천 메이크업 페이지는 PPT의 네 설명 축과 추천 목록을 따로 표시한다', () => {
+  const draft = content.getExplanation('B-1', 'female', 'ja');
+  const html = ui.renderExplanationPanel(draft, validProfile(), 3);
+
+  for (const label of ['피부 표현', '색감', '전체 느낌', '살릴 포인트']) {
+    assert.match(html, new RegExp(label));
+  }
+  assert.match(html, /로즈핑크 메이크업/);
+  assert.match(html, /ローズピンク/);
+  assert.match(html, /miyu-guide-detail-card/);
+  assert.match(html, /miyu-guide-list/);
+});
+
+test('피하면 좋은 헤어 페이지는 PPT 회피 스타일을 목록으로 따로 표시한다', () => {
+  const draft = content.getExplanation('A-1', 'female', 'ja');
+  const html = ui.renderExplanationPanel(draft, validProfile(), 6);
+
+  assert.match(html, /슬릭백/);
+  assert.match(html, /オールバック/);
+  assert.match(html, /miyu-guide-list/);
+});
+
 test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시한다', () => {
   const state = answeredState();
   state.selectedType = 'A-1';
@@ -383,6 +405,14 @@ test('남성 해설은 메이크업 대신 그루밍을 두 언어로 표시한�
   assert.match(html, /儀容示例/);
   assert.match(html, /lang="zh-Hant"/);
   assert.doesNotMatch(html, />메이크업</);
+});
+
+test('남성 그루밍은 대분류 공용 사진이 아니라 타입별 생성 참고 이미지를 쓴다', () => {
+  const draft = content.getExplanation('C-3', 'male', 'ja');
+  const html = ui.renderExplanationPanel(draft, validProfile({ gender: 'male' }), 3);
+
+  assert.equal(draft.sections.makeup.examples[0].image, 'reference/male/grooming-detail/c-3.jpg');
+  assert.match(html, /data-asset="reference\/male\/grooming-detail\/c-3\.jpg"/);
 });
 
 test('1위와 2위 라벨은 카드 상단용 요소로 점수 숫자와 분리한다', () => {

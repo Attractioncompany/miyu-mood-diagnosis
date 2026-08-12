@@ -1323,6 +1323,79 @@
   margin-top: 10px;
 }
 
+.miyu-guide-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.miyu-guide-detail-card {
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #dfdfdb;
+  background: #fafaf8;
+}
+
+.miyu-guide-detail-card .miyu-localized-heading {
+  margin-bottom: 6px;
+}
+
+.miyu-guide-detail-card .miyu-localized-heading-copy .miyu-language-ko {
+  font-size: 14px;
+}
+
+.miyu-guide-detail-card .miyu-localized-heading-copy .miyu-language-translated {
+  font-size: 12px;
+}
+
+.miyu-guide-detail-card .miyu-localized-copy > div {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.miyu-guide-detail-card .miyu-language-translated {
+  margin-top: 5px;
+  padding-top: 5px;
+}
+
+.miyu-guide-list-section {
+  margin-top: 16px;
+}
+
+.miyu-guide-list-section .miyu-localized-heading {
+  margin-bottom: 8px;
+}
+
+.miyu-guide-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.miyu-guide-list li {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid #e2e2df;
+  background: #fff;
+}
+
+.miyu-guide-list .miyu-localized-copy > div {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.miyu-guide-list .miyu-language-translated {
+  margin-top: 4px;
+  padding-top: 4px;
+}
+
+.miyu-guide-list-section-avoid .miyu-guide-list li {
+  background: #fbf8f6;
+}
+
 .miyu-reference-figure {
   min-width: 0;
   margin: 0;
@@ -1572,6 +1645,14 @@
 
   .miyu-explanation-copy {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .miyu-guide-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .miyu-hair-guide-details {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

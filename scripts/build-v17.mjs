@@ -80,6 +80,7 @@ function collectReferenceAssets(rootDir) {
     ...groups.map(group => `reference/male/hair/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/avoid/${group}.jpg`),
+    ...types.map(type => `reference/male/grooming-detail/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/hair/avoid/${group}.jpg`)
   ].sort();
