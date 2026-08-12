@@ -15,8 +15,6 @@ let browser;
 function completedState() {
   const state = core.createInitialState('2026-07-27');
   state.profile = {
-    customerName: '미유',
-    consultantName: '김컨설턴트',
     explanationLanguage: 'ja',
     gender: 'male',
     diagnosisDate: '2026-07-27'

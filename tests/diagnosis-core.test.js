@@ -5,8 +5,6 @@ const core = require('../src/diagnosis-core.js');
 
 function validProfile(overrides = {}) {
   return {
-    customerName: '미유',
-    consultantName: '김컨설턴트',
     explanationLanguage: 'ja',
     gender: 'male',
     diagnosisDate: '2026-07-30',
@@ -15,25 +13,25 @@ function validProfile(overrides = {}) {
 }
 
 
-test('초기 상태는 새 고객 정보만 포함하고 퍼스널컬러를 제거한다', () => {
+test('초기 상태는 이름 없이 진단 설정만 포함하고 퍼스널컬러를 제거한다', () => {
   const state = core.createInitialState('2026-07-30');
 
   assert.deepEqual(state.profile, {
-    customerName: '',
-    consultantName: '',
     explanationLanguage: '',
     gender: '',
     diagnosisDate: '2026-07-30'
   });
   assert.equal('personalColor' in state.profile, false);
+  assert.equal('customerName' in state.profile, false);
+  assert.equal('consultantName' in state.profile, false);
 });
 
-test('고객 정보 다섯 항목을 모두 입력해야 유효하다', () => {
+test('해설 언어·성별·진단일 세 항목을 입력해야 유효하다', () => {
   assert.deepEqual(
     core.validateProfile(validProfile()),
     { valid: true, field: null, error: null }
   );
-  assert.equal(core.validateProfile({}).field, 'customerName');
+  assert.equal(core.validateProfile({}).field, 'explanationLanguage');
   assert.equal(
     core.validateProfile(validProfile({ explanationLanguage: 'xx' })).field,
     'explanationLanguage'
@@ -48,8 +46,29 @@ test('기존 퍼스널컬러 프로필 세션은 새 입력 화면으로 초기�
 
   const restored = core.restoreState(JSON.stringify(legacy), '2026-07-30');
 
-  assert.equal(restored.profile.customerName, '');
+  assert.deepEqual(restored.profile, core.createInitialState('2026-07-30').profile);
   assert.deepEqual(restored.answers, Array.from({ length: 10 }, () => []));
+});
+
+test('이전 이름 필드가 있어도 현재 진단 설정과 답안을 복원한다', () => {
+  const saved = core.createInitialState('2026-07-30');
+  saved.profile = {
+    customerName: '이전 고객',
+    consultantName: '이전 컨설턴트',
+    explanationLanguage: 'ja',
+    gender: 'female',
+    diagnosisDate: '2026-07-30'
+  };
+  saved.answers[0] = ['A'];
+
+  const restored = core.restoreState(JSON.stringify(saved), '2026-08-12');
+
+  assert.deepEqual(restored.profile, {
+    explanationLanguage: 'ja',
+    gender: 'female',
+    diagnosisDate: '2026-07-30'
+  });
+  assert.deepEqual(restored.answers[0], ['A']);
 });
 
 
@@ -159,7 +178,7 @@ test('저장 상태를 복원할 때 점수는 답변에서 다시 계산한다'
 
   const restored = core.restoreState(JSON.stringify(saved), '2026-07-28');
 
-  assert.equal(restored.profile.customerName, '미유');
+  assert.deepEqual(restored.profile, validProfile({ diagnosisDate: '2026-07-27' }));
   assert.deepEqual(restored.scores, { A: 1, B: 1, C: 0, D: 0 });
 });
 

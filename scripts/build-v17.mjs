@@ -11,6 +11,42 @@ const explanationApi = require('../src/explanation-content.js');
 
 const EXPECTED_SOURCE_HASH = '46f24a73ab0e624e029f1f58fe44f6ec311bfdeba84c7e7833d82c8f0ee2fa81';
 export const MAX_DIST_BYTES = 95 * 1024 * 1024;
+export const FULL_V1_FILENAME = '미유_무드진단_Full_V1.html';
+export const LEGACY_V17_FILENAME = '미유_무드진단_12type_v17.html';
+
+
+function redirectPageHtml(targetFilename) {
+  const targetPath = `./${targetFilename}`;
+  return `<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIYU 무드 진단</title>
+  <script>
+    const target = new URL('${targetPath}', window.location.href);
+    target.hash = window.location.hash;
+    window.location.replace(target.href);
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0; url=${targetPath}">
+  </noscript>
+</head>
+<body>
+  <p><a href="${targetPath}">MIYU 무드 진단 열기</a></p>
+</body>
+</html>
+`;
+}
+
+
+export function writeEntryRedirects({ rootDir }) {
+  const distDir = path.join(rootDir, 'dist');
+  const html = redirectPageHtml(FULL_V1_FILENAME);
+  fs.mkdirSync(distDir, { recursive: true });
+  fs.writeFileSync(path.join(distDir, 'index.html'), html, 'utf8');
+  fs.writeFileSync(path.join(distDir, LEGACY_V17_FILENAME), html, 'utf8');
+}
 
 
 function sha256Buffer(buffer) {
@@ -273,6 +309,7 @@ export function buildV17({ rootDir, outputPath }) {
     `${diagnosisScript}\n// 뒤로가기 버튼`,
     'diagnosis script marker'
   );
+  html = html.replace(/[ \t]+(?=\r?\n)/g, '');
 
   for (const forbidden of [
     '검토 메모',
@@ -306,7 +343,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === currentFile) {
   const rootDir = path.resolve(path.dirname(currentFile), '..');
   const result = buildV17({
     rootDir,
-    outputPath: path.join(rootDir, 'dist', '미유_무드진단_12type_v17.html')
+    outputPath: path.join(rootDir, 'dist', FULL_V1_FILENAME)
   });
+  writeEntryRedirects({ rootDir });
   console.log(`${result.outputPath}\n${result.outputBytes} bytes\nsha256 ${result.outputHash}`);
 }

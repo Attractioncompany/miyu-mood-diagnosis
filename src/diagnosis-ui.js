@@ -60,16 +60,7 @@
       <img class="miyu-start-logo" src="${asset('logo')}" data-asset="logo" alt="MIYU">
       <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
       <h1>무드 진단</h1>
-      <p class="miyu-start-copy">10개의 항목을 차례로 확인해 주세요. 각 문항은 최대 2개까지 선택할 수 있어요.</p>
       <form class="miyu-profile-form" data-action="start">
-        <label>고객명
-          <input name="customerName" value="${escapeHtml(state.profile.customerName)}" required autocomplete="name">
-          <span class="miyu-field-error" data-profile-error="customerName" aria-live="polite"></span>
-        </label>
-        <label>컨설턴트명
-          <input name="consultantName" value="${escapeHtml(state.profile.consultantName)}" required autocomplete="name">
-          <span class="miyu-field-error" data-profile-error="consultantName" aria-live="polite"></span>
-        </label>
         <label>해설 언어
           <select name="explanationLanguage" required>
             <option value="">선택해 주세요</option>
@@ -287,9 +278,8 @@
       <header class="miyu-result-head">
         <img src="${asset('logo')}" data-asset="logo" alt="MIYU">
         <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
-        <h1>${escapeHtml(state.profile.customerName)}님의 진단 결과</h1>
+        <h1>무드 진단 결과</h1>
         <div class="miyu-result-profile">
-          <span>컨설턴트 ${escapeHtml(state.profile.consultantName)}</span>
           <span>${escapeHtml(state.profile.diagnosisDate)}</span>
           <span>${escapeHtml(languageLabel)}</span>
         </div>
@@ -438,8 +428,6 @@
           }, language, 'miyu-type-identity-name')}
         </div>
         <dl>
-          <div><dt>고객</dt><dd>${escapeHtml(profile.customerName)}</dd></div>
-          <div><dt>컨설턴트</dt><dd>${escapeHtml(profile.consultantName)}</dd></div>
           <div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div>
         </dl>
       </header>
@@ -481,8 +469,6 @@
 
     function start(profile) {
       const nextProfile = {
-        customerName: String(profile.customerName || '').trim(),
-        consultantName: String(profile.consultantName || '').trim(),
         explanationLanguage: String(profile.explanationLanguage || ''),
         gender: String(profile.gender || ''),
         diagnosisDate: String(profile.diagnosisDate || '')
@@ -601,7 +587,7 @@
 
     function newDiagnosis() {
       const hasProgress = Boolean(
-        state.profile.customerName
+        state.profile.explanationLanguage
         || state.selectedType
         || state.answers.some(answer => answer.length)
       );
@@ -898,8 +884,6 @@
       event.preventDefault();
       const form = new FormData(event.target);
       const result = mountedController.start({
-        customerName: form.get('customerName'),
-        consultantName: form.get('consultantName'),
         explanationLanguage: form.get('explanationLanguage'),
         gender: form.get('gender'),
         diagnosisDate: form.get('diagnosisDate')

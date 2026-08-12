@@ -159,8 +159,6 @@
 
   function emptyProfile(today) {
     return {
-      customerName: '',
-      consultantName: '',
       explanationLanguage: '',
       gender: '',
       diagnosisDate: today
@@ -185,8 +183,6 @@
 
   function validateProfile(profile) {
     const required = [
-      ['customerName', '고객명을 입력해 주세요'],
-      ['consultantName', '컨설턴트명을 입력해 주세요'],
       ['explanationLanguage', '해설 언어를 선택해 주세요'],
       ['gender', '성별을 선택해 주세요'],
       ['diagnosisDate', '진단일을 입력해 주세요']
@@ -298,8 +294,6 @@
       return {
         version: 17,
         profile: {
-          customerName: parsed.profile.customerName.trim(),
-          consultantName: parsed.profile.consultantName.trim(),
           explanationLanguage: parsed.profile.explanationLanguage,
           gender: parsed.profile.gender,
           diagnosisDate: parsed.profile.diagnosisDate

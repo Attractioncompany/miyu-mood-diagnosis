@@ -7,7 +7,7 @@ const { chromium } = require('playwright');
 
 const ROOT = path.resolve(__dirname, '..');
 const DIST_URL = pathToFileURL(
-  path.join(ROOT, 'dist', '미유_무드진단_12type_v17.html')
+  path.join(ROOT, 'dist', '미유_무드진단_Full_V1.html')
 ).href;
 let browser;
 
