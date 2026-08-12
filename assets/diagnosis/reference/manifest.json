@@ -100,176 +100,176 @@
     "reference/female/makeup/recommended/fantasy.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/fantasy.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/recommended/fruity.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/fruity.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 790
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/soda.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/soda.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 790
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/recommended/romantic.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/romantic.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/soft.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/soft.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/elegance.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/elegance.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/vintage.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/vintage.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/refined.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/refined.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/deep-chic.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/deep-chic.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/clear.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/clear.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/sharp.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/sharp.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/recommended/charisma.jpg": {
       "file": "diagnosis/reference/female/makeup/recommended/charisma.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/makeup/avoid/fantasy.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/fantasy.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/fruity.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/fruity.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/soda.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/soda.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/romantic.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/romantic.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 206
     },
     "reference/female/makeup/avoid/soft.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/soft.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/elegance.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/elegance.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/vintage.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/vintage.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/refined.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/refined.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/deep-chic.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/deep-chic.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/clear.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/clear.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/sharp.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/sharp.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     },
     "reference/female/makeup/avoid/charisma.jpg": {
       "file": "diagnosis/reference/female/makeup/avoid/charisma.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/female/hair/recommended/a.jpg": {
       "file": "diagnosis/reference/female/hair/recommended/a.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/hair/recommended/b.jpg": {
       "file": "diagnosis/reference/female/hair/recommended/b.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/hair/recommended/c.jpg": {
       "file": "diagnosis/reference/female/hair/recommended/c.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/hair/recommended/d.jpg": {
       "file": "diagnosis/reference/female/hair/recommended/d.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/hair/avoid/a.jpg": {
       "file": "diagnosis/reference/female/hair/avoid/a.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 790
+      "width": 720,
+      "height": 405
     },
     "reference/female/hair/avoid/b.jpg": {
       "file": "diagnosis/reference/female/hair/avoid/b.jpg",
@@ -292,74 +292,74 @@
     "reference/female/fashion/fantasy.jpg": {
       "file": "diagnosis/reference/female/fashion/fantasy.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/fruity.jpg": {
       "file": "diagnosis/reference/female/fashion/fruity.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/soda.jpg": {
       "file": "diagnosis/reference/female/fashion/soda.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/romantic.jpg": {
       "file": "diagnosis/reference/female/fashion/romantic.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/soft.jpg": {
       "file": "diagnosis/reference/female/fashion/soft.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/elegance.jpg": {
       "file": "diagnosis/reference/female/fashion/elegance.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     },
     "reference/female/fashion/vintage.jpg": {
       "file": "diagnosis/reference/female/fashion/vintage.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/refined.jpg": {
       "file": "diagnosis/reference/female/fashion/refined.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 790
+      "width": 720,
+      "height": 405
     },
     "reference/female/fashion/deep-chic.jpg": {
       "file": "diagnosis/reference/female/fashion/deep-chic.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/clear.jpg": {
       "file": "diagnosis/reference/female/fashion/clear.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/female/fashion/sharp.jpg": {
       "file": "diagnosis/reference/female/fashion/sharp.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 790
+      "width": 720,
+      "height": 405
     },
     "reference/female/fashion/charisma.jpg": {
       "file": "diagnosis/reference/female/fashion/charisma.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/average/male/a-1.jpg": {
       "file": "diagnosis/reference/average/male/a-1.jpg",
@@ -436,26 +436,26 @@
     "reference/male/hair/a.jpg": {
       "file": "diagnosis/reference/male/hair/a.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/male/hair/b.jpg": {
       "file": "diagnosis/reference/male/hair/b.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/male/hair/c.jpg": {
       "file": "diagnosis/reference/male/hair/c.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/male/hair/d.jpg": {
       "file": "diagnosis/reference/male/hair/d.jpg",
       "mime": "image/jpeg",
-      "width": 600,
-      "height": 900
+      "width": 720,
+      "height": 603
     },
     "reference/male/grooming/recommended/a.jpg": {
       "file": "diagnosis/reference/male/grooming/recommended/a.jpg",
@@ -580,26 +580,26 @@
     "reference/male/hair/avoid-ppt/a.jpg": {
       "file": "diagnosis/reference/male/hair/avoid-ppt/a.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     },
     "reference/male/hair/avoid-ppt/b.jpg": {
       "file": "diagnosis/reference/male/hair/avoid-ppt/b.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     },
     "reference/male/hair/avoid-ppt/c.jpg": {
       "file": "diagnosis/reference/male/hair/avoid-ppt/c.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 270
+      "width": 720,
+      "height": 405
     },
     "reference/male/hair/avoid-ppt/d.jpg": {
       "file": "diagnosis/reference/male/hair/avoid-ppt/d.jpg",
       "mime": "image/jpeg",
-      "width": 700,
-      "height": 530
+      "width": 720,
+      "height": 405
     }
   }
 }

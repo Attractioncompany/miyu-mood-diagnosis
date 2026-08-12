@@ -1235,9 +1235,19 @@
 }
 
 .miyu-reference-caption > div {
-  color: #555550;
-  font-size: 12px;
   line-height: 1.45;
+}
+
+.miyu-reference-caption .miyu-language-ko {
+  color: #3d3d39;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.miyu-reference-caption .miyu-language-translated {
+  color: #70706b;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .miyu-reference-caption .miyu-language-translated {
@@ -1310,7 +1320,7 @@
 .miyu-explanation-section,
 .miyu-styling-card {
   min-width: 0;
-  padding: clamp(18px, 3vw, 28px);
+  padding: clamp(16px, 2.4vw, 24px);
   border: 1px solid #d9d9d6;
   background: #fff;
 }
@@ -1318,14 +1328,14 @@
 .miyu-reference-gallery {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  width: min(100%, 420px);
-  gap: 12px;
-  margin-top: 10px;
+  width: min(100%, 680px);
+  gap: 10px;
+  margin: 12px auto 0;
 }
 
 .miyu-guide-details {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -1349,8 +1359,19 @@
 }
 
 .miyu-guide-detail-card .miyu-localized-copy > div {
-  font-size: 13px;
-  line-height: 1.55;
+  line-height: 1.58;
+}
+
+.miyu-guide-detail-card .miyu-localized-copy .miyu-language-ko {
+  color: #20201e;
+  font-size: clamp(16px, 1.9vw, 18px);
+  font-weight: 700;
+}
+
+.miyu-guide-detail-card .miyu-localized-copy .miyu-language-translated {
+  color: #62625d;
+  font-size: clamp(13px, 1.55vw, 15px);
+  font-weight: 550;
 }
 
 .miyu-guide-detail-card .miyu-language-translated {
@@ -1406,19 +1427,18 @@
 
 .miyu-reference-figure img {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  max-height: min(52vh, 620px);
   display: block;
   object-fit: contain;
   background: #efefed;
 }
 
-.miyu-hair-examples .miyu-reference-figure img {
+.miyu-average-face-visual img {
   aspect-ratio: 4 / 5;
 }
 
 .miyu-hair-examples {
-  width: min(100%, 520px);
-  margin-inline: auto;
+  width: min(100%, 680px);
 }
 
 .miyu-hair-examples .miyu-reference-figure {
@@ -1462,9 +1482,21 @@
 
 .miyu-localized-copy > div,
 .miyu-localized-value > div {
-  color: #333330;
-  font-size: clamp(14px, 1.7vw, 17px);
   line-height: 1.68;
+}
+
+.miyu-explanation-section .miyu-localized-copy .miyu-language-ko,
+.miyu-explanation-section .miyu-localized-value .miyu-language-ko {
+  color: #282825;
+  font-size: clamp(15px, 1.8vw, 17px);
+  font-weight: 650;
+}
+
+.miyu-explanation-section .miyu-localized-copy .miyu-language-translated,
+.miyu-explanation-section .miyu-localized-value .miyu-language-translated {
+  color: #666661;
+  font-size: clamp(13px, 1.55vw, 15px);
+  font-weight: 500;
 }
 
 .miyu-language-translated {
@@ -1694,6 +1726,10 @@
 
   .miyu-answer-grid {
     grid-template-columns: 1fr;
+  }
+
+  .miyu-guide-details {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .miyu-question-footer,
