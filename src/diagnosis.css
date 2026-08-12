@@ -294,18 +294,24 @@
 
 .miyu-intro-group-face {
   min-height: 0;
-  padding: 0 12px 12px;
+  padding: 12px;
   overflow: hidden;
 }
 
-.miyu-intro-group-face > img {
+.miyu-intro-face-frame {
+  width: min(100%, 172px);
+  aspect-ratio: 4 / 5;
+  margin: 0 auto 12px;
+  overflow: hidden;
+  background: #f1f0ee;
+}
+
+.miyu-intro-face-frame > img {
   width: 100%;
-  height: clamp(132px, 22vw, 180px);
-  margin: 0 0 10px;
+  height: 100%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
-  background: #efefed;
 }
 
 .miyu-intro-group-face > strong {
@@ -330,8 +336,28 @@
     padding-bottom: 12px;
   }
 
-  .miyu-intro-groups-with-faces .miyu-intro-group-face > img {
-    height: 160px;
+  .miyu-intro-groups-with-faces .miyu-intro-group-face {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 14px;
+    align-items: start;
+  }
+
+  .miyu-intro-groups-with-faces .miyu-intro-face-frame {
+    grid-row: 1 / span 3;
+    width: 132px;
+    margin: 0;
+  }
+
+  .miyu-intro-groups-with-faces .miyu-intro-group-face > strong,
+  .miyu-intro-groups-with-faces .miyu-intro-group-face > .miyu-localized-copy,
+  .miyu-intro-groups-with-faces .miyu-intro-group-face > .miyu-intro-group-caption {
+    grid-column: 2;
+  }
+
+  .miyu-intro-groups-with-faces .miyu-intro-group-face > strong {
+    margin: 2px 0 8px;
   }
 }
 

@@ -4,26 +4,26 @@
     "reference/intro/a.jpg": {
       "file": "diagnosis/reference/intro/a.jpg",
       "mime": "image/jpeg",
-      "width": 180,
-      "height": 269
+      "width": 720,
+      "height": 900
     },
     "reference/intro/b.jpg": {
       "file": "diagnosis/reference/intro/b.jpg",
       "mime": "image/jpeg",
-      "width": 175,
-      "height": 255
+      "width": 720,
+      "height": 900
     },
     "reference/intro/c.jpg": {
       "file": "diagnosis/reference/intro/c.jpg",
       "mime": "image/jpeg",
-      "width": 174,
-      "height": 258
+      "width": 720,
+      "height": 900
     },
     "reference/intro/d.jpg": {
       "file": "diagnosis/reference/intro/d.jpg",
       "mime": "image/jpeg",
-      "width": 174,
-      "height": 264
+      "width": 720,
+      "height": 900
     },
     "reference/average/female/a-1.jpg": {
       "file": "diagnosis/reference/average/female/a-1.jpg",

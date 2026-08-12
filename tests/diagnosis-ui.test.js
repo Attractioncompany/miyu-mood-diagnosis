@@ -132,6 +132,7 @@ test('소개 2페이지는 네 개의 얼굴 카드와 두 언어를 표시한�
   const html = ui.renderIntroView(state, 2);
 
   assert.equal((html.match(/miyu-intro-group-face/g) || []).length, 4);
+  assert.equal((html.match(/miyu-intro-face-frame/g) || []).length, 4);
   assert.match(html, /reference\/intro\/a\.jpg/);
   assert.match(html, /화사하고 사랑스러운/);
   assert.match(html, /華やかで愛らしい/);
