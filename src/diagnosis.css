@@ -1171,6 +1171,33 @@
   grid-template-columns: 1fr;
 }
 
+/* 첫 해설 페이지는 평균 얼굴·핵심 특징·무드 설명을 한 장에 담는다. */
+.miyu-identity-copy {
+  display: grid;
+  gap: 18px;
+}
+
+.miyu-identity .miyu-explanation-visual {
+  width: min(100%, 280px);
+  margin: 0 auto 18px;
+}
+
+.miyu-identity .miyu-localized-heading {
+  margin-bottom: 8px;
+}
+
+.miyu-identity .miyu-summary-list {
+  gap: 6px;
+}
+
+.miyu-identity .miyu-summary-list li {
+  padding: 8px 10px;
+}
+
+.miyu-identity .miyu-localized-summary-item > div {
+  font-size: 12px;
+}
+
 .miyu-average-face {
   margin: 0 clamp(18px, 4vw, 32px);
   padding: clamp(18px, 3vw, 28px);
@@ -1535,6 +1562,11 @@
   .miyu-explanation-visual {
     width: calc(100% - 48px);
     align-self: start;
+    margin: 28px 0 28px 28px;
+  }
+
+  .miyu-identity .miyu-explanation-visual {
+    width: calc(100% - 48px);
     margin: 28px 0 28px 28px;
   }
 

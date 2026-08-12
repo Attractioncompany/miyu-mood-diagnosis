@@ -353,29 +353,28 @@
     const summaryItems = sections.facialFeatures.items.map(item =>
       `<li>${renderLocalizedBlock(item, language, 'miyu-localized-summary-item')}</li>`
     ).join('');
-    if (page.id === 'summary') {
-      return `<section class="miyu-explanation-section miyu-page-summary">
-        ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
-      </section>`;
-    }
-    if (page.id === 'facial-features') {
-      return `<section class="miyu-explanation-section miyu-facial-features">
+    if (page.id === 'identity') {
+      return `<section class="miyu-explanation-section miyu-identity">
         <div class="miyu-explanation-layout">
           ${renderReferenceImage(draft.averageFace, language, 'miyu-explanation-visual miyu-average-face-visual', true)}
-          <div><ul class="miyu-summary-list">${summaryItems}</ul></div>
+          <div class="miyu-identity-copy">
+            <div class="miyu-facial-features">
+              ${renderSectionHeading(content.SECTION_LABELS.facialFeatures, language)}
+              <ul class="miyu-summary-list">${summaryItems}</ul>
+            </div>
+            <div class="miyu-mood">
+              ${renderSectionHeading(content.SECTION_LABELS.mood, language)}
+              ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
+              ${renderLocalizedBlock(sections.mood.definition, language, 'miyu-localized-copy')}
+              ${renderLocalizedBlock(sections.mood.keywords, language, 'miyu-localized-copy miyu-mood-keywords')}
+            </div>
+          </div>
         </div>
       </section>`;
     }
     if (page.id === 'facial-details-1' || page.id === 'facial-details-2') {
       return `<section class="miyu-explanation-section miyu-facial-details">
         ${renderDetailTable(page.details, language)}
-      </section>`;
-    }
-    if (page.id === 'mood') {
-      return `<section class="miyu-explanation-section miyu-mood">
-        ${renderLocalizedBlock(sections.mood.overview, language, 'miyu-localized-copy')}
-        ${renderLocalizedBlock(sections.mood.definition, language, 'miyu-localized-copy')}
-        ${renderLocalizedBlock(sections.mood.keywords, language, 'miyu-localized-copy miyu-mood-keywords')}
       </section>`;
     }
     if (page.id === 'makeup-recommended' || page.id === 'makeup-avoid') {

@@ -156,10 +156,21 @@
         assertLocalizedValue(value[gender], `group hair avoid: ${group}.${gender}`);
       }
     }
+    const makeupGuidesByName = data.TYPE_MAKEUP_GUIDES_BY_NAME || {};
+    if (Object.keys(makeupGuidesByName).length !== Object.keys(TYPE_DRAFTS).length) {
+      throw new Error('Expected one named female makeup guide for every explanation type');
+    }
+    for (const [name, guide] of Object.entries(makeupGuidesByName)) {
+      assertLocalizedValue(guide.recommended, `makeup recommendation: ${name}`);
+      assertLocalizedValue(guide.avoid, `makeup avoid: ${name}`);
+    }
 
     for (const typeCode of Object.keys(TYPE_DRAFTS)) {
       const type = getRawTypeContent(typeCode);
       if (!type) throw new Error(`Missing explanation type: ${typeCode}`);
+      if (!makeupGuidesByName[type.name]) {
+        throw new Error(`Missing named female makeup guide: ${typeCode}.${type.name}`);
+      }
       if (!type.localizedName || !type.common || !type.common.definition
         || !type.common.moodKeywords || !type.gender) {
         throw new Error(`Missing explanation section: ${typeCode}`);
@@ -224,14 +235,14 @@
   function buildExplanationPages(type, genderContent, sections, language) {
     return [
       {
-        id: 'summary',
-        title: data.SECTION_LABELS.representativeSummary,
-        content: localizedText(genderContent.overview, language)
-      },
-      {
-        id: 'facial-features',
-        title: data.SECTION_LABELS.facialFeatures,
-        content: joinedLocalized(type.common.representativeSummary, language)
+        id: 'identity',
+        title: data.SECTION_LABELS.mood,
+        content: joinedLocalized([
+          genderContent.overview,
+          ...type.common.representativeSummary,
+          sections.mood.definition,
+          sections.mood.keywords
+        ], language)
       },
       {
         id: 'facial-details-1',
@@ -244,15 +255,6 @@
         title: data.SECTION_LABELS.details,
         content: joinedLocalized(type.common.details.slice(5).map(row => row.text), language),
         details: type.common.details.slice(5)
-      },
-      {
-        id: 'mood',
-        title: data.SECTION_LABELS.mood,
-        content: joinedLocalized([
-          sections.mood.overview,
-          sections.mood.definition,
-          sections.mood.keywords
-        ], language)
       },
       {
         id: 'makeup-recommended',
@@ -298,9 +300,14 @@
       image: `reference/average/${safeGender}/${typeCode.toLowerCase()}.jpg`,
       caption: data.REFERENCE_CAPTIONS.averageFace[safeGender]
     };
-    const makeupCopy = type.recommendations.makeup[safeGender];
+    const makeupGuide = data.TYPE_MAKEUP_GUIDES_BY_NAME[type.name];
+    const makeupCopy = safeGender === 'female'
+      ? makeupGuide.recommended
+      : type.recommendations.makeup[safeGender];
     const hairCopy = data.GROUP_HAIR[type.group][safeGender];
-    const careAvoid = data.GROUP_CARE_AVOID[type.group][safeGender];
+    const careAvoid = safeGender === 'female'
+      ? makeupGuide.avoid
+      : data.GROUP_CARE_AVOID[type.group][safeGender];
     const hairAvoid = data.GROUP_HAIR_AVOID[type.group][safeGender];
     const typeAsset = typeCode.toLowerCase();
     const groupAsset = type.group.toLowerCase();
