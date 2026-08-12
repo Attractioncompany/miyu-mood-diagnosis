@@ -1200,12 +1200,12 @@
 /* 첫 해설 페이지는 평균 얼굴·핵심 특징·무드 설명을 한 장에 담는다. */
 .miyu-identity-copy {
   display: grid;
-  gap: 18px;
+  gap: 10px;
 }
 
 .miyu-identity .miyu-explanation-visual {
-  width: min(100%, 280px);
-  margin: 0 auto 18px;
+  width: min(100%, 240px);
+  margin: 0 auto 10px;
 }
 
 .miyu-identity .miyu-localized-heading {
@@ -1217,7 +1217,7 @@
 }
 
 .miyu-identity .miyu-summary-list li {
-  padding: 8px 10px;
+  padding: 6px 9px;
 }
 
 .miyu-identity .miyu-localized-summary-item > div {
@@ -1253,6 +1253,11 @@
   min-height: 0;
   display: block;
   object-fit: contain;
+}
+
+.miyu-explanation-visual .miyu-reference-image-frame {
+  aspect-ratio: auto;
+  height: 100%;
 }
 
 .miyu-reference-caption {
@@ -1352,11 +1357,32 @@
 }
 
 .miyu-reference-gallery {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
+.miyu-example-rail {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  width: min(100%, 680px);
-  gap: 10px;
-  margin: 12px auto 0;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(214px, calc((100% - 28px) / 3));
+  grid-template-rows: 1fr;
+  align-items: start;
+  gap: 14px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 2px 2px 14px;
+  scroll-snap-type: x mandatory;
+  scrollbar-color: #a4a29c transparent;
+  scrollbar-width: thin;
+}
+
+.miyu-example-rail::-webkit-scrollbar {
+  height: 7px;
+}
+
+.miyu-example-rail::-webkit-scrollbar-thumb {
+  background: #b7b4ad;
+  border-radius: 999px;
 }
 
 .miyu-guide-details {
@@ -1449,26 +1475,129 @@
   overflow: hidden;
   border: 1px solid #e2e2df;
   background: #fafafa;
+  scroll-snap-align: start;
 }
 
-.miyu-reference-figure img {
-  width: 100%;
-  max-height: min(52vh, 620px);
-  display: block;
-  object-fit: contain;
+.miyu-reference-image-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
   background: #efefed;
 }
+
+.miyu-reference-figure img,
+.miyu-daily-outfit-card img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.miyu-reference-image-frame[data-crop="top"] img { object-position: center top; }
+.miyu-reference-image-frame[data-crop="bottom"] img { object-position: center bottom; }
 
 .miyu-average-face-visual img {
   aspect-ratio: 4 / 5;
 }
 
 .miyu-hair-examples {
-  width: min(100%, 680px);
+  width: 100%;
 }
 
 .miyu-hair-examples .miyu-reference-figure {
   border-width: 2px;
+}
+
+.miyu-reference-caption {
+  padding: 11px 12px 13px;
+  min-height: 82px;
+}
+
+.miyu-reference-caption .miyu-language-ko {
+  color: #242421;
+  font-size: clamp(14px, 1.65vw, 16px);
+  font-weight: 760;
+  line-height: 1.45;
+}
+
+.miyu-reference-caption .miyu-language-translated {
+  margin-top: 5px;
+  padding-top: 5px;
+  color: #66635e;
+  font-size: clamp(12px, 1.35vw, 14px);
+  line-height: 1.42;
+}
+
+.miyu-daily-outfit-rail {
+  margin-top: 16px;
+}
+
+.miyu-daily-outfit-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #d9d9d4;
+  background: #fff;
+  scroll-snap-align: start;
+}
+
+.miyu-daily-outfit-card h4 {
+  margin: 0;
+  padding: 13px 14px 0;
+}
+
+.miyu-daily-outfit-name .miyu-language-ko {
+  color: #1f1f1d;
+  font-size: 16px;
+  font-weight: 820;
+}
+
+.miyu-daily-outfit-name .miyu-language-translated {
+  margin-top: 3px;
+  padding-top: 0;
+  border-top: 0;
+  font-size: 13px;
+}
+
+.miyu-daily-outfit-details {
+  display: grid;
+  gap: 0;
+  margin: 10px 14px 14px;
+}
+
+.miyu-daily-outfit-details > div {
+  padding: 9px 0;
+  border-top: 1px solid #e8e7e2;
+}
+
+.miyu-daily-outfit-details dt .miyu-localized-heading {
+  margin: 0 0 4px;
+}
+
+.miyu-daily-outfit-details dt .miyu-language-ko {
+  font-size: 12px;
+}
+
+.miyu-daily-outfit-details dt .miyu-language-translated {
+  display: none;
+}
+
+.miyu-daily-outfit-details dd {
+  margin: 0;
+}
+
+.miyu-daily-outfit-details dd .miyu-language-ko {
+  color: #282825;
+  font-size: 13px;
+  font-weight: 680;
+  line-height: 1.48;
+}
+
+.miyu-daily-outfit-details dd .miyu-language-translated {
+  margin-top: 3px;
+  padding-top: 3px;
+  font-size: 11px;
+  line-height: 1.42;
 }
 
 .miyu-localized-heading {

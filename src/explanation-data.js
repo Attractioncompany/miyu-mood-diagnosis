@@ -46,6 +46,12 @@
     avoidHair: localized('피하면 좋은 헤어', '控えたいヘア', '建议避免的发型', '建議避免的髮型'),
     fashion: localized('패션', 'ファッション', '穿搭', '穿搭'),
     accessoryFashion: localized('액세서리 및 패션', 'アクセサリーとファッション', '配饰与穿搭', '配飾與穿搭'),
+    fashionReference: localized('스타일 레퍼런스', 'スタイル参考', '风格参考', '風格參考'),
+    dailyOutfits: localized('데일리 코디 제안', 'デイリーコーデ提案', '日常穿搭建议', '日常穿搭建議'),
+    outfitMaterial: localized('소재', '素材', '材质', '材質'),
+    outfitDesign: localized('패턴·디자인', '柄・デザイン', '图案·设计', '圖案·設計'),
+    outfitAccessory: localized('액세서리', 'アクセサリー', '配饰', '配飾'),
+    outfitNote: localized('코디할 때 유의할 점', 'コーデのポイント', '搭配注意事项', '搭配注意事項'),
     avoid: localized(
       '피하면 좋은 방향', '避けたい方向', '建议避免', '建議避免'
     ),
