@@ -347,6 +347,53 @@
     </div>`;
   }
 
+  function renderGuideDetail(label, value, language) {
+    return `<article class="miyu-guide-detail-card">
+      ${renderSectionHeading(label, language)}
+      ${renderLocalizedBlock(value, language, 'miyu-localized-copy')}
+    </article>`;
+  }
+
+  function renderGuideList(label, items, language, variant = 'recommended') {
+    const localizedItems = Array.isArray(items && items.ko)
+      ? items.ko.map((ko, index) => ({
+        ko,
+        [language]: items[language] && items[language][index] || ''
+      }))
+      : [];
+    return `<section class="miyu-guide-list-section miyu-guide-list-section-${escapeHtml(variant)}">
+      ${renderSectionHeading(label, language)}
+      <ul class="miyu-guide-list">${localizedItems.map(item => `<li>
+        ${renderLocalizedBlock(item, language, 'miyu-localized-copy')}
+      </li>`).join('')}</ul>
+    </section>`;
+  }
+
+  function renderCareGuide(guide, language, isAvoid) {
+    if (isAvoid) {
+      return renderGuideList(content.SECTION_LABELS.avoidItems, guide.avoidItems, language, 'avoid');
+    }
+    return `<div class="miyu-guide-details">
+      ${renderGuideDetail(content.SECTION_LABELS.skin, guide.skin, language)}
+      ${renderGuideDetail(content.SECTION_LABELS.color, guide.color, language)}
+      ${renderGuideDetail(content.SECTION_LABELS.feeling, guide.feeling, language)}
+      ${renderGuideDetail(content.SECTION_LABELS.focus, guide.focus, language)}
+    </div>
+    ${renderGuideList(content.SECTION_LABELS.recommendedItems, guide.recommendedItems, language)}`;
+  }
+
+  function renderHairGuide(guide, language, isAvoid) {
+    if (isAvoid) {
+      return renderGuideList(content.SECTION_LABELS.avoidItems, guide.avoidItems, language, 'avoid');
+    }
+    return `<div class="miyu-guide-details miyu-hair-guide-details">
+      ${renderGuideDetail(content.SECTION_LABELS.texture, guide.texture, language)}
+      ${renderGuideDetail(content.SECTION_LABELS.volume, guide.volume, language)}
+      ${renderGuideDetail(content.SECTION_LABELS.silhouette, guide.silhouette, language)}
+    </div>
+    ${renderGuideList(content.SECTION_LABELS.recommendedItems, guide.recommendedItems, language)}`;
+  }
+
   function renderExplanationPage(draft, page) {
     const language = draft.language;
     const sections = draft.sections;
@@ -383,7 +430,7 @@
         : content.SECTION_LABELS.makeupExample;
       const isAvoid = page.id === 'makeup-avoid';
       return `<section class="miyu-explanation-section miyu-makeup">
-        ${renderLocalizedBlock(isAvoid ? sections.makeup.avoid : sections.makeup.copy, language, 'miyu-localized-copy')}
+        ${renderCareGuide(sections.makeup.guide, language, isAvoid)}
         ${renderSectionHeading(exampleLabel, language)}
         ${renderReferenceGallery(
           isAvoid ? sections.makeup.avoidExamples : sections.makeup.examples,
@@ -395,7 +442,7 @@
     if (page.id === 'hair-recommended' || page.id === 'hair-avoid') {
       const isAvoid = page.id === 'hair-avoid';
       return `<section class="miyu-explanation-section miyu-hair">
-        ${renderLocalizedBlock(isAvoid ? sections.hair.avoid : sections.hair.copy, language, 'miyu-localized-copy')}
+        ${renderHairGuide(sections.hair.guide, language, isAvoid)}
         ${renderSectionHeading(content.SECTION_LABELS.hairExample, language)}
         ${renderReferenceGallery(
           isAvoid ? sections.hair.avoidExamples : sections.hair.examples,

@@ -111,6 +111,22 @@
     }
   }
 
+  function assertLocalizedList(value, message) {
+    for (const language of LOCALIZED_LANGUAGES) {
+      if (!value || typeof value !== 'object' || !Array.isArray(value[language])
+        || value[language].length === 0 || value[language].some(item => !String(item || '').trim())) {
+        throw new Error(`Missing ${language} ${message}`);
+      }
+    }
+  }
+
+  function assertStructuredGuide(guide, message, fields) {
+    if (!guide || typeof guide !== 'object') throw new Error(`Missing ${message}`);
+    for (const field of fields) assertLocalizedValue(guide[field], `${message}.${field}`);
+    assertLocalizedList(guide.recommendedItems, `${message}.recommendedItems`);
+    assertLocalizedList(guide.avoidItems, `${message}.avoidItems`);
+  }
+
   function assertCompleteContent() {
     for (const [section, localizedValue] of Object.entries(data.SECTION_LABELS)) {
       assertLocalizedValue(localizedValue, `section label: ${section}`);
@@ -164,6 +180,17 @@
       assertLocalizedValue(guide.recommended, `makeup recommendation: ${name}`);
       assertLocalizedValue(guide.avoid, `makeup avoid: ${name}`);
     }
+    const femaleDetailGuides = data.TYPE_MAKEUP_DETAIL_GUIDES_BY_NAME || {};
+    const maleDetailGuides = data.TYPE_MALE_GROOMING_GUIDES_BY_NAME || {};
+    if (Object.keys(femaleDetailGuides).length !== Object.keys(TYPE_DRAFTS).length || Object.keys(maleDetailGuides).length !== Object.keys(TYPE_DRAFTS).length) {
+      throw new Error('Expected one structured care guide for every explanation type and gender');
+    }
+    const hairDetailGuides = data.GROUP_HAIR_DETAIL_GUIDES || {};
+    for (const gender of ['female', 'male']) {
+      for (const group of ['A', 'B', 'C', 'D']) {
+        assertStructuredGuide(hairDetailGuides[gender] && hairDetailGuides[gender][group], `hair detail guide: ${gender}.${group}`, ['texture', 'volume', 'silhouette']);
+      }
+    }
 
     for (const typeCode of Object.keys(TYPE_DRAFTS)) {
       const type = getRawTypeContent(typeCode);
@@ -171,6 +198,8 @@
       if (!makeupGuidesByName[type.name]) {
         throw new Error(`Missing named female makeup guide: ${typeCode}.${type.name}`);
       }
+      assertStructuredGuide(femaleDetailGuides[type.name], `female makeup detail guide: ${typeCode}.${type.name}`, ['skin', 'color', 'feeling', 'focus']);
+      assertStructuredGuide(maleDetailGuides[type.name], `male grooming detail guide: ${typeCode}.${type.name}`, ['skin', 'color', 'feeling', 'focus']);
       if (!type.localizedName || !type.common || !type.common.definition
         || !type.common.moodKeywords || !type.gender) {
         throw new Error(`Missing explanation section: ${typeCode}`);
@@ -301,6 +330,13 @@
       caption: data.REFERENCE_CAPTIONS.averageFace[safeGender]
     };
     const makeupGuide = data.TYPE_MAKEUP_GUIDES_BY_NAME[type.name];
+    const structuredCareGuide = safeGender === 'female'
+      ? data.TYPE_MAKEUP_DETAIL_GUIDES_BY_NAME[type.name]
+      : data.TYPE_MALE_GROOMING_GUIDES_BY_NAME[type.name];
+    const structuredHairGuide = data.GROUP_HAIR_DETAIL_GUIDES[safeGender][type.group];
+    if (!makeupGuide || !structuredCareGuide || !structuredHairGuide) {
+      throw new Error(`Missing structured explanation guide: ${typeCode}.${safeGender}`);
+    }
     const makeupCopy = safeGender === 'female'
       ? makeupGuide.recommended
       : type.recommendations.makeup[safeGender];
@@ -313,7 +349,7 @@
     const groupAsset = type.group.toLowerCase();
     const careExample = safeGender === 'female'
       ? `reference/female/makeup/${typeAsset}.jpg`
-      : `reference/male/grooming/recommended/${groupAsset}.jpg`;
+      : `reference/male/grooming-detail/${typeAsset}.jpg`;
     const careAvoidExample = safeGender === 'female'
       ? `reference/female/makeup/${typeAsset}.jpg`
       : `reference/male/grooming/avoid/${groupAsset}.jpg`;
@@ -338,6 +374,7 @@
       makeup: {
         ...makeupCopy,
         copy: makeupCopy,
+        guide: structuredCareGuide,
         examples: [{
           image: careExample,
           caption: data.REFERENCE_CAPTIONS.makeup[safeGender]
@@ -351,6 +388,7 @@
       hair: {
         ...hairCopy,
         copy: hairCopy,
+        guide: structuredHairGuide,
         avoid: hairAvoid,
         examples: [{
           image: hairExample,

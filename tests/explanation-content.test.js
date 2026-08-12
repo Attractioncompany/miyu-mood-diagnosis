@@ -61,7 +61,7 @@ test('해설은 평균 얼굴과 추천·피하면 좋은 방향 사진 참고�
   assert.equal(female.sections.hair.examples.length, 1);
   assert.equal(female.sections.hair.avoidExamples.length, 1);
   assert.equal(male.sections.makeup.examples.length, 1);
-  assert.match(male.sections.makeup.examples[0].image, /^reference\/male\/grooming\/recommended\/a\.jpg$/);
+  assert.match(male.sections.makeup.examples[0].image, /^reference\/male\/grooming-detail\/a-1\.jpg$/);
   assert.match(male.sections.makeup.avoidExamples[0].image, /^reference\/male\/grooming\/avoid\/a\.jpg$/);
   assert.equal(male.sections.hair.examples.length, 1);
   assert.match(male.sections.hair.examples[0].image, /^reference\/male\/hair\/recommended\/a\.jpg$/);
@@ -85,6 +85,35 @@ test('PPT 기준으로 헤어는 대분류, 여성 메이크업은 타입명 기
   assert.match(sharp.sections.makeup.avoid.ko, /동글고 귀여운 치크.*과한 애굣살/);
   assert.doesNotMatch(sharp.sections.makeup.copy.ko, /피하면 좋아요/);
   assert.doesNotMatch(sharp.sections.makeup.copy.ja, /控えめにします/);
+});
+
+test('여성 메이크업은 PPT의 피부·색감·느낌·포인트와 추천·회피 목록을 분리한다', () => {
+  const guide = content.getExplanation('B-1', 'female', 'ja').sections.makeup.guide;
+  assert.equal(guide.skin.ko, '맑고 투명하게 빛나는 윤광 피부 표현');
+  assert.equal(guide.color.ko, '사랑스럽고 여리여리한 핑크, 피치 계열');
+  assert.match(guide.feeling.ko, /사랑스럽고 여린/);
+  assert.match(guide.focus.ko, /립.*블러셔/);
+  assert.deepEqual(guide.recommendedItems.ko, ['로즈핑크 메이크업', '물먹립', '은은한 음영', '볼터치가 살짝 강조된 사랑스럽고 여성스러운 느낌']);
+  assert.deepEqual(guide.avoidItems.ko, ['시크한 메이크업', '무채색', '직선적인 쉐딩', '강한 눈매', '스모키']);
+  assert.equal(guide.skin.ja, '透明感のあるツヤ肌');
+});
+
+test('모던 타입은 앱 코드가 아니라 타입명으로 PPT 세부 메이크업을 연결한다', () => {
+  const charisma = content.getExplanation('D-1', 'female', 'ja').sections.makeup.guide;
+  const clear = content.getExplanation('D-2', 'female', 'ja').sections.makeup.guide;
+  const sharp = content.getExplanation('D-3', 'female', 'ja').sections.makeup.guide;
+  assert.match(charisma.color.ko, /딥 브라운.*다크 브릭/);
+  assert.match(clear.focus.ko, /아이라인.*립/);
+  assert.match(sharp.focus.ko, /아이라인.*윤곽 쉐딩/);
+});
+
+test('남성 타입별 그루밍과 대분류 헤어는 PPT 스타일 목록을 반환한다', () => {
+  const fantasy = content.getExplanation('A-1', 'male', 'zh-CN');
+  const blossomHair = content.getExplanation('A-2', 'male', 'ja').sections.hair.guide;
+  assert.match(fantasy.sections.makeup.guide.skin.ko, /깨끗하고 투명/);
+  assert.match(fantasy.sections.makeup.guide.focus.ko, /음영 최소화.*애교살.*혈색/);
+  assert.deepEqual(blossomHair.recommendedItems.ko, ['애즈펌', '시스루펌', '소프트 쉐도우펌', '댄디컷', '가벼운 리프컷', '내추럴 가르마펌']);
+  assert.deepEqual(blossomHair.avoidItems.ko, ['슬릭백', '올백', '포마드', '강한 다운펌', '울프컷']);
 });
 
 test('해설은 정체성 페이지와 추천·피하면 좋은 방향을 나눈 여덟 페이지로 제공한다', () => {
