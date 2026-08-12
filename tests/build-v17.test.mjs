@@ -8,7 +8,13 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { MAX_DIST_BYTES, buildV17, stripLegacyReviewNotes } from '../scripts/build-v17.mjs';
+import {
+  FULL_V1_FILENAME,
+  LEGACY_V17_FILENAME,
+  MAX_DIST_BYTES,
+  buildV17,
+  stripLegacyReviewNotes
+} from '../scripts/build-v17.mjs';
 
 
 const require = createRequire(import.meta.url);
@@ -16,7 +22,8 @@ const celebrityNames = require('../src/celebrity-names.js');
 const diagnosisCore = require('../src/diagnosis-core.js');
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourcePath = path.join(root, 'source', '미유_무드분류_12type_v16.html');
-const distPath = path.join(root, 'dist', '미유_무드진단_12type_v17.html');
+const distPath = path.join(root, 'dist', FULL_V1_FILENAME);
+const legacyPath = path.join(root, 'dist', LEGACY_V17_FILENAME);
 const standaloneManifestPath = path.join(root, 'assets', 'diagnosis', 'standalone', 'manifest.json');
 const expectedSourceHash = '46f24a73ab0e624e029f1f58fe44f6ec311bfdeba84c7e7833d82c8f0ee2fa81';
 
@@ -142,7 +149,7 @@ test('생성 HTML의 카드와 대표 인물 표시 이름에는 한글이 남�
 });
 
 
-test('v16은 바꾸지 않고 진단이 포함된 단일 v17을 만든다', () => {
+test('v16은 바꾸지 않고 진단이 포함된 단일 Full V1을 만든다', () => {
   const before = sha256(sourcePath);
   const { outputPath, html } = buildToTemporaryFile();
 
@@ -154,8 +161,8 @@ test('v16은 바꾸지 않고 진단이 포함된 단일 v17을 만든다', () =
 });
 
 
-test('저장된 v17은 현재 소스의 두 번의 재생성 결과와 정확히 일치한다', () => {
-  assert.ok(fs.existsSync(distPath), 'checked-in v17 dist must exist');
+test('저장된 Full V1은 현재 소스의 두 번의 재생성 결과와 정확히 일치한다', () => {
+  assert.ok(fs.existsSync(distPath), 'checked-in Full V1 dist must exist');
 
   const first = buildToTemporaryFile().outputPath;
   const second = buildToTemporaryFile().outputPath;
@@ -166,8 +173,23 @@ test('저장된 v17은 현재 소스의 두 번의 재생성 결과와 정확히
   assert.equal(
     sha256(distPath),
     firstHash,
-    'checked-in v17 is stale; run scripts/build-v17.mjs before committing'
+    'checked-in Full V1 is stale; run scripts/build-v17.mjs before committing'
   );
+});
+
+test('생성 Full V1에는 줄 끝 공백이 없다', () => {
+  const { html } = buildToTemporaryFile();
+
+  assert.doesNotMatch(html, /[ \t]+\r?\n/);
+});
+
+test('기존 v17 파일은 가벼운 Full V1 호환 페이지다', () => {
+  assert.ok(fs.existsSync(legacyPath), 'legacy v17 compatibility page must exist');
+  const legacy = fs.readFileSync(legacyPath, 'utf8');
+
+  assert.ok(fs.statSync(legacyPath).size < 5000);
+  assert.match(legacy, new RegExp(FULL_V1_FILENAME));
+  assert.match(legacy, /target\.hash = window\.location\.hash/);
 });
 
 test('다국어 해설 데이터와 기존 카테고리 연결을 단일 HTML에 포함한다', () => {

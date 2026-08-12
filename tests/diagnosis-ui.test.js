@@ -7,8 +7,6 @@ const ui = require('../src/diagnosis-ui.js');
 
 function validProfile(overrides = {}) {
   return {
-    customerName: '미유',
-    consultantName: '김컨설턴트',
     explanationLanguage: 'ja',
     gender: 'female',
     diagnosisDate: '2026-07-30',
@@ -45,12 +43,10 @@ function createMemoryStorage(initial = {}) {
 }
 
 
-test('시작 화면은 다섯 고객 정보와 로고를 표시하고 퍼스널컬러를 제거한다', () => {
+test('시작 화면은 이름 없이 세 진단 설정과 로고를 표시한다', () => {
   const html = ui.renderStartView(core.createInitialState('2026-07-27'));
 
   for (const name of [
-    'customerName',
-    'consultantName',
     'explanationLanguage',
     'gender',
     'diagnosisDate'
@@ -62,12 +58,14 @@ test('시작 화면은 다섯 고객 정보와 로고를 표시하고 퍼스널�
   assert.match(html, /중국어 간체\(중국\)/);
   assert.match(html, /중국어 번체\(홍콩·대만\)/);
   assert.doesNotMatch(html, /personalColor|퍼스널컬러/);
+  assert.doesNotMatch(html, /name="customerName"|name="consultantName"/);
+  assert.doesNotMatch(html, /10개의 항목을 차례로 확인해 주세요/);
   assert.match(html, /data-asset="logo"/);
 });
 
 test('사용자 입력은 HTML로 실행되지 않도록 이스케이프한다', () => {
   const state = core.createInitialState('2026-07-27');
-  state.profile.customerName = '<img src=x onerror=alert(1)>';
+  state.profile.diagnosisDate = '<img src=x onerror=alert(1)>';
 
   const html = ui.renderStartView(state);
 
@@ -75,7 +73,7 @@ test('사용자 입력은 HTML로 실행되지 않도록 이스케이프한다',
   assert.match(html, /&lt;img src=x onerror=alert\(1\)&gt;/);
 });
 
-test('고객 정보 뒤에는 소개 3장과 브릿지를 거쳐 진단을 시작한다', () => {
+test('진단 설정 뒤에는 소개 3장과 브릿지를 거쳐 진단을 시작한다', () => {
   const storage = createMemoryStorage();
   const location = { hash: '#/' };
   const controller = ui.createController({
@@ -107,7 +105,7 @@ test('새 고객의 진단 시작은 이전 고객의 답안과 선택 타입을
     today: () => '2026-08-09'
   });
 
-  controller.start(validProfile({ customerName: '새 고객', diagnosisDate: '2026-08-09' }));
+  controller.start(validProfile({ diagnosisDate: '2026-08-09' }));
 
   const state = controller.getState();
   assert.deepEqual(state.answers, Array.from({ length: 10 }, () => []));
@@ -275,7 +273,7 @@ test('남성 결과 화면은 B그룹을 보이시로 표시한다', () => {
 
   assert.match(html, /Boyish · 보이시/);
   assert.doesNotMatch(html, /Feminine · 페미닌/);
-  assert.match(html, /김컨설턴트/);
+  assert.match(html, /무드 진단 결과/);
   assert.match(html, /일본어/);
 });
 
@@ -304,7 +302,8 @@ test('해설 패널은 한국어와 선택 언어 및 이미지 슬롯을 함께
 
   assert.match(html, /lang="ko"/);
   assert.match(html, /lang="ja"/);
-  assert.match(html, /김컨설턴트/);
+  assert.match(html, /진단일/);
+  assert.doesNotMatch(html, /<dt>고객<\/dt>|<dt>컨설턴트<\/dt>/);
   assert.match(html, /miyu-explanation-visual/);
   assert.match(html, /data-gender="male"/);
   assert.doesNotMatch(html, /해설 초안|miyu-draft-badge/);
@@ -408,7 +407,7 @@ test('선택한 타입의 확정 버튼은 조사 오류 없이 해설 이동을
   assert.doesNotMatch(html, /카리스마으로/);
 });
 
-test('컨트롤러는 필수 고객 정보가 없으면 시작하지 않고 유효한 정보는 탭 저장소에 보관한다', () => {
+test('컨트롤러는 필수 진단 설정이 없으면 시작하지 않고 유효한 설정은 탭 저장소에 보관한다', () => {
   const storage = createMemoryStorage();
   const location = { hash: '#/' };
   const controller = ui.createController({
@@ -419,22 +418,16 @@ test('컨트롤러는 필수 고객 정보가 없으면 시작하지 않고 유�
   });
 
   assert.deepEqual(
-    controller.start(validProfile({ customerName: '   ' })),
-    { error: '고객명을 입력해 주세요', field: 'customerName' }
+    controller.start(validProfile({ explanationLanguage: '' })),
+    { error: '해설 언어를 선택해 주세요', field: 'explanationLanguage' }
   );
   assert.equal(location.hash, '#/');
 
-  const result = controller.start(validProfile({
-    customerName: ' 미유 ',
-    diagnosisDate: '2026-07-28'
-  }));
+  const result = controller.start(validProfile({ diagnosisDate: '2026-07-28' }));
   assert.equal(result.error, null);
   assert.equal(location.hash, '#/diagnosis/intro/1');
   const saved = JSON.parse(storage.getItem(ui.STORAGE_KEY)).profile;
-  assert.equal(saved.customerName, '미유');
-  assert.equal(saved.consultantName, '김컨설턴트');
-  assert.equal(saved.explanationLanguage, 'ja');
-  assert.equal(saved.gender, 'female');
+  assert.deepEqual(saved, validProfile({ diagnosisDate: '2026-07-28' }));
 });
 
 test('컨트롤러는 새로 만들어도 같은 탭의 답변을 복원한다', () => {

@@ -7,13 +7,15 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { FULL_V1_FILENAME, LEGACY_V17_FILENAME } from '../scripts/build-v17.mjs';
 
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 let dist;
-const TARGET_FILE = '미유_무드진단_12type_v17.html';
+const TARGET_FILE = FULL_V1_FILENAME;
+const LEGACY_FILE = LEGACY_V17_FILENAME;
 
 let browser;
 let server;
@@ -24,8 +26,6 @@ function completedState(overrides = {}) {
   return {
     version: 17,
     profile: {
-      customerName: '미유',
-      consultantName: '김컨설턴트',
       explanationLanguage: overrides.explanationLanguage || 'ja',
       gender: overrides.gender || 'male',
       diagnosisDate: '2026-07-30'
@@ -50,6 +50,7 @@ before(async () => {
   dist = mkdtempSync(path.join(os.tmpdir(), 'miyu-pages-entry-'));
   copyFileSync(path.join(ROOT, 'dist', 'index.html'), path.join(dist, 'index.html'));
   copyFileSync(path.join(ROOT, 'dist', TARGET_FILE), path.join(dist, TARGET_FILE));
+  copyFileSync(path.join(ROOT, 'dist', LEGACY_FILE), path.join(dist, LEGACY_FILE));
 
   server = createServer(async (request, response) => {
     const filePath = safeDistPath(request.url);
@@ -86,7 +87,7 @@ after(async () => {
 });
 
 
-test('루트 주소가 v17 진단 화면을 연다', async () => {
+test('루트 주소가 Full V1 진단 화면을 연다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   await page.goto(baseUrl);
   await page.waitForURL(
@@ -98,14 +99,29 @@ test('루트 주소가 v17 진단 화면을 연다', async () => {
   await page.close();
 });
 
+test('기존 v17 주소는 Full V1 화면으로 해시를 보존해 이동한다', async () => {
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.addInitScript(savedState => {
+    sessionStorage.setItem('miyuDiagnosisV17', JSON.stringify(savedState));
+  }, completedState());
+  const legacyUrl = new URL(LEGACY_FILE, baseUrl);
+  legacyUrl.hash = '#/diagnosis/question/1';
+  await page.goto(legacyUrl.href);
+  await page.waitForURL(
+    url => decodeURIComponent(url.pathname).endsWith(`/${TARGET_FILE}`)
+      && url.hash === '#/diagnosis/question/1',
+    { timeout: 5000 }
+  );
+  assert.match(await page.locator('.miyu-question-shell').textContent(), /얼굴형/);
+  await page.close();
+});
 
-test('고객 정보 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진단을 연다', async () => {
+
+test('진단 설정 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진단을 연다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   const url = new URL(TARGET_FILE, baseUrl);
   await page.goto(url.href);
 
-  await page.locator('input[name="customerName"]').fill('Miyu');
-  await page.locator('input[name="consultantName"]').fill('Consultant');
   await page.locator('select[name="explanationLanguage"]').selectOption('ja');
   await page.locator('select[name="gender"]').selectOption('female');
   await page.locator('input[name="diagnosisDate"]').fill('2026-08-09');
