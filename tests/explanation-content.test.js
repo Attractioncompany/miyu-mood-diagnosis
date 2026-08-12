@@ -50,26 +50,33 @@ test('두 번째 소개 화면은 네 무드 그룹의 얼굴 참고 이미지�
   assert.equal(male.groupVisuals[1].label['zh-TW'], 'Boyish · 清秀少年感');
 });
 
-test('해설은 평균 얼굴과 사진 참고가 있는 메이크업·헤어 안내를 반환한다', () => {
+test('해설은 평균 얼굴과 추천·피하면 좋은 방향 사진 참고를 반환한다', () => {
   const female = content.getExplanation('A-1', 'female', 'zh-TW');
   const male = content.getExplanation('A-1', 'male', 'ja');
 
   assert.match(female.averageFace.image, /^reference\/average\/female\/a-1\.jpg$/);
   assert.match(male.averageFace.image, /^reference\/average\/male\/a-1\.jpg$/);
   assert.equal(female.sections.makeup.examples.length, 1);
+  assert.equal(female.sections.makeup.avoidExamples.length, 1);
   assert.equal(female.sections.hair.examples.length, 1);
+  assert.equal(female.sections.hair.avoidExamples.length, 1);
   assert.equal(male.sections.makeup.examples.length, 1);
+  assert.match(male.sections.makeup.examples[0].image, /^reference\/male\/grooming\/recommended\/a\.jpg$/);
+  assert.match(male.sections.makeup.avoidExamples[0].image, /^reference\/male\/grooming\/avoid\/a\.jpg$/);
   assert.equal(male.sections.hair.examples.length, 1);
+  assert.match(male.sections.hair.examples[0].image, /^reference\/male\/hair\/recommended\/a\.jpg$/);
+  assert.match(male.sections.hair.avoidExamples[0].image, /^reference\/male\/hair\/avoid\/a\.jpg$/);
   assert.ok(female.sections.makeup.copy['zh-TW'].trim());
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
 });
 
-test('해설은 긴 이목구비 상세를 나눈 여덟 페이지로 제공한다', () => {
+test('해설은 긴 이목구비 상세와 추천·피하면 좋은 방향을 나눈 열 페이지로 제공한다', () => {
   const draft = content.getExplanation('A-1', 'female', 'ja');
 
   assert.deepEqual(draft.pages.map(page => page.id), [
     'summary', 'facial-features', 'facial-details-1', 'facial-details-2',
-    'mood', 'makeup', 'hair', 'accessory-fashion'
+    'mood', 'makeup-recommended', 'makeup-avoid',
+    'hair-recommended', 'hair-avoid', 'accessory-fashion'
   ]);
   assert.equal(draft.pages[2].details.length, 5);
   assert.equal(draft.pages[3].details.length, 5);

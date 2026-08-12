@@ -246,6 +246,9 @@
       const rank = ranks[group];
       const groupName = content.getGroupName(group, state.profile.gender);
       const typeCards = groupTypes.map(type => {
+        const typeImage = state.profile.gender === 'male'
+          ? `reference/average/male/${type.code.toLowerCase()}.jpg`
+          : type.image;
         const selected = state.selectedType === type.code;
         return `<button class="miyu-type-card" type="button"
           data-action="select-type" data-type="${type.code}"
@@ -253,7 +256,7 @@
           aria-pressed="${selected}">
           ${renderRankBadge(rank)}
           ${selected ? '<span class="miyu-selected-badge">선택</span>' : ''}
-          <span class="miyu-type-photo"><img src="${asset(type.image)}" data-asset="${type.image}" alt="${escapeHtml(type.name)}"></span>
+          <span class="miyu-type-photo"><img src="${asset(typeImage)}" data-asset="${typeImage}" alt="${escapeHtml(type.name)}"></span>
           <span class="miyu-type-code">${type.code}</span>
           <strong>${escapeHtml(type.name)}</strong>
         </button>`;
@@ -379,23 +382,31 @@
         ${renderLocalizedBlock(sections.mood.keywords, language, 'miyu-localized-copy miyu-mood-keywords')}
       </section>`;
     }
-    if (page.id === 'makeup') {
+    if (page.id === 'makeup-recommended' || page.id === 'makeup-avoid') {
       const exampleLabel = draft.gender === 'male'
         ? content.SECTION_LABELS.groomingExample
         : content.SECTION_LABELS.makeupExample;
+      const isAvoid = page.id === 'makeup-avoid';
       return `<section class="miyu-explanation-section miyu-makeup">
-        ${renderLocalizedBlock(sections.makeup.copy, language, 'miyu-localized-copy')}
+        ${renderLocalizedBlock(isAvoid ? sections.makeup.avoid : sections.makeup.copy, language, 'miyu-localized-copy')}
         ${renderSectionHeading(exampleLabel, language)}
-        ${renderReferenceGallery(sections.makeup.examples, language, 'miyu-makeup-examples')}
+        ${renderReferenceGallery(
+          isAvoid ? sections.makeup.avoidExamples : sections.makeup.examples,
+          language,
+          `miyu-makeup-examples ${isAvoid ? 'miyu-avoid-examples' : 'miyu-recommended-examples'}`
+        )}
       </section>`;
     }
-    if (page.id === 'hair') {
+    if (page.id === 'hair-recommended' || page.id === 'hair-avoid') {
+      const isAvoid = page.id === 'hair-avoid';
       return `<section class="miyu-explanation-section miyu-hair">
-        ${renderLocalizedBlock(sections.hair.copy, language, 'miyu-localized-copy')}
-        ${renderSectionHeading(content.SECTION_LABELS.avoid, language)}
-        ${renderLocalizedBlock(sections.hair.avoid, language, 'miyu-localized-copy')}
+        ${renderLocalizedBlock(isAvoid ? sections.hair.avoid : sections.hair.copy, language, 'miyu-localized-copy')}
         ${renderSectionHeading(content.SECTION_LABELS.hairExample, language)}
-        ${renderReferenceGallery(sections.hair.examples, language, 'miyu-hair-examples')}
+        ${renderReferenceGallery(
+          isAvoid ? sections.hair.avoidExamples : sections.hair.examples,
+          language,
+          `miyu-hair-examples ${isAvoid ? 'miyu-avoid-examples' : 'miyu-recommended-examples'}`
+        )}
       </section>`;
     }
     return `<section class="miyu-explanation-section miyu-accessory-fashion">

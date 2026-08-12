@@ -41,7 +41,11 @@ function collectReferenceAssets(rootDir) {
     ...types.map(type => `reference/female/makeup/${type}.jpg`),
     ...groups.map(group => `reference/female/hair/${group}.jpg`),
     ...types.map(type => `reference/average/male/${type}.jpg`),
-    ...groups.map(group => `reference/male/hair/${group}.jpg`)
+    ...groups.map(group => `reference/male/hair/${group}.jpg`),
+    ...groups.map(group => `reference/male/grooming/recommended/${group}.jpg`),
+    ...groups.map(group => `reference/male/grooming/avoid/${group}.jpg`),
+    ...groups.map(group => `reference/male/hair/recommended/${group}.jpg`),
+    ...groups.map(group => `reference/male/hair/avoid/${group}.jpg`)
   ].sort();
   const manifestKeys = Object.keys(manifest.assets).sort();
   if (JSON.stringify(manifestKeys) !== JSON.stringify(expectedKeys)) {

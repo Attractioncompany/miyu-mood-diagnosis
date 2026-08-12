@@ -79,7 +79,7 @@
         ? ['A', 'B', 'C', 'D'].map(group => ({
             group,
             label: data.GROUP_LABELS[safeGender][group],
-            image: data.INTRO_GROUP_VISUALS[group].image,
+            image: data.INTRO_GROUP_VISUALS[group].image[safeGender],
             caption: data.INTRO_GROUP_VISUALS[group].caption
           }))
         : []
@@ -128,7 +128,8 @@
       }
     }
     for (const [group, reference] of Object.entries(data.INTRO_GROUP_VISUALS || {})) {
-      if (!reference.image || !reference.image.startsWith('reference/intro/')) {
+      if (!reference.image || !reference.image.female?.startsWith('reference/intro/')
+        || !reference.image.male?.startsWith('reference/average/male/')) {
         throw new Error(`Missing intro reference: ${group}`);
       }
       assertLocalizedValue(reference.caption, `intro reference caption: ${group}`);
@@ -143,6 +144,16 @@
     for (const [group, value] of Object.entries(data.GROUP_HAIR || {})) {
       for (const gender of ['female', 'male']) {
         assertLocalizedValue(value[gender], `group hair: ${group}.${gender}`);
+      }
+    }
+    for (const [group, value] of Object.entries(data.GROUP_CARE_AVOID || {})) {
+      for (const gender of ['female', 'male']) {
+        assertLocalizedValue(value[gender], `group care avoid: ${group}.${gender}`);
+      }
+    }
+    for (const [group, value] of Object.entries(data.GROUP_HAIR_AVOID || {})) {
+      for (const gender of ['female', 'male']) {
+        assertLocalizedValue(value[gender], `group hair avoid: ${group}.${gender}`);
       }
     }
 
@@ -211,10 +222,6 @@
   }
 
   function buildExplanationPages(type, genderContent, sections, language) {
-    const careLabel = genderContent.grooming
-      ? data.SECTION_LABELS.grooming
-      : data.SECTION_LABELS.makeup;
-    const careCopy = sections.makeup.copy;
     return [
       {
         id: 'summary',
@@ -248,14 +255,24 @@
         ], language)
       },
       {
-        id: 'makeup',
-        title: careLabel,
-        content: localizedText(careCopy, language)
+        id: 'makeup-recommended',
+        title: data.SECTION_LABELS.recommendedCare,
+        content: localizedText(sections.makeup.copy, language)
       },
       {
-        id: 'hair',
-        title: data.SECTION_LABELS.hair,
-        content: joinedLocalized([sections.hair.copy, sections.hair.avoid], language)
+        id: 'makeup-avoid',
+        title: data.SECTION_LABELS.avoidCare,
+        content: localizedText(sections.makeup.avoid, language)
+      },
+      {
+        id: 'hair-recommended',
+        title: data.SECTION_LABELS.recommendedHair,
+        content: localizedText(sections.hair.copy, language)
+      },
+      {
+        id: 'hair-avoid',
+        title: data.SECTION_LABELS.avoidHair,
+        content: localizedText(sections.hair.avoid, language)
       },
       {
         id: 'accessory-fashion',
@@ -283,6 +300,22 @@
     };
     const makeupCopy = type.recommendations.makeup[safeGender];
     const hairCopy = data.GROUP_HAIR[type.group][safeGender];
+    const careAvoid = data.GROUP_CARE_AVOID[type.group][safeGender];
+    const hairAvoid = data.GROUP_HAIR_AVOID[type.group][safeGender];
+    const typeAsset = typeCode.toLowerCase();
+    const groupAsset = type.group.toLowerCase();
+    const careExample = safeGender === 'female'
+      ? `reference/female/makeup/${typeAsset}.jpg`
+      : `reference/male/grooming/recommended/${groupAsset}.jpg`;
+    const careAvoidExample = safeGender === 'female'
+      ? `reference/female/makeup/${typeAsset}.jpg`
+      : `reference/male/grooming/avoid/${groupAsset}.jpg`;
+    const hairExample = safeGender === 'female'
+      ? `reference/female/hair/${groupAsset}.jpg`
+      : `reference/male/hair/recommended/${groupAsset}.jpg`;
+    const hairAvoidExample = safeGender === 'female'
+      ? `reference/female/hair/${groupAsset}.jpg`
+      : `reference/male/hair/avoid/${groupAsset}.jpg`;
     const sections = {
       facialFeatures: {
         label: data.SECTION_LABELS.facialFeatures,
@@ -299,18 +332,25 @@
         ...makeupCopy,
         copy: makeupCopy,
         examples: [{
-          image: safeGender === 'female'
-            ? `reference/female/makeup/${typeCode.toLowerCase()}.jpg`
-            : averageFace.image,
+          image: careExample,
+          caption: data.REFERENCE_CAPTIONS.makeup[safeGender]
+        }],
+        avoid: careAvoid,
+        avoidExamples: [{
+          image: careAvoidExample,
           caption: data.REFERENCE_CAPTIONS.makeup[safeGender]
         }]
       },
       hair: {
         ...hairCopy,
         copy: hairCopy,
-        avoid: genderContent.avoid,
+        avoid: hairAvoid,
         examples: [{
-          image: `reference/${safeGender}/hair/${type.group.toLowerCase()}.jpg`,
+          image: hairExample,
+          caption: data.REFERENCE_CAPTIONS.hair[safeGender]
+        }],
+        avoidExamples: [{
+          image: hairAvoidExample,
           caption: data.REFERENCE_CAPTIONS.hair[safeGender]
         }]
       },

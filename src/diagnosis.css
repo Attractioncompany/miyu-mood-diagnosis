@@ -1270,7 +1270,16 @@
 }
 
 .miyu-hair-examples .miyu-reference-figure img {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
+}
+
+.miyu-hair-examples {
+  width: min(100%, 520px);
+  margin-inline: auto;
+}
+
+.miyu-hair-examples .miyu-reference-figure {
+  border-width: 2px;
 }
 
 .miyu-localized-heading {
