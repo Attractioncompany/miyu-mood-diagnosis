@@ -432,10 +432,44 @@
 }
 
 .miyu-question-subtitle {
-  margin: 8px 0 28px;
+  margin: 8px 0 14px;
   color: var(--miyu-muted);
   font-size: clamp(14px, 2vw, 17px);
   word-break: keep-all;
+}
+
+.miyu-question-guidance {
+  margin: 0 0 clamp(16px, 2.2vw, 22px);
+  padding: 14px 16px;
+  border: 1px solid var(--miyu-line);
+  border-left: 3px solid var(--miyu-rank-one);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--miyu-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.miyu-question-guidance p {
+  margin: 0;
+  word-break: keep-all;
+}
+
+.miyu-question-guidance p + p {
+  margin-top: 6px;
+}
+
+.miyu-question-guidance strong {
+  display: inline-block;
+  min-width: 68px;
+  margin-right: 8px;
+  color: var(--miyu-ink);
+  font-weight: 760;
+}
+
+.miyu-question-rule {
+  color: var(--miyu-ink);
+  font-weight: 680;
 }
 
 .miyu-answer-grid {
@@ -466,7 +500,7 @@
 .miyu-answer-select {
   position: relative;
   width: 100%;
-  min-height: 82px;
+  min-height: 108px;
   padding: 18px 56px 16px 58px;
   border: 0;
   border-bottom: 1px solid var(--miyu-line);
@@ -487,6 +521,15 @@
   display: block;
   font-weight: 720;
   line-height: 1.42;
+  word-break: keep-all;
+}
+
+.miyu-option-detail {
+  display: block;
+  margin-top: 5px;
+  color: var(--miyu-muted);
+  font-size: 12px;
+  line-height: 1.45;
   word-break: keep-all;
 }
 

@@ -204,6 +204,26 @@ test('문항 화면은 2×2 선택 카드, 진행표, 이전·다음 버튼을 �
   assert.match(html, /q05-a\.png/);
 });
 
+test('문항 화면은 공통 안내와 문항별 판단 기준 및 선택지 설명을 표시한다', () => {
+  const state = core.createInitialState('2026-07-27');
+  state.profile.gender = 'female';
+  const html = ui.renderQuestionView(state, 7);
+
+  assert.match(html, /정면·무표정 기준/);
+  assert.match(html, /입꼬리보다 가로 폭/);
+  assert.match(html, /무표정에서는 작아 보여도/);
+  assert.match(html, /miyu-question-guidance/);
+  assert.match(html, /miyu-option-detail/);
+});
+
+test('모든 진단 문항은 컨설턴트용 판단 기준과 헷갈릴 때 확인 포인트를 가진다', () => {
+  for (const question of core.QUESTIONS) {
+    assert.ok(question.guide, `${question.number}번 판단 기준이 필요합니다`);
+    assert.ok(question.hint, `${question.number}번 확인 포인트가 필요합니다`);
+    assert.equal(question.options.filter(option => !option.detail).length, 0);
+  }
+});
+
 test('체크리스트에는 확대 기능이 없다', () => {
   const state = core.createInitialState('2026-07-30');
   state.profile.gender = 'male';
