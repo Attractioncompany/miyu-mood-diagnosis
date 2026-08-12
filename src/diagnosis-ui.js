@@ -92,7 +92,7 @@
     const groups = page.groupVisuals && page.groupVisuals.length
       ? `<div class="miyu-intro-groups miyu-intro-groups-with-faces">${page.groupVisuals.map(item =>
         `<article class="miyu-intro-group miyu-intro-group-face" data-group="${escapeHtml(item.group)}">`
-          + `<img src="${asset(item.image)}" data-asset="${escapeHtml(item.image)}" alt="" loading="eager">`
+          + `<div class="miyu-intro-face-frame"><img src="${asset(item.image)}" data-asset="${escapeHtml(item.image)}" alt="" loading="eager"></div>`
           + `<strong>${escapeHtml(item.group)}</strong>`
           + renderLocalizedBlock(item.label, profile.explanationLanguage, 'miyu-localized-copy')
           + renderLocalizedBlock(item.caption, profile.explanationLanguage, 'miyu-intro-group-caption')

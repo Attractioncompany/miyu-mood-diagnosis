@@ -225,6 +225,28 @@ test('세로 태블릿에서 스타일 참고 보드는 넓게 쓰고 평균 얼
 });
 
 
+test('세로 태블릿의 소개 얼굴 카드는 사진과 설명을 나란히 배치해 빈 여백을 줄인다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const state = core.createInitialState('2026-08-13');
+  state.profile = { explanationLanguage: 'ja', gender: 'female', diagnosisDate: '2026-08-13' };
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style><section id="miyu-diagnosis-app">${ui.renderIntroView(state, 2)}</section>`);
+
+  const firstCard = page.locator('.miyu-intro-group-face').first();
+  const columns = await firstCard.evaluate(element =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+  );
+  const frame = firstCard.locator('.miyu-intro-face-frame');
+  const frameWidth = await frame.evaluate(element => element.getBoundingClientRect().width);
+  const cardHeight = await firstCard.evaluate(element => element.getBoundingClientRect().height);
+
+  assert.equal(columns, 2);
+  assert.ok(frameWidth >= 120, `intro face width was ${frameWidth}`);
+  assert.ok(cardHeight < 260, `intro card height was ${cardHeight}`);
+  await page.close();
+});
+
+
 test('해설 가이드에서 한국어는 번역문보다 크게 강조된다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
