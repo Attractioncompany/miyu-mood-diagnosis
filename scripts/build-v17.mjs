@@ -79,12 +79,14 @@ function collectReferenceAssets(rootDir) {
     ...groups.map(group => `reference/female/hair/recommended/${group}.jpg`),
     ...groups.map(group => `reference/female/hair/avoid/${group}.jpg`),
     ...['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'].map(type => `reference/female/fashion/${type}.jpg`),
+    ...groups.map(group => `reference/female/daily/${group}.jpg`),
     ...types.map(type => `reference/average/male/${type}.jpg`),
     ...groups.map(group => `reference/male/hair/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/recommended/${group}.jpg`),
     ...groups.map(group => `reference/male/grooming/avoid/${group}.jpg`),
     ...types.map(type => `reference/male/grooming-detail/${type}.jpg`),
-    ...groups.map(group => `reference/male/hair/avoid-ppt/${group}.jpg`)
+    ...groups.map(group => `reference/male/hair/avoid-ppt/${group}.jpg`),
+    ...groups.map(group => `reference/male/daily/${group}.jpg`)
   ].sort();
   const manifestKeys = Object.keys(manifest.assets).sort();
   if (JSON.stringify(manifestKeys) !== JSON.stringify(expectedKeys)) {
@@ -275,7 +277,7 @@ export function buildV17({ rootDir, outputPath }) {
   }
   if (topNav) topNav.style.display = 'block';
   
-  if (parts[0] === '' || hash === '#/' || parts[0] === 'diagnosis') {
+  if (parts[0] === '' || hash === '#/' || parts[0] === 'diagnosis' || parts[0] === 'explanation') {
     MiyuDiagnosisUI.renderRoute(hash);
     return;
   } else if (parts[0] === 'index') {

@@ -21,12 +21,14 @@ EXPECTED = (
     + [f'female/hair/recommended/{group}.jpg' for group in GROUPS]
     + [f'female/hair/avoid/{group}.jpg' for group in GROUPS]
     + [f'female/fashion/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
+    + [f'female/daily/{group}.jpg' for group in GROUPS]
     + [f'average/male/{code}.jpg' for code in TYPES]
     + [f'male/hair/{group}.jpg' for group in GROUPS]
     + [f'male/grooming/recommended/{group}.jpg' for group in GROUPS]
     + [f'male/grooming/avoid/{group}.jpg' for group in GROUPS]
     + [f'male/grooming-detail/{code}.jpg' for code in TYPES]
     + [f'male/hair/avoid-ppt/{group}.jpg' for group in GROUPS]
+    + [f'male/daily/{group}.jpg' for group in GROUPS]
 )
 
 

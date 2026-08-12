@@ -80,9 +80,40 @@
           <input name="diagnosisDate" type="date" value="${escapeHtml(state.profile.diagnosisDate)}" required>
           <span class="miyu-field-error" data-profile-error="diagnosisDate" aria-live="polite"></span>
         </label>
-        <button class="miyu-button miyu-primary" type="submit">진단 시작</button>
+        <div class="miyu-start-actions">
+          <button class="miyu-button miyu-primary" type="submit">진단 시작</button>
+          <button class="miyu-button miyu-secondary" type="button" data-action="open-explanation-picker">해설 바로보기</button>
+        </div>
       </form>
     </div>`;
+  }
+
+  function renderExplanationPicker(profile) {
+    const pickerCopy = {
+      ko: '성별과 타입을 고르면 진단 없이 해설을 볼 수 있어요.',
+      ja: '性別とタイプを選ぶと、診断をせずに解説を見ることができます。',
+      'zh-CN': '选择性别和类型后，无需诊断也能查看说明。',
+      'zh-TW': '選擇性別和類型後，無需診斷也能查看說明。'
+    };
+    const types = core.TYPES.map(type => {
+      const draft = content.getExplanation(type.code, profile.gender, profile.explanationLanguage);
+      return `<button class="miyu-public-type-card" type="button" data-action="open-public-explanation"
+        data-type="${escapeHtml(type.code)}">
+        <img src="${asset(draft.averageFace.image)}" data-asset="${escapeHtml(draft.averageFace.image)}" alt="" loading="lazy">
+        <strong>${escapeHtml(type.code)}</strong>
+        ${renderLocalizedBlock(draft.localizedTypeName, profile.explanationLanguage, 'miyu-localized-copy')}
+      </button>`;
+    }).join('');
+    const genderButton = gender => `<button class="miyu-button ${profile.gender === gender ? 'miyu-primary' : 'miyu-secondary'}"
+      type="button" data-action="switch-public-gender" data-gender="${gender}">${gender === 'female' ? '여성' : '남성'}</button>`;
+    return `<section class="miyu-public-picker">
+      <header class="miyu-explanation-meta"><p>MIYU STYLE REFERENCE</p>
+        <h1>해설 바로보기</h1>
+        ${renderLocalizedBlock(pickerCopy, profile.explanationLanguage, 'miyu-localized-copy')}
+      </header>
+      <div class="miyu-public-picker-controls">${genderButton('female')}${genderButton('male')}</div>
+      <div class="miyu-public-type-grid">${types}</div>
+    </section>`;
   }
 
   function renderIntroView(state, pageNumber) {
@@ -323,15 +354,32 @@
   function renderReferenceImage(reference, language, className, eager = false) {
     if (!reference || !reference.image) return '';
     return `<figure class="${escapeHtml(className)}">
-      <img src="${asset(reference.image)}" data-asset="${escapeHtml(reference.image)}" alt="" loading="${eager ? 'eager' : 'lazy'}">
+      <div class="miyu-reference-image-frame" data-crop="${escapeHtml(reference.cropPosition || 'center')}">
+        <img src="${asset(reference.image)}" data-asset="${escapeHtml(reference.image)}" alt="" loading="${eager ? 'eager' : 'lazy'}">
+      </div>
       <figcaption>${renderLocalizedBlock(reference.caption, language, 'miyu-reference-caption')}</figcaption>
     </figure>`;
   }
 
   function renderReferenceGallery(examples, language, className) {
-    return `<div class="miyu-reference-gallery ${escapeHtml(className)}">${examples.map(reference =>
-      renderReferenceImage(reference, language, 'miyu-reference-figure')
+    return `<div class="miyu-reference-gallery miyu-example-rail ${escapeHtml(className)}">${examples.map(reference =>
+      renderReferenceImage(reference, language, 'miyu-reference-figure miyu-example-rail-card')
     ).join('')}</div>`;
+  }
+
+  function renderDailyOutfitCard(outfit, language) {
+    return `<article class="miyu-daily-outfit-card miyu-example-rail-card">
+      <div class="miyu-reference-image-frame" data-crop="${escapeHtml(outfit.cropPosition || 'center')}">
+        <img src="${asset(outfit.image)}" data-asset="${escapeHtml(outfit.image)}" alt="" loading="lazy">
+      </div>
+      <h4>${renderLocalizedBlock(outfit.name, language, 'miyu-daily-outfit-name')}</h4>
+      <dl class="miyu-daily-outfit-details">
+        <div><dt>${renderSectionHeading(content.SECTION_LABELS.outfitMaterial, language)}</dt><dd>${renderLocalizedBlock(outfit.material, language, 'miyu-localized-copy')}</dd></div>
+        <div><dt>${renderSectionHeading(content.SECTION_LABELS.outfitDesign, language)}</dt><dd>${renderLocalizedBlock(outfit.design, language, 'miyu-localized-copy')}</dd></div>
+        <div><dt>${renderSectionHeading(content.SECTION_LABELS.outfitAccessory, language)}</dt><dd>${renderLocalizedBlock(outfit.accessory, language, 'miyu-localized-copy')}</dd></div>
+        <div><dt>${renderSectionHeading(content.SECTION_LABELS.outfitNote, language)}</dt><dd>${renderLocalizedBlock(outfit.note, language, 'miyu-localized-copy')}</dd></div>
+      </dl>
+    </article>`;
   }
 
   function renderDetailTable(details, language) {
@@ -451,12 +499,20 @@
         )}
       </section>`;
     }
-    return `<section class="miyu-explanation-section miyu-accessory-fashion">
+    if (page.id === 'fashion-reference') {
+      return `<section class="miyu-explanation-section miyu-accessory-fashion">
+        ${renderLocalizedBlock(sections.accessoryFashion, language, 'miyu-localized-copy')}
+        ${sections.accessoryFashion.idolExamples && sections.accessoryFashion.idolExamples.length ? `
+          ${renderSectionHeading(content.SECTION_LABELS.exampleCelebrities, language)}
+          ${renderReferenceGallery(sections.accessoryFashion.idolExamples, language, 'miyu-fashion-examples')}
+        ` : `<p class="miyu-reference-empty">${escapeHtml(draft.gender === 'male' ? '스타일 방향을 중심으로 코디를 확인해 주세요.' : 'PPT 스타일 참고 이미지를 준비 중입니다.')}</p>`}
+      </section>`;
+    }
+    return `<section class="miyu-explanation-section miyu-daily-outfits">
       ${renderLocalizedBlock(sections.accessoryFashion, language, 'miyu-localized-copy')}
-      ${sections.accessoryFashion.examples && sections.accessoryFashion.examples.length ? `
-        ${renderSectionHeading(content.SECTION_LABELS.fashion, language)}
-        ${renderReferenceGallery(sections.accessoryFashion.examples, language, 'miyu-fashion-examples')}
-      ` : ''}
+      <div class="miyu-daily-outfit-rail miyu-example-rail">${sections.accessoryFashion.dailyOutfits.map(outfit =>
+        renderDailyOutfitCard(outfit, language)
+      ).join('')}</div>
     </section>`;
   }
 
@@ -477,9 +533,7 @@
             [language]: `${localizedGroupDisplayName(draft.localizedGroupName, language)} · ${draft.typeCode} ${draft.localizedTypeName[language]}`
           }, language, 'miyu-type-identity-name')}
         </div>
-        <dl>
-          <div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div>
-        </dl>
+        ${profile.isPublic ? '' : `<dl><div><dt>진단일</dt><dd>${escapeHtml(profile.diagnosisDate)}</dd></div></dl>`}
       </header>
       <div class="miyu-explanation-page-head">
         ${renderSectionHeading(page.title, language)}
@@ -489,6 +543,7 @@
       <footer class="miyu-explanation-pager">
         <button class="miyu-button miyu-secondary" type="button" data-action="explanation-previous"${safeIndex === 0 ? ' disabled' : ''}>이전</button>
         <button class="miyu-button miyu-primary" type="button" data-action="explanation-next"${safeIndex === draft.pages.length - 1 ? ' disabled' : ''}>다음</button>
+        <button class="miyu-button miyu-secondary miyu-other-type-button" type="button" data-action="open-explanation-picker">다른 타입 해설 보기</button>
       </footer>
     </section>`;
   }
@@ -500,6 +555,11 @@
       state.profile.explanationLanguage
     );
     return draft ? renderExplanationPanel(draft, state.profile, pageIndex) : '';
+  }
+
+  function renderPublicExplanationView(profile, typeCode, pageIndex = 0) {
+    const draft = content.getExplanation(typeCode, profile.gender, profile.explanationLanguage);
+    return draft ? renderExplanationPanel(draft, { ...profile, isPublic: true }, pageIndex) : '';
   }
 
   function createController(adapters) {
@@ -550,6 +610,25 @@
 
     function beginDiagnosis() {
       location.hash = '#/diagnosis/question/1';
+    }
+
+    function openExplanationPicker(profile) {
+      const explanationLanguage = String(profile.explanationLanguage || '');
+      const gender = String(profile.gender || '');
+      if (!content.LANGUAGES[explanationLanguage]) {
+        return { error: '해설 언어를 선택해 주세요', field: 'explanationLanguage' };
+      }
+      if (!['female', 'male'].includes(gender)) {
+        return { error: '성별을 선택해 주세요', field: 'gender' };
+      }
+      location.hash = `#/explanation/${gender}/${explanationLanguage}`;
+      return { error: null, field: null };
+    }
+
+    function openPublicExplanation(profile, typeCode) {
+      if (!core.TYPES.some(type => type.code === typeCode)) return { error: '선택할 수 없는 타입이에요' };
+      location.hash = `#/explanation/${profile.gender}/${profile.explanationLanguage}/${typeCode.toLowerCase()}/1`;
+      return { error: null };
     }
 
     function selectAnswer(questionIndex, optionCode) {
@@ -655,6 +734,27 @@
         return { kind: 'start', state };
       }
 
+      const publicMatch = hash.match(/^#\/explanation\/(female|male)\/(ja|zh-CN|zh-TW)(?:\/([a-d]-[1-3])\/(\d+))?$/i);
+      if (publicMatch) {
+        const profile = {
+          gender: publicMatch[1].toLowerCase(),
+          explanationLanguage: publicMatch[2],
+          diagnosisDate: ''
+        };
+        const typeCode = publicMatch[3] && publicMatch[3].toUpperCase();
+        if (!typeCode) return { kind: 'explanation-picker', profile, state };
+        const draft = content.getExplanation(typeCode, profile.gender, profile.explanationLanguage);
+        if (!draft) {
+          location.hash = `#/explanation/${profile.gender}/${profile.explanationLanguage}`;
+          return { kind: 'redirect', state };
+        }
+        const requestedIndex = Number(publicMatch[4]) - 1;
+        return {
+          kind: 'public-explanation', state, profile, typeCode,
+          pageIndex: Math.max(0, Math.min(draft.pages.length - 1, requestedIndex))
+        };
+      }
+
       if (!core.validateProfile(state.profile).valid) {
         location.hash = '#/';
         return { kind: 'redirect', state };
@@ -732,6 +832,8 @@
       nextIntro,
       previousBridge,
       beginDiagnosis,
+      openExplanationPicker,
+      openPublicExplanation,
       selectAnswer,
       previous,
       next,
@@ -918,6 +1020,10 @@
       if (route.kind === 'explanation') {
         view.innerHTML = renderExplanationView(route.state, route.typeCode, route.pageIndex);
       }
+      if (route.kind === 'explanation-picker') view.innerHTML = renderExplanationPicker(route.profile);
+      if (route.kind === 'public-explanation') {
+        view.innerHTML = renderPublicExplanationView(route.profile, route.typeCode, route.pageIndex);
+      }
       appElement.style.display = 'block';
       appElement.classList.remove('miyu-drawer-open');
       const topNav = document.getElementById('topNav');
@@ -975,6 +1081,32 @@
       }
       if (action === 'begin-diagnosis') {
         mountedController.beginDiagnosis();
+        return;
+      }
+      if (action === 'open-explanation-picker') {
+        const shell = target.closest('.miyu-start-shell');
+        const profile = shell ? {
+          explanationLanguage: shell.querySelector('[name="explanationLanguage"]').value,
+          gender: shell.querySelector('[name="gender"]').value
+        } : mountedController.getState().profile;
+        const result = mountedController.openExplanationPicker(profile);
+        if (result.error && shell) {
+          const error = shell.querySelector(`[data-profile-error="${result.field}"]`);
+          if (error) error.textContent = result.error;
+        }
+        return;
+      }
+      if (action === 'switch-public-gender') {
+        const route = mountedController.resolveRoute(adapters.location.hash);
+        if (route.profile) mountedController.openExplanationPicker({
+          ...route.profile,
+          gender: target.dataset.gender
+        });
+        return;
+      }
+      if (action === 'open-public-explanation') {
+        const route = mountedController.resolveRoute(adapters.location.hash);
+        if (route.profile) mountedController.openPublicExplanation(route.profile, target.dataset.type);
         return;
       }
       if (action === 'select-answer') {
@@ -1044,6 +1176,10 @@
     if (route.kind === 'explanation') {
       view.innerHTML = renderExplanationView(route.state, route.typeCode, route.pageIndex);
     }
+    if (route.kind === 'explanation-picker') view.innerHTML = renderExplanationPicker(route.profile);
+    if (route.kind === 'public-explanation') {
+      view.innerHTML = renderPublicExplanationView(route.profile, route.typeCode, route.pageIndex);
+    }
     mountedApp.style.display = 'block';
     mountedApp.classList.remove('miyu-drawer-open');
     const topNav = document.getElementById('topNav');
@@ -1065,6 +1201,8 @@
     renderDetailTable,
     renderExplanationPanel,
     renderExplanationView,
+    renderExplanationPicker,
+    renderPublicExplanationView,
     createController,
     getMountedProfile,
     isMaleLegacyRoute,

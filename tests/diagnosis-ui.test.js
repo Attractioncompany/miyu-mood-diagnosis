@@ -61,6 +61,27 @@ test('시작 화면은 이름 없이 세 진단 설정과 로고를 표시한다
   assert.doesNotMatch(html, /name="customerName"|name="consultantName"/);
   assert.doesNotMatch(html, /10개의 항목을 차례로 확인해 주세요/);
   assert.match(html, /data-asset="logo"/);
+  assert.match(html, /data-action="open-explanation-picker"/);
+});
+
+test('진단 없이 여는 해설은 URL의 성별·언어·타입으로 선택 화면과 해설을 표시한다', () => {
+  const location = { hash: '#/explanation/female/ja' };
+  const controller = ui.createController({
+    storage: createMemoryStorage(),
+    location,
+    confirm: () => true,
+    today: () => '2026-08-13'
+  });
+
+  const picker = controller.resolveRoute(location.hash);
+  assert.equal(picker.kind, 'explanation-picker');
+  assert.equal(picker.profile.gender, 'female');
+  assert.equal(picker.profile.explanationLanguage, 'ja');
+
+  const explanation = controller.resolveRoute('#/explanation/male/zh-TW/b-1/1');
+  assert.equal(explanation.kind, 'public-explanation');
+  assert.equal(explanation.profile.gender, 'male');
+  assert.equal(explanation.typeCode, 'B-1');
 });
 
 test('사용자 입력은 HTML로 실행되지 않도록 이스케이프한다', () => {
@@ -360,11 +381,12 @@ test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시
   assert.match(html, /ブロッサム · A-1 ファンタジー/);
   assert.doesNotMatch(html, /Blossom · 블로썸 · A-1/);
   assert.match(html, /data-action="explanation-next"/);
+  assert.match(html, /data-action="open-explanation-picker"/);
   assert.match(html, /miyu-mood/);
   assert.doesNotMatch(html, /miyu-hair/);
 });
 
-test('해설 패널은 모든 고객용 섹션을 한국어와 선택 언어로 표시한다', () => {
+test('해설 패널은 패션 레퍼런스와 데일리 코디를 한국어와 선택 언어로 표시한다', () => {
   const draft = content.getExplanation('C-3', 'female', 'ja');
   const html = draft.pages.map((_, index) => ui.renderExplanationPanel(draft, validProfile(), index)).join('');
 
@@ -380,7 +402,8 @@ test('해설 패널은 모든 고객용 섹션을 한국어와 선택 언어로 
   for (const label of [
     '이목구비 특징', '顔立ちの特徴',
     '이 무드의 분위기', 'このムードの雰囲気',
-    '액세서리 및 패션', 'アクセサリーとファッション',
+    '스타일 레퍼런스', 'スタイル参考',
+    '데일리 코디 제안', 'デイリーコーデ提案',
     '추천 헤어', 'おすすめのヘア',
     '추천 메이크업', 'おすすめのメイク',
     '피하면 좋은 헤어', '控えたいヘア',
@@ -537,5 +560,5 @@ test('해설 주소는 선택한 최종 타입의 페이지 범위 안에서만 
 
   assert.equal(view.kind, 'explanation');
   assert.equal(view.typeCode, 'C-2');
-  assert.equal(view.pageIndex, 7);
+  assert.equal(view.pageIndex, 8);
 });

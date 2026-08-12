@@ -216,11 +216,28 @@ test('세로 태블릿에서 스타일 참고 보드는 넓게 쓰고 평균 얼
   );
   const gallery = page.locator('.miyu-makeup-examples');
   const galleryWidth = await gallery.evaluate(element => element.getBoundingClientRect().width);
-  const galleryRatio = await gallery.locator('img').evaluate(element => getComputedStyle(element).aspectRatio);
+  const galleryRatio = await gallery.locator('img').first().evaluate(element => getComputedStyle(element).aspectRatio);
 
   assert.equal(averageRatio, '4 / 5');
   assert.equal(galleryRatio, 'auto');
   assert.ok(galleryWidth >= 600, `style gallery width was ${galleryWidth}`);
+  await page.close();
+});
+
+test('태블릿 해설 예시 이미지는 한 줄에서 세 장씩 보이고 가로로 넘긴다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml(3)}`);
+
+  const rail = page.locator('.miyu-example-rail').first();
+  const geometry = await rail.evaluate(element => ({
+    width: element.getBoundingClientRect().width,
+    cardWidth: element.firstElementChild.getBoundingClientRect().width,
+    columns: getComputedStyle(element).gridAutoColumns
+  }));
+
+  assert.match(geometry.columns, /minmax/);
+  assert.ok(geometry.cardWidth * 3 <= geometry.width + 4, JSON.stringify(geometry));
   await page.close();
 });
 

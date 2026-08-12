@@ -270,6 +270,60 @@
     };
   }
 
+  function localizedReferenceExamples(image, captions) {
+    const positions = ['top', 'center', 'bottom'];
+    const values = Array.isArray(captions && captions.ko) ? captions.ko : [];
+    return positions.map((position, index) => ({
+      image,
+      cropPosition: position,
+      caption: {
+        ko: values[index] || values.at(-1) || '',
+        ja: captions && captions.ja && (captions.ja[index] || captions.ja.at(-1)) || '',
+        'zh-CN': captions && captions['zh-CN'] && (captions['zh-CN'][index] || captions['zh-CN'].at(-1)) || '',
+        'zh-TW': captions && captions['zh-TW'] && (captions['zh-TW'][index] || captions['zh-TW'].at(-1)) || ''
+      }
+    }));
+  }
+
+  function fashionReferenceExamples(image) {
+    const positions = ['top', 'center', 'bottom'];
+    const captions = [
+      { ko: '이 타입이 주는 전체적인 인상', ja: 'このタイプらしい全体の印象', 'zh-CN': '体现该类型的整体印象', 'zh-TW': '呈現此類型的整體印象' },
+      { ko: '실루엣과 색감의 균형', ja: 'シルエットと色のバランス', 'zh-CN': '轮廓与色彩的平衡', 'zh-TW': '輪廓與色彩的平衡' },
+      { ko: '작지만 또렷한 액세서리 포인트', ja: '小さくても明確なアクセサリーのポイント', 'zh-CN': '小而明确的配饰重点', 'zh-TW': '小而明確的配飾重點' }
+    ];
+    return positions.map((cropPosition, index) => ({ image, cropPosition, caption: captions[index] }));
+  }
+
+  function firstSentence(localizedValue) {
+    return Object.fromEntries(LOCALIZED_LANGUAGES.map(language => {
+      const source = String(localizedValue && localizedValue[language] || '').trim();
+      const match = source.match(/^.*?[.!。](?:\s|$)/);
+      return [language, (match ? match[0] : source).trim()];
+    }));
+  }
+
+  function dailyOutfits(type, genderContent, safeGender) {
+    const image = `reference/${safeGender}/daily/${type.group.toLowerCase()}.jpg`;
+    const looks = [
+      { ko: '룩 1 · 편안한 기본 조합', ja: 'LOOK 1 · 軽やかなベーシック', 'zh-CN': 'LOOK 1 · 轻松基础搭配', 'zh-TW': 'LOOK 1 · 輕鬆基礎搭配' },
+      { ko: '룩 2 · 색감 한 가지를 살린 조합', ja: 'LOOK 2 · 色を一つ生かす組み合わせ', 'zh-CN': 'LOOK 2 · 突出一种颜色的搭配', 'zh-TW': 'LOOK 2 · 突出一種色彩的搭配' },
+      { ko: '룩 3 · 약속 있는 날의 정돈된 조합', ja: 'LOOK 3 · 外出日の整った組み合わせ', 'zh-CN': 'LOOK 3 · 外出日的利落搭配', 'zh-TW': 'LOOK 3 · 外出日的俐落搭配' }
+    ];
+    const fashion = firstSentence(type.recommendations.accessoryFashion[safeGender]);
+    const style = firstSentence(genderContent.fashion);
+    const caution = firstSentence(genderContent.avoid);
+    return looks.map((name, index) => ({
+      image,
+      cropPosition: ['top', 'center', 'bottom'][index],
+      name,
+      material: fashion,
+      design: style,
+      accessory: fashion,
+      note: caution
+    }));
+  }
+
   function buildExplanationPages(type, genderContent, sections, language) {
     return [
       {
@@ -315,8 +369,13 @@
         content: localizedText(sections.hair.avoid, language)
       },
       {
-        id: 'accessory-fashion',
-        title: data.SECTION_LABELS.accessoryFashion,
+        id: 'fashion-reference',
+        title: data.SECTION_LABELS.fashionReference,
+        content: localizedText(sections.accessoryFashion, language)
+      },
+      {
+        id: 'daily-outfits',
+        title: data.SECTION_LABELS.dailyOutfits,
         content: localizedText(sections.accessoryFashion, language)
       }
     ];
@@ -386,36 +445,24 @@
         ...makeupCopy,
         copy: makeupCopy,
         guide: structuredCareGuide,
-        examples: [{
-          image: careExample,
-          caption: data.REFERENCE_CAPTIONS.makeupRecommended[safeGender]
-        }],
+        examples: localizedReferenceExamples(careExample, structuredCareGuide.recommendedItems),
         avoid: careAvoid,
-        avoidExamples: [{
-          image: careAvoidExample,
-          caption: data.REFERENCE_CAPTIONS.makeupAvoid[safeGender]
-        }]
+        avoidExamples: localizedReferenceExamples(careAvoidExample, structuredCareGuide.avoidItems)
       },
       hair: {
         ...hairCopy,
         copy: hairCopy,
         guide: structuredHairGuide,
         avoid: hairAvoid,
-        examples: [{
-          image: hairExample,
-          caption: data.REFERENCE_CAPTIONS.hairRecommended[safeGender]
-        }],
-        avoidExamples: [{
-          image: hairAvoidExample,
-          caption: data.REFERENCE_CAPTIONS.hairAvoid[safeGender]
-        }]
+        examples: localizedReferenceExamples(hairExample, structuredHairGuide.recommendedItems),
+        avoidExamples: localizedReferenceExamples(hairAvoidExample, structuredHairGuide.avoidItems)
       },
       accessoryFashion: {
         ...type.recommendations.accessoryFashion[safeGender],
-        examples: safeGender === 'female' ? [{
-          image: `reference/female/fashion/${pptVisualAsset}.jpg`,
-          caption: data.REFERENCE_CAPTIONS.fashion.female
-        }] : []
+        idolExamples: safeGender === 'female'
+          ? fashionReferenceExamples(`reference/female/fashion/${pptVisualAsset}.jpg`)
+          : [],
+        dailyOutfits: dailyOutfits(type, genderContent, safeGender)
       }
     };
     Object.defineProperties(sections, {
