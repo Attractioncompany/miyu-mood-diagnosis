@@ -206,6 +206,49 @@ test('세로 태블릿의 병합된 평균 얼굴과 스타일 참고 이미지�
 });
 
 
+test('세로 태블릿에서 스타일 참고 보드는 넓게 쓰고 평균 얼굴만 세로 비율을 유지한다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml(0)}${explanationHtml(3)}`);
+
+  const averageRatio = await page.locator('.miyu-average-face-visual').evaluate(element =>
+    getComputedStyle(element).aspectRatio
+  );
+  const gallery = page.locator('.miyu-makeup-examples');
+  const galleryWidth = await gallery.evaluate(element => element.getBoundingClientRect().width);
+  const galleryRatio = await gallery.locator('img').evaluate(element => getComputedStyle(element).aspectRatio);
+
+  assert.equal(averageRatio, '4 / 5');
+  assert.equal(galleryRatio, 'auto');
+  assert.ok(galleryWidth >= 600, `style gallery width was ${galleryWidth}`);
+  await page.close();
+});
+
+
+test('해설 가이드에서 한국어는 번역문보다 크게 강조된다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml(3)}`);
+
+  const typography = await page.locator('.miyu-guide-detail-card').first().evaluate(element => {
+    const ko = element.querySelector('.miyu-localized-copy .miyu-language-ko');
+    const translated = element.querySelector('.miyu-localized-copy .miyu-language-translated');
+    const koStyle = getComputedStyle(ko);
+    const translatedStyle = getComputedStyle(translated);
+    return {
+      koSize: Number.parseFloat(koStyle.fontSize),
+      translatedSize: Number.parseFloat(translatedStyle.fontSize),
+      koWeight: Number.parseFloat(koStyle.fontWeight),
+      translatedWeight: Number.parseFloat(translatedStyle.fontWeight)
+    };
+  });
+
+  assert.ok(typography.koSize > typography.translatedSize, JSON.stringify(typography));
+  assert.ok(typography.koWeight > typography.translatedWeight, JSON.stringify(typography));
+  await page.close();
+});
+
+
 test('세로 태블릿의 상세 특징은 5행씩 나뉘고 셀 안에서 두 언어를 쌓는다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });

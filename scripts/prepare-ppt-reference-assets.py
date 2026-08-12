@@ -7,7 +7,7 @@ import argparse
 import io
 from pathlib import Path
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageStat
 from pptx import Presentation
 
 
@@ -66,22 +66,43 @@ def sampled(images, limit=12):
     return [images[round(index * (len(images) - 1) / (limit - 1))] for index in range(limit)]
 
 
-def collage_images(images, destination: Path, columns: int = 3, limit: int = 12):
-    pictures = sampled(images, limit)
+def is_blank_placeholder(image: Image.Image):
+    """Ignore tiny, plain-white PPT spacer shapes that are not reference photos."""
+    stat = ImageStat.Stat(image.resize((16, 16)))
+    return min(stat.mean) >= 250 and max(stat.var) <= 1
+
+
+def balanced_row_counts(count: int):
+    """Split a board into balanced rows so the last row has no empty cells."""
+    if count < 1:
+        return []
+    columns = min(4, max(1, (count + 1) // 2))
+    rows = (count + columns - 1) // columns
+    base, extra = divmod(count, rows)
+    return [base + 1 if index < extra else base for index in range(rows)]
+
+
+def collage_images(images, destination: Path, limit: int = 12):
+    pictures = [image for image in sampled(images, limit) if not is_blank_placeholder(image)]
     if not pictures:
         raise SystemExit(f'No pictures available for {destination}')
-    rows = (len(pictures) + columns - 1) // columns
-    cell_width, cell_height, gap = 220, 250, 10
+    row_counts = balanced_row_counts(len(pictures))
+    canvas_width, cell_height, gap = 900, 238, 10
     canvas = Image.new(
         'RGB',
-        (columns * cell_width + (columns + 1) * gap, rows * cell_height + (rows + 1) * gap),
+        (canvas_width, len(row_counts) * cell_height + (len(row_counts) + 1) * gap),
         '#f5f3ef'
     )
-    for index, image in enumerate(pictures):
-        copy = ImageOps.contain(image, (cell_width, cell_height), Image.Resampling.LANCZOS)
-        x = gap + (index % columns) * (cell_width + gap) + (cell_width - copy.width) // 2
-        y = gap + (index // columns) * (cell_height + gap) + (cell_height - copy.height) // 2
-        canvas.paste(copy, (x, y))
+    image_index = 0
+    for row_index, row_count in enumerate(row_counts):
+        cell_width = (canvas_width - (row_count + 1) * gap) // row_count
+        y = gap + row_index * (cell_height + gap)
+        for column_index in range(row_count):
+            image = pictures[image_index]
+            copy = ImageOps.contain(image, (cell_width, cell_height), Image.Resampling.LANCZOS)
+            x = gap + column_index * (cell_width + gap) + (cell_width - copy.width) // 2
+            canvas.paste(copy, (x, y + (cell_height - copy.height) // 2))
+            image_index += 1
     jpg(canvas, destination, (720, 900))
 
 
