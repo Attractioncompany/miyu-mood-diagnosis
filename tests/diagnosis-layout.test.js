@@ -206,6 +206,28 @@ test('세로 태블릿의 병합된 평균 얼굴과 스타일 참고 이미지�
 });
 
 
+test('해설 상단의 다른 타입 보기 버튼은 타입명과 겹치지 않는다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml(3)}`);
+
+  const boxes = await page.locator('.miyu-explanation-utility, .miyu-type-identity').evaluateAll(elements =>
+    elements.map(element => {
+      const box = element.getBoundingClientRect();
+      return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
+    })
+  );
+  const [utility, identity] = boxes;
+  const overlaps = utility.left < identity.right
+    && utility.right > identity.left
+    && utility.top < identity.bottom
+    && utility.bottom > identity.top;
+
+  assert.equal(overlaps, false, `utility and identity overlap: ${JSON.stringify(boxes)}`);
+  await page.close();
+});
+
+
 test('세로 태블릿에서 스타일 참고 보드는 넓게 쓰고 평균 얼굴만 세로 비율을 유지한다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });

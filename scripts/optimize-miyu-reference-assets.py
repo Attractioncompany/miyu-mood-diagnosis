@@ -13,22 +13,28 @@ ROOT = Path(__file__).resolve().parents[1]
 REFERENCE = ROOT / 'assets' / 'diagnosis' / 'reference'
 GROUPS = ('a', 'b', 'c', 'd')
 TYPES = ('a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3')
+TYPE_NAMES = ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')
+
+
+def card_assets(directory, keys):
+    return [f'{directory}/{key}/{index}.jpg' for key in keys for index in (1, 2, 3)]
+
+
 EXPECTED = (
     [f'intro/{group}.jpg' for group in GROUPS]
     + [f'average/female/{code}.jpg' for code in TYPES]
-    + [f'female/makeup/recommended/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
-    + [f'female/makeup/avoid/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
-    + [f'female/hair/recommended/{group}.jpg' for group in GROUPS]
-    + [f'female/hair/avoid/{group}.jpg' for group in GROUPS]
-    + [f'female/fashion/{name}.jpg' for name in ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')]
-    + [f'female/daily/{group}.jpg' for group in GROUPS]
+    + card_assets('female/makeup/recommended', TYPE_NAMES)
+    + card_assets('female/makeup/avoid', TYPE_NAMES)
+    + card_assets('female/hair/recommended', GROUPS)
+    + card_assets('female/hair/avoid', GROUPS)
+    + card_assets('female/fashion', TYPE_NAMES)
+    + card_assets('female/daily', GROUPS)
     + [f'average/male/{code}.jpg' for code in TYPES]
-    + [f'male/hair/{group}.jpg' for group in GROUPS]
-    + [f'male/grooming/recommended/{group}.jpg' for group in GROUPS]
-    + [f'male/grooming/avoid/{group}.jpg' for group in GROUPS]
-    + [f'male/grooming-detail/{code}.jpg' for code in TYPES]
-    + [f'male/hair/avoid-ppt/{group}.jpg' for group in GROUPS]
-    + [f'male/daily/{group}.jpg' for group in GROUPS]
+    + card_assets('male/hair', GROUPS)
+    + card_assets('male/grooming/avoid', GROUPS)
+    + card_assets('male/grooming-detail', TYPES)
+    + card_assets('male/hair/avoid-ppt', GROUPS)
+    + card_assets('male/daily', GROUPS)
 )
 
 

@@ -62,18 +62,58 @@ test('해설은 평균 얼굴과 추천·피하면 좋은 방향의 세 장 예�
   assert.equal(female.sections.hair.avoidExamples.length, 3);
   assert.equal(female.sections.accessoryFashion.idolExamples.length, 3);
   assert.equal(female.sections.accessoryFashion.dailyOutfits.length, 3);
-  assert.match(female.sections.makeup.examples[0].image, /^reference\/female\/makeup\/recommended\/fantasy\.jpg$/);
-  assert.match(female.sections.makeup.avoidExamples[0].image, /^reference\/female\/makeup\/avoid\/fantasy\.jpg$/);
-  assert.match(female.sections.hair.examples[0].image, /^reference\/female\/hair\/recommended\/a\.jpg$/);
-  assert.match(female.sections.hair.avoidExamples[0].image, /^reference\/female\/hair\/avoid\/a\.jpg$/);
-  assert.match(female.sections.accessoryFashion.idolExamples[0].image, /^reference\/female\/fashion\/fantasy\.jpg$/);
-  assert.match(female.sections.accessoryFashion.dailyOutfits[0].image, /^reference\/female\/daily\/a\.jpg$/);
+  assert.deepEqual(female.sections.makeup.examples.map(example => example.image), [
+    'reference/female/makeup/recommended/fantasy/1.jpg',
+    'reference/female/makeup/recommended/fantasy/2.jpg',
+    'reference/female/makeup/recommended/fantasy/3.jpg'
+  ]);
+  assert.deepEqual(female.sections.makeup.avoidExamples.map(example => example.image), [
+    'reference/female/makeup/avoid/fantasy/1.jpg',
+    'reference/female/makeup/avoid/fantasy/2.jpg',
+    'reference/female/makeup/avoid/fantasy/3.jpg'
+  ]);
+  assert.deepEqual(female.sections.hair.examples.map(example => example.image), [
+    'reference/female/hair/recommended/a/1.jpg',
+    'reference/female/hair/recommended/a/2.jpg',
+    'reference/female/hair/recommended/a/3.jpg'
+  ]);
+  assert.deepEqual(female.sections.hair.avoidExamples.map(example => example.image), [
+    'reference/female/hair/avoid/a/1.jpg',
+    'reference/female/hair/avoid/a/2.jpg',
+    'reference/female/hair/avoid/a/3.jpg'
+  ]);
+  assert.deepEqual(female.sections.accessoryFashion.idolExamples.map(example => example.image), [
+    'reference/female/fashion/fantasy/1.jpg',
+    'reference/female/fashion/fantasy/2.jpg',
+    'reference/female/fashion/fantasy/3.jpg'
+  ]);
+  assert.deepEqual(female.sections.accessoryFashion.dailyOutfits.map(example => example.image), [
+    'reference/female/daily/a/1.jpg',
+    'reference/female/daily/a/2.jpg',
+    'reference/female/daily/a/3.jpg'
+  ]);
   assert.equal(male.sections.makeup.examples.length, 3);
-  assert.match(male.sections.makeup.examples[0].image, /^reference\/male\/grooming-detail\/a-1\.jpg$/);
-  assert.match(male.sections.makeup.avoidExamples[0].image, /^reference\/male\/grooming\/avoid\/a\.jpg$/);
+  assert.deepEqual(male.sections.makeup.examples.map(example => example.image), [
+    'reference/male/grooming-detail/a-1/1.jpg',
+    'reference/male/grooming-detail/a-1/2.jpg',
+    'reference/male/grooming-detail/a-1/3.jpg'
+  ]);
+  assert.deepEqual(male.sections.makeup.avoidExamples.map(example => example.image), [
+    'reference/male/grooming/avoid/a/1.jpg',
+    'reference/male/grooming/avoid/a/2.jpg',
+    'reference/male/grooming/avoid/a/3.jpg'
+  ]);
   assert.equal(male.sections.hair.examples.length, 3);
-  assert.match(male.sections.hair.examples[0].image, /^reference\/male\/hair\/a\.jpg$/);
-  assert.match(male.sections.hair.avoidExamples[0].image, /^reference\/male\/hair\/avoid-ppt\/a\.jpg$/);
+  assert.deepEqual(male.sections.hair.examples.map(example => example.image), [
+    'reference/male/hair/a/1.jpg',
+    'reference/male/hair/a/2.jpg',
+    'reference/male/hair/a/3.jpg'
+  ]);
+  assert.deepEqual(male.sections.hair.avoidExamples.map(example => example.image), [
+    'reference/male/hair/avoid-ppt/a/1.jpg',
+    'reference/male/hair/avoid-ppt/a/2.jpg',
+    'reference/male/hair/avoid-ppt/a/3.jpg'
+  ]);
   assert.ok(female.sections.makeup.copy['zh-TW'].trim());
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
 });
@@ -83,10 +123,10 @@ test('PPT 시각 자료는 앱 번호가 아니라 타입명으로 연결해 D�
   const clear = content.getExplanation('D-2', 'female', 'ja');
   const sharp = content.getExplanation('D-3', 'female', 'ja');
 
-  assert.match(charisma.sections.makeup.examples[0].image, /makeup\/recommended\/charisma\.jpg$/);
-  assert.match(clear.sections.makeup.examples[0].image, /makeup\/recommended\/clear\.jpg$/);
-  assert.match(sharp.sections.makeup.examples[0].image, /makeup\/recommended\/sharp\.jpg$/);
-  assert.match(charisma.sections.accessoryFashion.idolExamples[0].image, /fashion\/charisma\.jpg$/);
+  assert.match(charisma.sections.makeup.examples[0].image, /makeup\/recommended\/charisma\/1\.jpg$/);
+  assert.match(clear.sections.makeup.examples[0].image, /makeup\/recommended\/clear\/1\.jpg$/);
+  assert.match(sharp.sections.makeup.examples[0].image, /makeup\/recommended\/sharp\/1\.jpg$/);
+  assert.match(charisma.sections.accessoryFashion.idolExamples[0].image, /fashion\/charisma\/1\.jpg$/);
 });
 
 test('PPT 기준으로 헤어는 대분류, 여성 메이크업은 타입명 기준으로 연결한다', () => {

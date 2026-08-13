@@ -57,6 +57,9 @@
       `<option value="${value}"${state.profile.explanationLanguage === value ? ' selected' : ''}>${escapeHtml(meta.inputLabel)}</option>`
     ).join('');
     return `<div class="miyu-start-shell">
+      <div class="miyu-start-utility">
+        <button class="miyu-utility-button" type="button" data-action="open-explanation-picker">해설 바로보기</button>
+      </div>
       <img class="miyu-start-logo" src="${asset('logo')}" data-asset="logo" alt="MIYU">
       <p class="miyu-eyebrow">MIYU MOOD CHECKLIST</p>
       <h1>무드 진단</h1>
@@ -82,7 +85,6 @@
         </label>
         <div class="miyu-start-actions">
           <button class="miyu-button miyu-primary" type="submit">진단 시작</button>
-          <button class="miyu-button miyu-secondary" type="button" data-action="open-explanation-picker">해설 바로보기</button>
         </div>
       </form>
     </div>`;
@@ -527,6 +529,9 @@
       data-explanation-page="${safeIndex}">
       <header class="miyu-explanation-meta">
         <p>MIYU CONSULTATION NOTE</p>
+        <div class="miyu-explanation-utility">
+          <button class="miyu-utility-button" type="button" data-action="open-explanation-picker">다른 타입 해설 보기</button>
+        </div>
         <div class="miyu-type-identity">
           ${renderLocalizedBlock({
             ko: `${localizedGroupDisplayName(draft.localizedGroupName, 'ko')} · ${draft.typeCode} ${draft.localizedTypeName.ko}`,
@@ -543,7 +548,6 @@
       <footer class="miyu-explanation-pager">
         <button class="miyu-button miyu-secondary" type="button" data-action="explanation-previous"${safeIndex === 0 ? ' disabled' : ''}>이전</button>
         <button class="miyu-button miyu-primary" type="button" data-action="explanation-next"${safeIndex === draft.pages.length - 1 ? ' disabled' : ''}>다음</button>
-        <button class="miyu-button miyu-secondary miyu-other-type-button" type="button" data-action="open-explanation-picker">다른 타입 해설 보기</button>
       </footer>
     </section>`;
   }
@@ -1085,10 +1089,11 @@
       }
       if (action === 'open-explanation-picker') {
         const shell = target.closest('.miyu-start-shell');
+        const route = mountedController.resolveRoute(adapters.location.hash);
         const profile = shell ? {
           explanationLanguage: shell.querySelector('[name="explanationLanguage"]').value,
           gender: shell.querySelector('[name="gender"]').value
-        } : mountedController.getState().profile;
+        } : route.profile || mountedController.getState().profile;
         const result = mountedController.openExplanationPicker(profile);
         if (result.error && shell) {
           const error = shell.querySelector(`[data-profile-error="${result.field}"]`);

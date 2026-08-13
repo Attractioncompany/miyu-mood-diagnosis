@@ -117,6 +117,24 @@ test('기존 v17 주소는 Full V1 화면으로 해시를 보존해 이동한다
 });
 
 
+test('진단 없이 연 해설의 다른 타입 보기 버튼은 URL의 성별과 언어를 유지한다', async () => {
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  const url = new URL(TARGET_FILE, baseUrl);
+  url.hash = '#/explanation/male/ja/b-1/1';
+  await page.goto(url.href);
+
+  await page.locator('.miyu-explanation-panel').waitFor({ state: 'visible' });
+  await page.locator('.miyu-explanation-utility [data-action="open-explanation-picker"]').click();
+  await page.waitForURL(current => current.hash === '#/explanation/male/ja');
+  assert.match(
+    await page.locator('[data-action="switch-public-gender"][data-gender="male"]').getAttribute('class'),
+    /miyu-primary/
+  );
+  assert.match(await page.locator('.miyu-public-picker').textContent(), /性別とタイプを選ぶと/);
+  await page.close();
+});
+
+
 test('진단 설정 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진단을 연다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   const url = new URL(TARGET_FILE, baseUrl);
