@@ -1588,6 +1588,17 @@
   border-width: 2px;
 }
 
+/* Hair references include both wide style boards and portrait photos.
+   Keep their source ratio instead of forcing the makeup-card portrait frame. */
+.miyu-hair-examples .miyu-reference-image-frame {
+  aspect-ratio: auto;
+  background: transparent;
+}
+
+.miyu-hair-examples .miyu-reference-figure img {
+  height: auto;
+}
+
 .miyu-reference-caption {
   padding: 11px 12px 13px;
   min-height: 82px;
