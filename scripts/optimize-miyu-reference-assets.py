@@ -16,14 +16,14 @@ TYPES = ('a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', '
 TYPE_NAMES = ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')
 
 
-def card_assets(directory, keys):
-    return [f'{directory}/{key}/{index}.jpg' for key in keys for index in (1, 2, 3)]
+def card_assets(directory, keys, count=3):
+    return [f'{directory}/{key}/{index}.jpg' for key in keys for index in range(1, count + 1)]
 
 
 EXPECTED = (
     [f'intro/{group}.jpg' for group in GROUPS]
     + [f'average/female/{code}.jpg' for code in TYPES]
-    + card_assets('female/makeup/recommended', TYPE_NAMES)
+    + card_assets('female/makeup/recommended', TYPE_NAMES, count=6)
     + card_assets('female/makeup/avoid', TYPE_NAMES)
     + card_assets('female/hair/recommended', GROUPS)
     + card_assets('female/hair/avoid', GROUPS)

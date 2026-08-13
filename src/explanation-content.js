@@ -270,15 +270,19 @@
     };
   }
 
-  function localizedReferenceExamples(imageDirectory, captions) {
+  function localizedReferenceExamples(imageDirectory, captions, count = 3) {
     const values = Array.isArray(captions && captions.ko) ? captions.ko : [];
-    return [1, 2, 3].map((number, index) => ({
-      image: `${imageDirectory}/${number}.jpg`,
+    const captionIndex = index => Math.min(
+      values.length - 1,
+      Math.floor(index * values.length / count)
+    );
+    return Array.from({ length: count }, (_, index) => ({
+      image: `${imageDirectory}/${index + 1}.jpg`,
       caption: {
-        ko: values[index] || values.at(-1) || '',
-        ja: captions && captions.ja && (captions.ja[index] || captions.ja.at(-1)) || '',
-        'zh-CN': captions && captions['zh-CN'] && (captions['zh-CN'][index] || captions['zh-CN'].at(-1)) || '',
-        'zh-TW': captions && captions['zh-TW'] && (captions['zh-TW'][index] || captions['zh-TW'].at(-1)) || ''
+        ko: values[captionIndex(index)] || values.at(-1) || '',
+        ja: captions && captions.ja && (captions.ja[captionIndex(index)] || captions.ja.at(-1)) || '',
+        'zh-CN': captions && captions['zh-CN'] && (captions['zh-CN'][captionIndex(index)] || captions['zh-CN'].at(-1)) || '',
+        'zh-TW': captions && captions['zh-TW'] && (captions['zh-TW'][captionIndex(index)] || captions['zh-TW'].at(-1)) || ''
       }
     }));
   }
@@ -444,7 +448,11 @@
         ...makeupCopy,
         copy: makeupCopy,
         guide: structuredCareGuide,
-        examples: localizedReferenceExamples(careExample, structuredCareGuide.recommendedItems),
+        examples: localizedReferenceExamples(
+          careExample,
+          structuredCareGuide.recommendedItems,
+          safeGender === 'female' ? 6 : 3
+        ),
         avoid: careAvoid,
         avoidExamples: localizedReferenceExamples(careAvoidExample, structuredCareGuide.avoidItems)
       },

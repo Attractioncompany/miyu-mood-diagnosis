@@ -72,13 +72,13 @@ function collectReferenceAssets(rootDir) {
   const groups = ['a', 'b', 'c', 'd'];
   const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
   const typeNames = ['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'];
-  const cardAssets = (directory, keys) => keys.flatMap(key =>
-    [1, 2, 3].map(index => `${directory}/${key}/${index}.jpg`)
+  const cardAssets = (directory, keys, count = 3) => keys.flatMap(key =>
+    Array.from({ length: count }, (_, index) => `${directory}/${key}/${index + 1}.jpg`)
   );
   const expectedKeys = [
     ...groups.map(group => `reference/intro/${group}.jpg`),
     ...types.map(type => `reference/average/female/${type}.jpg`),
-    ...cardAssets('reference/female/makeup/recommended', typeNames),
+    ...cardAssets('reference/female/makeup/recommended', typeNames, 6),
     ...cardAssets('reference/female/makeup/avoid', typeNames),
     ...cardAssets('reference/female/hair/recommended', groups),
     ...cardAssets('reference/female/hair/avoid', groups),

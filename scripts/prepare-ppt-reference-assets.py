@@ -154,7 +154,9 @@ def import_assets(ppt_path: Path):
         collage_images(recommended, OUTPUT / 'female' / 'makeup' / 'recommended' / f'{key}.jpg')
         collage_images(avoid, OUTPUT / 'female' / 'makeup' / 'avoid' / f'{key}.jpg')
         collage_images(fashion, OUTPUT / 'female' / 'fashion' / f'{key}.jpg')
-        card_images(recommended, OUTPUT / 'female' / 'makeup' / 'recommended' / key)
+        # Keep six representative PPT photos: three are visible at once and
+        # the consultation screen can reveal the remaining examples by arrow.
+        card_images(recommended, OUTPUT / 'female' / 'makeup' / 'recommended' / key, count=6)
         card_images(avoid, OUTPUT / 'female' / 'makeup' / 'avoid' / key)
         card_images(fashion, OUTPUT / 'female' / 'fashion' / key)
 

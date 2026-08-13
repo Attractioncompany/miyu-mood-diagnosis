@@ -1403,6 +1403,35 @@
   margin: 12px 0 0;
 }
 
+.miyu-gallery-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+  color: #6f6e69;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.miyu-gallery-button {
+  width: 38px;
+  height: 34px;
+  border: 1px solid #c9c9c5;
+  border-radius: 4px;
+  background: #fff;
+  color: #272725;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.miyu-gallery-button:hover,
+.miyu-gallery-button:focus-visible {
+  border-color: #272725;
+  background: #f5f4f1;
+}
+
 .miyu-example-rail {
   display: grid;
   grid-auto-flow: column;
@@ -1527,7 +1556,14 @@
   background: #efefed;
 }
 
-.miyu-reference-figure img,
+.miyu-reference-figure img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  object-position: center center;
+}
+
 .miyu-daily-outfit-card img {
   width: 100%;
   height: 100%;
