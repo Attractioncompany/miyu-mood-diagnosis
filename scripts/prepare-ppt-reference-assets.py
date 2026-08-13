@@ -106,6 +106,20 @@ def collage_images(images, destination: Path, limit: int = 12):
     jpg(canvas, destination, (720, 900))
 
 
+def card_images(images, destination: Path, count: int = 3):
+    """Export distinct source photos for the horizontally scrollable explanation cards."""
+    pictures = [image for image in images if not is_blank_placeholder(image)]
+    if not pictures:
+        raise SystemExit(f'No pictures available for {destination}')
+    selected = sampled(pictures, count)
+    # Source slides normally contain at least three photos. If a legacy slide
+    # has fewer, preserve its real source image instead of inventing a new one.
+    while len(selected) < count:
+        selected.append(selected[-1])
+    for index, image in enumerate(selected[:count], start=1):
+        jpg(image, destination / f'{index}.jpg', (420, 560))
+
+
 def slide_images(presentation, numbers):
     return [open_picture(shape) for number in numbers for shape in picture_shapes(presentation.slides[number - 1])]
 
@@ -134,27 +148,32 @@ def import_assets(ppt_path: Path):
         pictures = picture_shapes(presentation.slides[source['face'] - 1])
         if len(pictures) < 2:
             raise SystemExit(f'Expected at least 2 type photos on slide {source["face"]}: {key}')
-        collage_images(
-            comparison_images(presentation, source['comparison'], 'recommended'),
-            OUTPUT / 'female' / 'makeup' / 'recommended' / f'{key}.jpg'
-        )
-        collage_images(
-            comparison_images(presentation, source['comparison'], 'avoid'),
-            OUTPUT / 'female' / 'makeup' / 'avoid' / f'{key}.jpg'
-        )
-        collage_images(
-            slide_images(presentation, source['fashion']),
-            OUTPUT / 'female' / 'fashion' / f'{key}.jpg'
-        )
+        recommended = comparison_images(presentation, source['comparison'], 'recommended')
+        avoid = comparison_images(presentation, source['comparison'], 'avoid')
+        fashion = slide_images(presentation, source['fashion'])
+        collage_images(recommended, OUTPUT / 'female' / 'makeup' / 'recommended' / f'{key}.jpg')
+        collage_images(avoid, OUTPUT / 'female' / 'makeup' / 'avoid' / f'{key}.jpg')
+        collage_images(fashion, OUTPUT / 'female' / 'fashion' / f'{key}.jpg')
+        card_images(recommended, OUTPUT / 'female' / 'makeup' / 'recommended' / key)
+        card_images(avoid, OUTPUT / 'female' / 'makeup' / 'avoid' / key)
+        card_images(fashion, OUTPUT / 'female' / 'fashion' / key)
 
     for group, slides in FEMALE_HAIR_RECOMMENDED_SLIDES.items():
-        collage_images(slide_images(presentation, slides), OUTPUT / 'female' / 'hair' / 'recommended' / f'{group}.jpg')
+        images = slide_images(presentation, slides)
+        collage_images(images, OUTPUT / 'female' / 'hair' / 'recommended' / f'{group}.jpg')
+        card_images(images, OUTPUT / 'female' / 'hair' / 'recommended' / group)
     for group, slides in FEMALE_HAIR_AVOID_SLIDES.items():
-        collage_images(slide_images(presentation, slides), OUTPUT / 'female' / 'hair' / 'avoid' / f'{group}.jpg')
+        images = slide_images(presentation, slides)
+        collage_images(images, OUTPUT / 'female' / 'hair' / 'avoid' / f'{group}.jpg')
+        card_images(images, OUTPUT / 'female' / 'hair' / 'avoid' / group)
     for group, slides in MALE_HAIR_RECOMMENDED_SLIDES.items():
-        collage_images(slide_images(presentation, slides), OUTPUT / 'male' / 'hair' / f'{group}.jpg')
+        images = slide_images(presentation, slides)
+        collage_images(images, OUTPUT / 'male' / 'hair' / f'{group}.jpg')
+        card_images(images, OUTPUT / 'male' / 'hair' / group)
     for group, slides in MALE_HAIR_AVOID_SLIDES.items():
-        collage_images(slide_images(presentation, slides), OUTPUT / 'male' / 'hair' / 'avoid-ppt' / f'{group}.jpg')
+        images = slide_images(presentation, slides)
+        collage_images(images, OUTPUT / 'male' / 'hair' / 'avoid-ppt' / f'{group}.jpg')
+        card_images(images, OUTPUT / 'male' / 'hair' / 'avoid-ppt' / group)
 
 
 if __name__ == '__main__':

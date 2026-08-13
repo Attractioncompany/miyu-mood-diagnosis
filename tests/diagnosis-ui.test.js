@@ -61,7 +61,11 @@ test('시작 화면은 이름 없이 세 진단 설정과 로고를 표시한다
   assert.doesNotMatch(html, /name="customerName"|name="consultantName"/);
   assert.doesNotMatch(html, /10개의 항목을 차례로 확인해 주세요/);
   assert.match(html, /data-asset="logo"/);
-  assert.match(html, /data-action="open-explanation-picker"/);
+  assert.match(html, /class="miyu-start-utility"[\s\S]*data-action="open-explanation-picker"/);
+  assert.ok(
+    html.indexOf('miyu-start-utility') < html.indexOf('<form class="miyu-profile-form"'),
+    '해설 바로보기는 진단 시작 폼과 분리된 보조 영역에 있어야 한다'
+  );
 });
 
 test('진단 없이 여는 해설은 URL의 성별·언어·타입으로 선택 화면과 해설을 표시한다', () => {
@@ -369,7 +373,7 @@ test('피하면 좋은 헤어 페이지는 PPT 회피 스타일을 목록으로 
   assert.match(html, /miyu-guide-list/);
 });
 
-test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시한다', () => {
+test('해설 패널은 한 타입 정체성과 상단의 다른 타입 보기·하단 페이지 이동 버튼을 표시한다', () => {
   const state = answeredState();
   state.selectedType = 'A-1';
   const draft = content.getExplanation('A-1', 'female', 'ja');
@@ -381,7 +385,9 @@ test('해설 패널은 한 타입 정체성과 페이지 이동 버튼만 표시
   assert.match(html, /ブロッサム · A-1 ファンタジー/);
   assert.doesNotMatch(html, /Blossom · 블로썸 · A-1/);
   assert.match(html, /data-action="explanation-next"/);
-  assert.match(html, /data-action="open-explanation-picker"/);
+  assert.match(html, /class="miyu-explanation-utility"[\s\S]*data-action="open-explanation-picker"/);
+  const pager = html.slice(html.indexOf('<footer class="miyu-explanation-pager">'));
+  assert.doesNotMatch(pager, /open-explanation-picker/);
   assert.match(html, /miyu-mood/);
   assert.doesNotMatch(html, /miyu-hair/);
 });
@@ -435,8 +441,8 @@ test('남성 그루밍은 대분류 공용 사진이 아니라 타입별 생성 
   const draft = content.getExplanation('C-3', 'male', 'ja');
   const html = ui.renderExplanationPanel(draft, validProfile({ gender: 'male' }), 3);
 
-  assert.equal(draft.sections.makeup.examples[0].image, 'reference/male/grooming-detail/c-3.jpg');
-  assert.match(html, /data-asset="reference\/male\/grooming-detail\/c-3\.jpg"/);
+  assert.equal(draft.sections.makeup.examples[0].image, 'reference/male/grooming-detail/c-3/1.jpg');
+  assert.match(html, /data-asset="reference\/male\/grooming-detail\/c-3\/1\.jpg"/);
 });
 
 test('1위와 2위 라벨은 카드 상단용 요소로 점수 숫자와 분리한다', () => {

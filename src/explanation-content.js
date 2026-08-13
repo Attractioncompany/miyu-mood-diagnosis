@@ -270,12 +270,10 @@
     };
   }
 
-  function localizedReferenceExamples(image, captions) {
-    const positions = ['top', 'center', 'bottom'];
+  function localizedReferenceExamples(imageDirectory, captions) {
     const values = Array.isArray(captions && captions.ko) ? captions.ko : [];
-    return positions.map((position, index) => ({
-      image,
-      cropPosition: position,
+    return [1, 2, 3].map((number, index) => ({
+      image: `${imageDirectory}/${number}.jpg`,
       caption: {
         ko: values[index] || values.at(-1) || '',
         ja: captions && captions.ja && (captions.ja[index] || captions.ja.at(-1)) || '',
@@ -285,14 +283,16 @@
     }));
   }
 
-  function fashionReferenceExamples(image) {
-    const positions = ['top', 'center', 'bottom'];
+  function fashionReferenceExamples(imageDirectory) {
     const captions = [
       { ko: '이 타입이 주는 전체적인 인상', ja: 'このタイプらしい全体の印象', 'zh-CN': '体现该类型的整体印象', 'zh-TW': '呈現此類型的整體印象' },
       { ko: '실루엣과 색감의 균형', ja: 'シルエットと色のバランス', 'zh-CN': '轮廓与色彩的平衡', 'zh-TW': '輪廓與色彩的平衡' },
       { ko: '작지만 또렷한 액세서리 포인트', ja: '小さくても明確なアクセサリーのポイント', 'zh-CN': '小而明确的配饰重点', 'zh-TW': '小而明確的配飾重點' }
     ];
-    return positions.map((cropPosition, index) => ({ image, cropPosition, caption: captions[index] }));
+    return [1, 2, 3].map((number, index) => ({
+      image: `${imageDirectory}/${number}.jpg`,
+      caption: captions[index]
+    }));
   }
 
   function firstSentence(localizedValue) {
@@ -304,7 +304,7 @@
   }
 
   function dailyOutfits(type, genderContent, safeGender) {
-    const image = `reference/${safeGender}/daily/${type.group.toLowerCase()}.jpg`;
+    const imageDirectory = `reference/${safeGender}/daily/${type.group.toLowerCase()}`;
     const looks = [
       { ko: '룩 1 · 편안한 기본 조합', ja: 'LOOK 1 · 軽やかなベーシック', 'zh-CN': 'LOOK 1 · 轻松基础搭配', 'zh-TW': 'LOOK 1 · 輕鬆基礎搭配' },
       { ko: '룩 2 · 색감 한 가지를 살린 조합', ja: 'LOOK 2 · 色を一つ生かす組み合わせ', 'zh-CN': 'LOOK 2 · 突出一种颜色的搭配', 'zh-TW': 'LOOK 2 · 突出一種色彩的搭配' },
@@ -314,8 +314,7 @@
     const style = firstSentence(genderContent.fashion);
     const caution = firstSentence(genderContent.avoid);
     return looks.map((name, index) => ({
-      image,
-      cropPosition: ['top', 'center', 'bottom'][index],
+      image: `${imageDirectory}/${index + 1}.jpg`,
       name,
       material: fashion,
       design: style,
@@ -418,17 +417,17 @@
     const groupAsset = type.group.toLowerCase();
     if (!pptVisualAsset) throw new Error(`Missing PPT visual key: ${type.name}`);
     const careExample = safeGender === 'female'
-      ? `reference/female/makeup/recommended/${pptVisualAsset}.jpg`
-      : `reference/male/grooming-detail/${typeAsset}.jpg`;
+      ? `reference/female/makeup/recommended/${pptVisualAsset}`
+      : `reference/male/grooming-detail/${typeAsset}`;
     const careAvoidExample = safeGender === 'female'
-      ? `reference/female/makeup/avoid/${pptVisualAsset}.jpg`
-      : `reference/male/grooming/avoid/${groupAsset}.jpg`;
+      ? `reference/female/makeup/avoid/${pptVisualAsset}`
+      : `reference/male/grooming/avoid/${groupAsset}`;
     const hairExample = safeGender === 'female'
-      ? `reference/female/hair/recommended/${groupAsset}.jpg`
-      : `reference/male/hair/${groupAsset}.jpg`;
+      ? `reference/female/hair/recommended/${groupAsset}`
+      : `reference/male/hair/${groupAsset}`;
     const hairAvoidExample = safeGender === 'female'
-      ? `reference/female/hair/avoid/${groupAsset}.jpg`
-      : `reference/male/hair/avoid-ppt/${groupAsset}.jpg`;
+      ? `reference/female/hair/avoid/${groupAsset}`
+      : `reference/male/hair/avoid-ppt/${groupAsset}`;
     const sections = {
       facialFeatures: {
         label: data.SECTION_LABELS.facialFeatures,
@@ -460,7 +459,7 @@
       accessoryFashion: {
         ...type.recommendations.accessoryFashion[safeGender],
         idolExamples: safeGender === 'female'
-          ? fashionReferenceExamples(`reference/female/fashion/${pptVisualAsset}.jpg`)
+          ? fashionReferenceExamples(`reference/female/fashion/${pptVisualAsset}`)
           : [],
         dailyOutfits: dailyOutfits(type, genderContent, safeGender)
       }
