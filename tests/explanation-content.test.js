@@ -81,9 +81,9 @@ test('여성 메이크업 추천은 PPT의 여섯 장 예시를 반환하고 피
     'reference/female/hair/recommended/a/3.jpg'
   ]);
   assert.deepEqual(female.sections.hair.avoidExamples.map(example => example.image), [
-    'reference/female/hair/avoid/a/1.jpg',
-    'reference/female/hair/avoid/a/2.jpg',
-    'reference/female/hair/avoid/a/3.jpg'
+    'reference/female/semantic/hair-avoid/a/heavy-straight.jpg',
+    'reference/female/semantic/hair-avoid/a/slick-back.jpg',
+    'reference/female/semantic/hair-avoid/a/hime-cut.jpg'
   ]);
   assert.deepEqual(female.sections.accessoryFashion.idolExamples.map(example => example.image), [
     'reference/female/fashion/fantasy/1.jpg',
@@ -119,6 +119,78 @@ test('여성 메이크업 추천은 PPT의 여섯 장 예시를 반환하고 피
   ]);
   assert.ok(female.sections.makeup.copy['zh-TW'].trim());
   assert.ok(male.sections.hair.examples[0].caption.ja.trim());
+});
+
+test('고객에게 보이는 모든 예시 카드는 이미지별 다국어 설명과 표시 비율을 가진다', () => {
+  for (const typeCode of TYPE_CODES) {
+    for (const gender of ['female', 'male']) {
+      const result = content.getExplanation(typeCode, gender, 'ja');
+      const exampleSets = [
+        result.sections.makeup.examples,
+        result.sections.makeup.avoidExamples,
+        result.sections.hair.examples,
+        result.sections.hair.avoidExamples,
+        result.sections.accessoryFashion.idolExamples
+      ];
+      for (const examples of exampleSets) {
+        for (const card of examples) {
+          assert.ok(
+            ['portrait', 'landscape', 'natural'].includes(card.layout),
+            `${typeCode} ${gender} ${card.image} needs an explicit layout`
+          );
+          for (const language of ['ko', ...LANGUAGES]) {
+            assert.ok(
+              String(card.caption[language] || '').trim(),
+              `${typeCode} ${gender} ${card.image} missing ${language} caption`
+            );
+          }
+        }
+      }
+    }
+  }
+});
+
+test('같은 타입의 세 데일리 코디는 서로 다른 소재·디자인·액세서리·유의사항을 안내한다', () => {
+  for (const typeCode of TYPE_CODES) {
+    for (const gender of ['female', 'male']) {
+      const outfits = content.getExplanation(typeCode, gender, 'ja').sections.accessoryFashion.dailyOutfits;
+      assert.equal(outfits.length, 3);
+      const guidance = outfits.map(outfit => JSON.stringify([
+        outfit.material.ko,
+        outfit.design.ko,
+        outfit.accessory.ko,
+        outfit.note.ko
+      ]));
+      assert.equal(new Set(guidance).size, 3, `${typeCode} ${gender} repeats daily outfit guidance`);
+      for (const outfit of outfits) {
+        for (const field of ['name', 'material', 'design', 'accessory', 'note']) {
+          for (const language of ['ko', ...LANGUAGES]) {
+            assert.ok(
+              String(outfit[field][language] || '').trim(),
+              `${typeCode} ${gender} ${field} missing ${language}`
+            );
+          }
+        }
+      }
+    }
+  }
+});
+
+test('여성 패션 레퍼런스는 세부 타입별로 서로 다른 설명을 제공한다', () => {
+  const fruity = content.getExplanation('A-2', 'female', 'ja').sections.accessoryFashion.idolExamples;
+  const soda = content.getExplanation('A-3', 'female', 'ja').sections.accessoryFashion.idolExamples;
+  const romantic = content.getExplanation('B-1', 'female', 'ja').sections.accessoryFashion.idolExamples;
+
+  assert.notDeepEqual(
+    fruity.map(example => example.caption.ko),
+    soda.map(example => example.caption.ko),
+    '프루티와 소다는 공통 패션 문구를 재사용하면 안 된다'
+  );
+  assert.notDeepEqual(
+    soda.map(example => example.caption.ko),
+    romantic.map(example => example.caption.ko),
+    '서로 다른 세부 타입은 각자의 패션 방향을 설명해야 한다'
+  );
 });
 
 test('PPT 시각 자료는 앱 번호가 아니라 타입명으로 연결해 D그룹이 뒤바뀌지 않는다', () => {

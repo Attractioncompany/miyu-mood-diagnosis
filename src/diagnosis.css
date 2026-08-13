@@ -1567,10 +1567,21 @@
 
 .miyu-daily-outfit-card img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
+}
+
+.miyu-reference-image-frame[data-layout="landscape"],
+.miyu-reference-image-frame[data-layout="natural"] {
+  aspect-ratio: auto;
+  background: transparent;
+}
+
+.miyu-reference-image-frame[data-layout="landscape"] img,
+.miyu-reference-image-frame[data-layout="natural"] img {
+  height: auto;
 }
 
 .miyu-reference-image-frame[data-crop="top"] img { object-position: center top; }

@@ -311,6 +311,20 @@ test('해설 예시 이미지는 카드 안에서 잘리지 않고 전체가 보
   await page.close();
 });
 
+test('데일리 코디 이미지는 세로 프레임에 맞춘다는 이유로 잘리지 않는다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${explanationHtml(8)}`);
+
+  const objectFits = await page.locator('.miyu-daily-outfit-card img').evaluateAll(images =>
+    images.map(image => getComputedStyle(image).objectFit)
+  );
+
+  assert.equal(objectFits.length, 3);
+  assert.ok(objectFits.every(objectFit => objectFit !== 'cover'), `daily image fits: ${objectFits.join(', ')}`);
+  await page.close();
+});
+
 
 test('세로 태블릿의 소개 얼굴 카드는 사진과 설명을 나란히 배치해 빈 여백을 줄인다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
