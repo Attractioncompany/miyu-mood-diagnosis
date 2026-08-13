@@ -135,6 +135,20 @@ test('진단 없이 연 해설의 다른 타입 보기 버튼은 URL의 성별�
 });
 
 
+test('진단 없이 연 해설의 다음 버튼은 현재 URL 기준으로 다음 페이지를 연다', async () => {
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  const url = new URL(TARGET_FILE, baseUrl);
+  url.hash = '#/explanation/female/ja/a-1/1';
+  await page.goto(url.href);
+
+  await page.locator('.miyu-explanation-panel').waitFor({ state: 'visible' });
+  await page.locator('[data-action="explanation-next"]').click();
+  await page.waitForURL(current => current.hash === '#/explanation/female/ja/a-1/2', { timeout: 2000 });
+  assert.match(await page.locator('.miyu-explanation-page-head').textContent(), /2\s*\/\s*9/);
+  await page.close();
+});
+
+
 test('진단 설정 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진단을 연다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
   const url = new URL(TARGET_FILE, baseUrl);

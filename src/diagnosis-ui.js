@@ -718,6 +718,18 @@
       return moveExplanation(pageIndex, 1);
     }
 
+    function movePublicExplanation(profile, typeCode, pageIndex, direction) {
+      const draft = content.getExplanation(
+        typeCode,
+        profile.gender,
+        profile.explanationLanguage
+      );
+      if (!draft) return { error: '해설을 찾을 수 없어요' };
+      const nextIndex = Math.max(0, Math.min(draft.pages.length - 1, pageIndex + direction));
+      location.hash = `#/explanation/${profile.gender}/${profile.explanationLanguage}/${typeCode.toLowerCase()}/${nextIndex + 1}`;
+      return { error: null };
+    }
+
     function newDiagnosis() {
       const hasProgress = Boolean(
         state.profile.explanationLanguage
@@ -846,6 +858,7 @@
       confirmType,
       previousExplanation,
       nextExplanation,
+      movePublicExplanation,
       newDiagnosis,
       resolveRoute
     };
@@ -1150,6 +1163,12 @@
       }
       if (action === 'explanation-previous' || action === 'explanation-next') {
         const pageIndex = Number(target.closest('[data-explanation-page]').dataset.explanationPage);
+        const route = mountedController.resolveRoute(adapters.location.hash || '#/');
+        const direction = action === 'explanation-previous' ? -1 : 1;
+        if (route.kind === 'public-explanation') {
+          mountedController.movePublicExplanation(route.profile, route.typeCode, pageIndex, direction);
+          return;
+        }
         if (action === 'explanation-previous') mountedController.previousExplanation(pageIndex);
         if (action === 'explanation-next') mountedController.nextExplanation(pageIndex);
         return;
