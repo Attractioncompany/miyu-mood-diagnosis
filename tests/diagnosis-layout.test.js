@@ -255,11 +255,31 @@ test('태블릿 해설 예시 이미지는 한 줄에서 세 장씩 보이고 �
   const geometry = await rail.evaluate(element => ({
     width: element.getBoundingClientRect().width,
     cardWidth: element.firstElementChild.getBoundingClientRect().width,
-    columns: getComputedStyle(element).gridAutoColumns
+    cardBasis: getComputedStyle(element.firstElementChild).flexBasis
   }));
 
-  assert.match(geometry.columns, /minmax/);
+  assert.match(geometry.cardBasis, /max/);
   assert.ok(geometry.cardWidth * 3 <= geometry.width + 4, JSON.stringify(geometry));
+  await page.close();
+});
+
+test('넓은 PC에서도 추천 메이크업은 세 장만 보이고 나머지는 옆으로 넘긴다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const femaleDraft = content.getExplanation('A-1', 'female', 'ja');
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  await page.setContent(`<style>${css}</style>${ui.renderExplanationPanel(femaleDraft, {
+    gender: 'female', explanationLanguage: 'ja', diagnosisDate: '2026-08-13'
+  }, 3)}`);
+
+  const geometry = await page.locator('.miyu-makeup-examples .miyu-example-rail').evaluate(element => {
+    const firstCard = element.firstElementChild.getBoundingClientRect().width;
+    const gap = Number.parseFloat(getComputedStyle(element).gap);
+    return { width: element.clientWidth, scrollWidth: element.scrollWidth, firstCard, gap };
+  });
+
+  assert.ok(geometry.firstCard * 3 + geometry.gap * 2 <= geometry.width + 4, JSON.stringify(geometry));
+  assert.ok(geometry.firstCard * 4 + geometry.gap * 3 > geometry.width, JSON.stringify(geometry));
+  assert.ok(geometry.scrollWidth > geometry.width, JSON.stringify(geometry));
   await page.close();
 });
 

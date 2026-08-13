@@ -1433,10 +1433,7 @@
 }
 
 .miyu-example-rail {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(214px, calc((100% - 28px) / 3));
-  grid-template-rows: 1fr;
+  display: flex;
   align-items: start;
   gap: 14px;
   overflow-x: auto;
@@ -1445,6 +1442,10 @@
   scroll-snap-type: x mandatory;
   scrollbar-color: #a4a29c transparent;
   scrollbar-width: thin;
+}
+
+.miyu-example-rail > .miyu-example-rail-card {
+  flex: 0 0 max(214px, calc((100% - 28px) / 3));
 }
 
 .miyu-example-rail::-webkit-scrollbar {
