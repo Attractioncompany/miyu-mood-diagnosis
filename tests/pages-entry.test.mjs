@@ -164,6 +164,27 @@ test('여성 추천 메이크업 갤러리는 화살표로 다음 예시를 보�
   await page.close();
 });
 
+test('가로형 헤어 예시는 원본 비율로 보여 큰 위아래 여백이 없다', async () => {
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
+  const url = new URL(TARGET_FILE, baseUrl);
+  url.hash = '#/explanation/female/ja/b-1/7';
+  await page.goto(url.href);
+
+  const image = page.locator('.miyu-hair-examples img').first();
+  await image.waitFor({ state: 'visible' });
+  await image.evaluate(element => element.complete && element.naturalWidth > 0);
+  const ratio = await image.evaluate(element => {
+    const frame = element.closest('.miyu-reference-image-frame').getBoundingClientRect();
+    return {
+      natural: element.naturalWidth / element.naturalHeight,
+      frame: frame.width / frame.height
+    };
+  });
+
+  assert.ok(Math.abs(ratio.natural - ratio.frame) < 0.02, JSON.stringify(ratio));
+  await page.close();
+});
+
 
 test('진단 설정 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진단을 연다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
