@@ -50,13 +50,13 @@ test('두 번째 소개 화면은 네 무드 그룹의 얼굴 참고 이미지�
   assert.equal(male.groupVisuals[1].label['zh-TW'], 'Boyish · 清秀少年感');
 });
 
-test('해설은 평균 얼굴과 추천·피하면 좋은 방향의 세 장 예시를 반환한다', () => {
+test('여성 메이크업 추천은 PPT의 여섯 장 예시를 반환하고 피하면 좋은 방향은 원본 수만 반환한다', () => {
   const female = content.getExplanation('A-1', 'female', 'zh-TW');
   const male = content.getExplanation('A-1', 'male', 'ja');
 
   assert.match(female.averageFace.image, /^reference\/average\/female\/a-1\.jpg$/);
   assert.match(male.averageFace.image, /^reference\/average\/male\/a-1\.jpg$/);
-  assert.equal(female.sections.makeup.examples.length, 3);
+  assert.equal(female.sections.makeup.examples.length, 6);
   assert.equal(female.sections.makeup.avoidExamples.length, 3);
   assert.equal(female.sections.hair.examples.length, 3);
   assert.equal(female.sections.hair.avoidExamples.length, 3);
@@ -65,7 +65,10 @@ test('해설은 평균 얼굴과 추천·피하면 좋은 방향의 세 장 예�
   assert.deepEqual(female.sections.makeup.examples.map(example => example.image), [
     'reference/female/makeup/recommended/fantasy/1.jpg',
     'reference/female/makeup/recommended/fantasy/2.jpg',
-    'reference/female/makeup/recommended/fantasy/3.jpg'
+    'reference/female/makeup/recommended/fantasy/3.jpg',
+    'reference/female/makeup/recommended/fantasy/4.jpg',
+    'reference/female/makeup/recommended/fantasy/5.jpg',
+    'reference/female/makeup/recommended/fantasy/6.jpg'
   ]);
   assert.deepEqual(female.sections.makeup.avoidExamples.map(example => example.image), [
     'reference/female/makeup/avoid/fantasy/1.jpg',

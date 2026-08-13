@@ -263,6 +263,34 @@ test('태블릿 해설 예시 이미지는 한 줄에서 세 장씩 보이고 �
   await page.close();
 });
 
+test('여성 메이크업 예시가 세 장을 넘으면 좌우 이동 버튼을 표시한다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const femaleDraft = content.getExplanation('A-1', 'female', 'ja');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${ui.renderExplanationPanel(femaleDraft, {
+    gender: 'female', explanationLanguage: 'ja', diagnosisDate: '2026-08-13'
+  }, 3)}`);
+
+  assert.equal(await page.locator('[data-action="gallery-previous"]').count(), 1);
+  assert.equal(await page.locator('[data-action="gallery-next"]').count(), 1);
+  await page.close();
+});
+
+test('해설 예시 이미지는 카드 안에서 잘리지 않고 전체가 보인다', async () => {
+  const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');
+  const femaleDraft = content.getExplanation('A-1', 'female', 'ja');
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  await page.setContent(`<style>${css}</style>${ui.renderExplanationPanel(femaleDraft, {
+    gender: 'female', explanationLanguage: 'ja', diagnosisDate: '2026-08-13'
+  }, 3)}`);
+
+  assert.equal(
+    await page.locator('.miyu-makeup-examples img').first().evaluate(element => getComputedStyle(element).objectFit),
+    'contain'
+  );
+  await page.close();
+});
+
 
 test('세로 태블릿의 소개 얼굴 카드는 사진과 설명을 나란히 배치해 빈 여백을 줄인다', async () => {
   const css = fs.readFileSync(path.join(ROOT, 'src', 'diagnosis.css'), 'utf8');

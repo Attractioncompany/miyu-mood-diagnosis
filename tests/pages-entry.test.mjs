@@ -148,6 +148,22 @@ test('진단 없이 연 해설의 다음 버튼은 현재 URL 기준으로 다�
   await page.close();
 });
 
+test('여성 추천 메이크업 갤러리는 화살표로 다음 예시를 보여 준다', async () => {
+  const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });
+  const url = new URL(TARGET_FILE, baseUrl);
+  url.hash = '#/explanation/female/ja/a-1/4';
+  await page.goto(url.href);
+
+  const rail = page.locator('[data-gallery-rail]');
+  await rail.waitFor({ state: 'visible' });
+  assert.equal(await rail.locator('.miyu-reference-figure').count(), 6);
+  const initialScroll = await rail.evaluate(element => element.scrollLeft);
+  await page.locator('[data-action="gallery-next"]').click();
+  await page.waitForTimeout(500);
+  assert.ok(await rail.evaluate(element => element.scrollLeft) > initialScroll);
+  await page.close();
+});
+
 
 test('진단 설정 뒤에는 소개 3장과 브릿지를 거쳐 한국어 진단을 연다', async () => {
   const page = await browser.newPage({ viewport: { width: 834, height: 1194 } });

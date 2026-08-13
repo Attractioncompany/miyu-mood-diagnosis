@@ -71,13 +71,13 @@ function expectedReferenceAssetKeys() {
   const groups = ['a', 'b', 'c', 'd'];
   const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
   const typeNames = ['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'];
-  const cardAssets = (directory, keys) => keys.flatMap(key =>
-    [1, 2, 3].map(index => `${directory}/${key}/${index}.jpg`)
+  const cardAssets = (directory, keys, count = 3) => keys.flatMap(key =>
+    Array.from({ length: count }, (_, index) => `${directory}/${key}/${index + 1}.jpg`)
   );
   return [
     ...groups.map(group => `reference/intro/${group}.jpg`),
     ...types.map(type => `reference/average/female/${type}.jpg`),
-    ...cardAssets('reference/female/makeup/recommended', typeNames),
+    ...cardAssets('reference/female/makeup/recommended', typeNames, 6),
     ...cardAssets('reference/female/makeup/avoid', typeNames),
     ...cardAssets('reference/female/hair/recommended', groups),
     ...cardAssets('reference/female/hair/avoid', groups),
@@ -240,7 +240,7 @@ test('로고·진단·시각 해설 이미지를 외부 경로 없이 HTML 안�
   const keys = Object.keys(assets).sort();
   const expectedKeys = [...expectedDiagnosisAssetKeys(), ...expectedReferenceAssetKeys()].sort();
 
-  assert.equal(new Set(expectedKeys).size, 337);
+  assert.equal(new Set(expectedKeys).size, 373);
   assert.equal(expectedKeys.filter(key => /^questions\/q\d/.test(key)).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('questions/male/')).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('types/')).length, 12);

@@ -364,9 +364,17 @@
   }
 
   function renderReferenceGallery(examples, language, className) {
-    return `<div class="miyu-reference-gallery miyu-example-rail ${escapeHtml(className)}">${examples.map(reference =>
-      renderReferenceImage(reference, language, 'miyu-reference-figure miyu-example-rail-card')
-    ).join('')}</div>`;
+    const canMove = examples.length > 3;
+    return `<div class="miyu-reference-gallery ${escapeHtml(className)}" data-reference-gallery>
+      <div class="miyu-example-rail" data-gallery-rail>${examples.map(reference =>
+        renderReferenceImage(reference, language, 'miyu-reference-figure miyu-example-rail-card')
+      ).join('')}</div>
+      ${canMove ? `<div class="miyu-gallery-controls" aria-label="예시 이미지 이동">
+        <button class="miyu-gallery-button" type="button" data-action="gallery-previous" aria-label="이전 예시 이미지">‹</button>
+        <span>예시 더 보기</span>
+        <button class="miyu-gallery-button" type="button" data-action="gallery-next" aria-label="다음 예시 이미지">›</button>
+      </div>` : ''}
+    </div>`;
   }
 
   function renderDailyOutfitCard(outfit, language) {
@@ -1171,6 +1179,17 @@
         }
         if (action === 'explanation-previous') mountedController.previousExplanation(pageIndex);
         if (action === 'explanation-next') mountedController.nextExplanation(pageIndex);
+        return;
+      }
+      if (action === 'gallery-previous' || action === 'gallery-next') {
+        const gallery = target.closest('[data-reference-gallery]');
+        const rail = gallery && gallery.querySelector('[data-gallery-rail]');
+        if (rail) {
+          rail.scrollBy({
+            left: (action === 'gallery-previous' ? -1 : 1) * Math.max(rail.clientWidth * 0.92, 240),
+            behavior: 'smooth'
+          });
+        }
         return;
       }
       if (action === 'new-diagnosis') {
