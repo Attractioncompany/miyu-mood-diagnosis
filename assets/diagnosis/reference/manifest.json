@@ -1752,6 +1752,78 @@
       "mime": "image/jpeg",
       "width": 420,
       "height": 295
+    },
+    "reference/female/semantic/hair-avoid/a/heavy-straight.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/a/heavy-straight.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/a/slick-back.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/a/slick-back.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/a/hime-cut.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/a/hime-cut.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/b/hime-cut.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/b/hime-cut.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/b/bleach.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/b/bleach.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/b/shag.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/b/shag.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/c/twin-tail.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/c/twin-tail.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/c/harsh-layer.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/c/harsh-layer.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/c/messy.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/c/messy.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/d/tight-wave.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/d/tight-wave.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/d/cute-pony.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/d/cute-pony.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
+    },
+    "reference/female/semantic/hair-avoid/d/baby-hair.jpg": {
+      "file": "diagnosis/reference/female/semantic/hair-avoid/d/baby-hair.jpg",
+      "mime": "image/jpeg",
+      "width": 720,
+      "height": 900
     }
   }
 }

@@ -2,13 +2,16 @@
   const data = typeof module === 'object' && module.exports
     ? require('./explanation-data.js')
     : root.MiyuExplanationData;
-  const api = factory(data);
+  const cardManifest = typeof module === 'object' && module.exports
+    ? require('./explanation-card-manifest.js')
+    : root.MiyuExplanationCardManifest;
+  const api = factory(data, cardManifest);
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.MiyuExplanationContent = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (data) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (data, cardManifest) {
   'use strict';
 
-  if (!data) throw new Error('MiyuExplanationData is required');
+  if (!data || !cardManifest) throw new Error('MIYU explanation data and card manifest are required');
 
   const LOCALIZED_LANGUAGES = ['ko', 'ja', 'zh-CN', 'zh-TW'];
   const DETAIL_KEYS = [
@@ -270,63 +273,6 @@
     };
   }
 
-  function localizedReferenceExamples(imageDirectory, captions, count = 3) {
-    const values = Array.isArray(captions && captions.ko) ? captions.ko : [];
-    const captionIndex = index => Math.min(
-      values.length - 1,
-      Math.floor(index * values.length / count)
-    );
-    return Array.from({ length: count }, (_, index) => ({
-      image: `${imageDirectory}/${index + 1}.jpg`,
-      caption: {
-        ko: values[captionIndex(index)] || values.at(-1) || '',
-        ja: captions && captions.ja && (captions.ja[captionIndex(index)] || captions.ja.at(-1)) || '',
-        'zh-CN': captions && captions['zh-CN'] && (captions['zh-CN'][captionIndex(index)] || captions['zh-CN'].at(-1)) || '',
-        'zh-TW': captions && captions['zh-TW'] && (captions['zh-TW'][captionIndex(index)] || captions['zh-TW'].at(-1)) || ''
-      }
-    }));
-  }
-
-  function fashionReferenceExamples(imageDirectory) {
-    const captions = [
-      { ko: '이 타입이 주는 전체적인 인상', ja: 'このタイプらしい全体の印象', 'zh-CN': '体现该类型的整体印象', 'zh-TW': '呈現此類型的整體印象' },
-      { ko: '실루엣과 색감의 균형', ja: 'シルエットと色のバランス', 'zh-CN': '轮廓与色彩的平衡', 'zh-TW': '輪廓與色彩的平衡' },
-      { ko: '작지만 또렷한 액세서리 포인트', ja: '小さくても明確なアクセサリーのポイント', 'zh-CN': '小而明确的配饰重点', 'zh-TW': '小而明確的配飾重點' }
-    ];
-    return [1, 2, 3].map((number, index) => ({
-      image: `${imageDirectory}/${number}.jpg`,
-      caption: captions[index]
-    }));
-  }
-
-  function firstSentence(localizedValue) {
-    return Object.fromEntries(LOCALIZED_LANGUAGES.map(language => {
-      const source = String(localizedValue && localizedValue[language] || '').trim();
-      const match = source.match(/^.*?[.!。](?:\s|$)/);
-      return [language, (match ? match[0] : source).trim()];
-    }));
-  }
-
-  function dailyOutfits(type, genderContent, safeGender) {
-    const imageDirectory = `reference/${safeGender}/daily/${type.group.toLowerCase()}`;
-    const looks = [
-      { ko: '룩 1 · 편안한 기본 조합', ja: 'LOOK 1 · 軽やかなベーシック', 'zh-CN': 'LOOK 1 · 轻松基础搭配', 'zh-TW': 'LOOK 1 · 輕鬆基礎搭配' },
-      { ko: '룩 2 · 색감 한 가지를 살린 조합', ja: 'LOOK 2 · 色を一つ生かす組み合わせ', 'zh-CN': 'LOOK 2 · 突出一种颜色的搭配', 'zh-TW': 'LOOK 2 · 突出一種色彩的搭配' },
-      { ko: '룩 3 · 약속 있는 날의 정돈된 조합', ja: 'LOOK 3 · 外出日の整った組み合わせ', 'zh-CN': 'LOOK 3 · 外出日的利落搭配', 'zh-TW': 'LOOK 3 · 外出日的俐落搭配' }
-    ];
-    const fashion = firstSentence(type.recommendations.accessoryFashion[safeGender]);
-    const style = firstSentence(genderContent.fashion);
-    const caution = firstSentence(genderContent.avoid);
-    return looks.map((name, index) => ({
-      image: `${imageDirectory}/${index + 1}.jpg`,
-      name,
-      material: fashion,
-      design: style,
-      accessory: fashion,
-      note: caution
-    }));
-  }
-
   function buildExplanationPages(type, genderContent, sections, language) {
     return [
       {
@@ -416,22 +362,7 @@
       ? makeupGuide.avoid
       : data.GROUP_CARE_AVOID[type.group][safeGender];
     const hairAvoid = data.GROUP_HAIR_AVOID[type.group][safeGender];
-    const typeAsset = typeCode.toLowerCase();
-    const pptVisualAsset = PPT_VISUAL_KEY_BY_TYPE_NAME[type.name];
-    const groupAsset = type.group.toLowerCase();
-    if (!pptVisualAsset) throw new Error(`Missing PPT visual key: ${type.name}`);
-    const careExample = safeGender === 'female'
-      ? `reference/female/makeup/recommended/${pptVisualAsset}`
-      : `reference/male/grooming-detail/${typeAsset}`;
-    const careAvoidExample = safeGender === 'female'
-      ? `reference/female/makeup/avoid/${pptVisualAsset}`
-      : `reference/male/grooming/avoid/${groupAsset}`;
-    const hairExample = safeGender === 'female'
-      ? `reference/female/hair/recommended/${groupAsset}`
-      : `reference/male/hair/${groupAsset}`;
-    const hairAvoidExample = safeGender === 'female'
-      ? `reference/female/hair/avoid/${groupAsset}`
-      : `reference/male/hair/avoid-ppt/${groupAsset}`;
+    const cardContext = { typeCode, typeName: type.name, group: type.group, gender: safeGender };
     const sections = {
       facialFeatures: {
         label: data.SECTION_LABELS.facialFeatures,
@@ -448,28 +379,38 @@
         ...makeupCopy,
         copy: makeupCopy,
         guide: structuredCareGuide,
-        examples: localizedReferenceExamples(
-          careExample,
-          structuredCareGuide.recommendedItems,
-          safeGender === 'female' ? 6 : 3
-        ),
+        examples: cardManifest.getReferenceCards({
+          ...cardContext,
+          section: 'makeup-recommended',
+          items: structuredCareGuide.recommendedItems
+        }),
         avoid: careAvoid,
-        avoidExamples: localizedReferenceExamples(careAvoidExample, structuredCareGuide.avoidItems)
+        avoidExamples: cardManifest.getReferenceCards({
+          ...cardContext,
+          section: 'makeup-avoid',
+          items: structuredCareGuide.avoidItems
+        })
       },
       hair: {
         ...hairCopy,
         copy: hairCopy,
         guide: structuredHairGuide,
         avoid: hairAvoid,
-        examples: localizedReferenceExamples(hairExample, structuredHairGuide.recommendedItems),
-        avoidExamples: localizedReferenceExamples(hairAvoidExample, structuredHairGuide.avoidItems)
+        examples: cardManifest.getReferenceCards({
+          ...cardContext,
+          section: 'hair-recommended',
+          items: structuredHairGuide.recommendedItems
+        }),
+        avoidExamples: cardManifest.getReferenceCards({
+          ...cardContext,
+          section: 'hair-avoid',
+          items: structuredHairGuide.avoidItems
+        })
       },
       accessoryFashion: {
         ...type.recommendations.accessoryFashion[safeGender],
-        idolExamples: safeGender === 'female'
-          ? fashionReferenceExamples(`reference/female/fashion/${pptVisualAsset}`)
-          : [],
-        dailyOutfits: dailyOutfits(type, genderContent, safeGender)
+        idolExamples: cardManifest.getReferenceCards({ ...cardContext, section: 'fashion' }),
+        dailyOutfits: cardManifest.getDailyOutfitCards(cardContext)
       }
     };
     Object.defineProperties(sections, {

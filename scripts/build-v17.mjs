@@ -72,6 +72,20 @@ function collectReferenceAssets(rootDir) {
   const groups = ['a', 'b', 'c', 'd'];
   const types = ['a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3'];
   const typeNames = ['fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma'];
+  const semanticCards = [
+    'reference/female/semantic/hair-avoid/a/heavy-straight.jpg',
+    'reference/female/semantic/hair-avoid/a/slick-back.jpg',
+    'reference/female/semantic/hair-avoid/a/hime-cut.jpg',
+    'reference/female/semantic/hair-avoid/b/hime-cut.jpg',
+    'reference/female/semantic/hair-avoid/b/bleach.jpg',
+    'reference/female/semantic/hair-avoid/b/shag.jpg',
+    'reference/female/semantic/hair-avoid/c/twin-tail.jpg',
+    'reference/female/semantic/hair-avoid/c/harsh-layer.jpg',
+    'reference/female/semantic/hair-avoid/c/messy.jpg',
+    'reference/female/semantic/hair-avoid/d/tight-wave.jpg',
+    'reference/female/semantic/hair-avoid/d/cute-pony.jpg',
+    'reference/female/semantic/hair-avoid/d/baby-hair.jpg'
+  ];
   const cardAssets = (directory, keys, count = 3) => keys.flatMap(key =>
     Array.from({ length: count }, (_, index) => `${directory}/${key}/${index + 1}.jpg`)
   );
@@ -89,7 +103,8 @@ function collectReferenceAssets(rootDir) {
     ...cardAssets('reference/male/grooming/avoid', groups),
     ...cardAssets('reference/male/grooming-detail', types),
     ...cardAssets('reference/male/hair/avoid-ppt', groups),
-    ...cardAssets('reference/male/daily', groups)
+    ...cardAssets('reference/male/daily', groups),
+    ...semanticCards
   ].sort();
   const manifestKeys = Object.keys(manifest.assets).sort();
   if (JSON.stringify(manifestKeys) !== JSON.stringify(expectedKeys)) {
@@ -220,6 +235,10 @@ export function buildV17({ rootDir, outputPath }) {
     path.join(rootDir, 'src', 'explanation-data.js'),
     'utf8'
   );
+  const explanationCardManifest = fs.readFileSync(
+    path.join(rootDir, 'src', 'explanation-card-manifest.js'),
+    'utf8'
+  );
   const explanationContent = fs.readFileSync(
     path.join(rootDir, 'src', 'explanation-content.js'),
     'utf8'
@@ -307,6 +326,7 @@ export function buildV17({ rootDir, outputPath }) {
   const diagnosisScript = [
     `window.MIYU_DIAGNOSIS_ASSETS = ${JSON.stringify(assets)};`,
     explanationData,
+    explanationCardManifest,
     explanationContent,
     core,
     ui

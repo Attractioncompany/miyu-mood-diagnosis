@@ -14,6 +14,20 @@ REFERENCE = ROOT / 'assets' / 'diagnosis' / 'reference'
 GROUPS = ('a', 'b', 'c', 'd')
 TYPES = ('a-1', 'a-2', 'a-3', 'b-1', 'b-2', 'b-3', 'c-1', 'c-2', 'c-3', 'd-1', 'd-2', 'd-3')
 TYPE_NAMES = ('fantasy', 'fruity', 'soda', 'romantic', 'soft', 'elegance', 'vintage', 'refined', 'deep-chic', 'clear', 'sharp', 'charisma')
+SEMANTIC_HAIR_AVOID = (
+    'female/semantic/hair-avoid/a/heavy-straight.jpg',
+    'female/semantic/hair-avoid/a/slick-back.jpg',
+    'female/semantic/hair-avoid/a/hime-cut.jpg',
+    'female/semantic/hair-avoid/b/hime-cut.jpg',
+    'female/semantic/hair-avoid/b/bleach.jpg',
+    'female/semantic/hair-avoid/b/shag.jpg',
+    'female/semantic/hair-avoid/c/twin-tail.jpg',
+    'female/semantic/hair-avoid/c/harsh-layer.jpg',
+    'female/semantic/hair-avoid/c/messy.jpg',
+    'female/semantic/hair-avoid/d/tight-wave.jpg',
+    'female/semantic/hair-avoid/d/cute-pony.jpg',
+    'female/semantic/hair-avoid/d/baby-hair.jpg',
+)
 
 
 def card_assets(directory, keys, count=3):
@@ -35,6 +49,7 @@ EXPECTED = (
     + card_assets('male/grooming-detail', TYPES)
     + card_assets('male/hair/avoid-ppt', GROUPS)
     + card_assets('male/daily', GROUPS)
+    + list(SEMANTIC_HAIR_AVOID)
 )
 
 

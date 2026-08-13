@@ -88,7 +88,19 @@ function expectedReferenceAssetKeys() {
     ...cardAssets('reference/male/grooming/avoid', groups),
     ...cardAssets('reference/male/grooming-detail', types),
     ...cardAssets('reference/male/hair/avoid-ppt', groups),
-    ...cardAssets('reference/male/daily', groups)
+    ...cardAssets('reference/male/daily', groups),
+    'reference/female/semantic/hair-avoid/a/heavy-straight.jpg',
+    'reference/female/semantic/hair-avoid/a/slick-back.jpg',
+    'reference/female/semantic/hair-avoid/a/hime-cut.jpg',
+    'reference/female/semantic/hair-avoid/b/hime-cut.jpg',
+    'reference/female/semantic/hair-avoid/b/bleach.jpg',
+    'reference/female/semantic/hair-avoid/b/shag.jpg',
+    'reference/female/semantic/hair-avoid/c/twin-tail.jpg',
+    'reference/female/semantic/hair-avoid/c/harsh-layer.jpg',
+    'reference/female/semantic/hair-avoid/c/messy.jpg',
+    'reference/female/semantic/hair-avoid/d/tight-wave.jpg',
+    'reference/female/semantic/hair-avoid/d/cute-pony.jpg',
+    'reference/female/semantic/hair-avoid/d/baby-hair.jpg'
   ].sort();
 }
 
@@ -240,7 +252,7 @@ test('로고·진단·시각 해설 이미지를 외부 경로 없이 HTML 안�
   const keys = Object.keys(assets).sort();
   const expectedKeys = [...expectedDiagnosisAssetKeys(), ...expectedReferenceAssetKeys()].sort();
 
-  assert.equal(new Set(expectedKeys).size, 373);
+  assert.equal(new Set(expectedKeys).size, 385);
   assert.equal(expectedKeys.filter(key => /^questions\/q\d/.test(key)).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('questions/male/')).length, 34);
   assert.equal(expectedKeys.filter(key => key.startsWith('types/')).length, 12);
@@ -389,6 +401,10 @@ test('번역이 하나라도 비면 결과 파일을 쓰기 전에 빌드를 중
   fs.copyFileSync(
     path.join(root, 'src', 'explanation-content.js'),
     path.join(tempRoot, 'src', 'explanation-content.js')
+  );
+  fs.copyFileSync(
+    path.join(root, 'src', 'explanation-card-manifest.js'),
+    path.join(tempRoot, 'src', 'explanation-card-manifest.js')
   );
   fs.copyFileSync(
     path.join(root, 'src', 'celebrity-names.js'),

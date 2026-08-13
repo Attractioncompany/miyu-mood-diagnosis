@@ -356,7 +356,7 @@
   function renderReferenceImage(reference, language, className, eager = false) {
     if (!reference || !reference.image) return '';
     return `<figure class="${escapeHtml(className)}">
-      <div class="miyu-reference-image-frame" data-crop="${escapeHtml(reference.cropPosition || 'center')}">
+      <div class="miyu-reference-image-frame" data-layout="${escapeHtml(reference.layout || 'portrait')}" data-crop="${escapeHtml(reference.cropPosition || 'center')}">
         <img src="${asset(reference.image)}" data-asset="${escapeHtml(reference.image)}" alt="" loading="${eager ? 'eager' : 'lazy'}">
       </div>
       <figcaption>${renderLocalizedBlock(reference.caption, language, 'miyu-reference-caption')}</figcaption>
@@ -379,7 +379,7 @@
 
   function renderDailyOutfitCard(outfit, language) {
     return `<article class="miyu-daily-outfit-card miyu-example-rail-card">
-      <div class="miyu-reference-image-frame" data-crop="${escapeHtml(outfit.cropPosition || 'center')}">
+      <div class="miyu-reference-image-frame" data-layout="${escapeHtml(outfit.layout || 'portrait')}" data-crop="${escapeHtml(outfit.cropPosition || 'center')}">
         <img src="${asset(outfit.image)}" data-asset="${escapeHtml(outfit.image)}" alt="" loading="lazy">
       </div>
       <h4>${renderLocalizedBlock(outfit.name, language, 'miyu-daily-outfit-name')}</h4>
